@@ -68,10 +68,10 @@
 
 <!-- Navbar -->
 <header class="glass p-4 flex justify-between items-center sticky top-0 z-20">
-  <div class="flex items-center gap-2">
+<a href="https://rialo.io" target="_blank" class="flex items-center gap-2" style="text-decoration:none; color:inherit;">
     <img src="https://i.imgur.com/wKWNeZe.png" class="w-8 h-8 logo-glow" alt="Rialo Games"/>
-    <span class="font-bold">Rialo Games</span>
-  </div>
+    <span class="font-bold">Rialo </span>
+  </a>
   <div class="flex gap-3 items-center">
     <button onclick="toggleLang()" class="chip" id="langToggle">EN</button>
     <button onclick="toggleMode()" class="chip" id="modeToggle">☀️</button>
@@ -80,24 +80,65 @@
 
 <main class="flex-1">
   <!-- Hero -->
-  <section class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
-    <div>
-      <h1 id="heroTitle" class="text-4xl sm:text-5xl font-extrabold">
-        The world of Rialo Games — play, experiment, and shine.
-      </h1>
-      <p id="heroText" class="mt-4 text-lg text-gray-300">
-        An ecosystem of mini games and tools designed with a neon tech aesthetic. Jump in, try it out, and feel a modern big game experience.
-      </p>
-      <div class="mt-6 flex gap-3">
-        <!-- Sekarang mengarah ke halaman games.html yang terpisah -->
-        <a href="games.html" class="btn" id="openHub">Open Games Hub</a>
-        <a href="#about" class="btn bg-gray-600" id="learnMore">Learn More</a>
+<section class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+  <div class="min-w-0">
+    <h1 id="heroTitle" class="text-4xl sm:text-5xl font-extrabold">
+     What is Rialo?
+    </h1>
+    <p id="heroText" class="mt-4 text-lg text-gray-300">
+      Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.
+    </p>
+    <div class="mt-6 flex gap-3">
+      <a href="#games" class="btn" id="openHub">Open Games Hub</a>
+      <a href="#about" class="btn bg-gray-600" id="learnMore">Learn More</a>
+    </div>
+  </div>
+  <div class="glass rounded-2xl overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Hero visual"/>
+  </div>
+</section>
+
+<section class="px-6 max-w-7xl mx-auto">
+  <div class="mt-10">
+    <p class="text-sm text-gray-500 text-center mb-3">Backed by</p>
+    <div class="marquee-wrap">
+      <div class="marquee-track-left">
+        <span>Coinbase</span>
+        <span>Pantera Capital</span>
+        <span>Susquehanna</span>
+        <span>Edge Capital</span>
+        <span>Mirana</span>
+        <span>Mysten Labs</span>
+        <span>Coinbase</span>
+        <span>Pantera Capital</span>
+        <span>Susquehanna</span>
+        <span>Edge Capital</span>
+        <span>Mirana</span>
+        <span>Mysten Labs</span>
       </div>
     </div>
-    <div class="glass rounded-2xl overflow-hidden">
-      <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Hero visual"/>
+
+    <p class="text-sm text-gray-500 text-center mt-8 mb-3">Partners</p>
+    <div class="marquee-wrap">
+      <div class="marquee-track-right">
+        <span>Nasdaq</span>
+        <span>CBOE</span>
+        <span>NYSE</span>
+        <span>Predicate</span>
+        <span>DoubleZero</span>
+        <span>M0</span>
+        <span>Keplr</span>
+        <span>Nasdaq</span>
+        <span>CBOE</span>
+        <span>NYSE</span>
+        <span>Predicate</span>
+        <span>DoubleZero</span>
+        <span>M0</span>
+        <span>Keplr</span>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- About -->
   <section id="about" class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10">
