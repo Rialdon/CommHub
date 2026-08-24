@@ -114,38 +114,62 @@
   </section>
 </main>
 
-<footer class="glass p-6 text-center">
+<!-- Footer -->
+<footer class="p-6 text-center mt-auto opacity-75">
   <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo Games"/>
-  <p>
-    <span data-en="© 2026 Rialo Games." data-id="© 2026 Rialo Games.">© 2026 Rialo Games.</span><br>
-    <span class="text-gray-700" data-en="Powered by Rialo Community" data-id="Didukung oleh Rialo Community">Powered by Rialo Community</span>
-  </p>
+  <p>© 2026 Rialo Games.<br><span class="opacity-60 text-xs">Powered by Rialo Community</span></p>
 </footer>
 
+<!-- JavaScript -->
 <script>
-  // Language toggle — otomatis mengubah SEMUA elemen yang punya data-en / data-id
-  let lang = "EN";
-  function toggleLang(){
-    lang = (lang === "EN") ? "ID" : "EN";
-    document.getElementById("langToggle").innerText = lang;
-
-    const targetAttr = (lang === "ID") ? "data-id" : "data-en";
-    document.querySelectorAll("[data-en]").forEach(el => {
-      el.innerText = el.getAttribute(targetAttr);
-    });
+// Language toggle
+let lang = "EN";
+function toggleLang(){
+  lang = (lang==="EN")?"ID":"EN";
+  document.getElementById("langToggle").innerText = lang;
+  if(lang==="ID"){
+    document.getElementById("heroTitle").innerText = "Apa itu Rialo?";
+    document.getElementById("heroText").innerText = "Rialo adalah platform blockchain generasi berikutnya yang dibangun untuk menjembatani Web3 dan dunia nyata. Platform ini memungkinkan smart contract terhubung langsung dengan pembayaran data real-time, harga, cuaca, dan apa pun tanpa memerlukan oracle atau middleware yang rumit. Singkatnya, Rialo membuat aplikasi blockchain berjalan sehalus aplikasi yang Anda gunakan setiap hari.";
+    document.getElementById("openHub").innerText = "Buka Games Hub";
+    document.getElementById("learnMore").innerText = "Pelajari Lebih";
+  } else {
+    document.getElementById("heroTitle").innerText = "What is Rialo?";
+    document.getElementById("heroText").innerText = "Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.";
+    document.getElementById("openHub").innerText = "Open Games Hub";
+    document.getElementById("learnMore").innerText = "Learn More";
   }
+}
 
-  // Mode toggle
-  function toggleMode(){
-    const body = document.getElementById("body");
-    if(body.classList.contains("dark-mode")){
-      body.classList.remove("dark-mode"); body.classList.add("light-mode");
-      document.getElementById("modeToggle").innerText = "🌙";
-    } else {
-      body.classList.remove("light-mode"); body.classList.add("dark-mode");
-      document.getElementById("modeToggle").innerText = "☀️";
-    }
+// Mode toggle (Light/Dark Switch)
+function toggleMode(){
+  const body = document.getElementById("body");
+  if(body.classList.contains("dark-mode")){
+    body.classList.remove("dark-mode");
+    document.getElementById("modeToggle").innerText = "🌙";
+  } else {
+    body.classList.add("dark-mode");
+    document.getElementById("modeToggle").innerText = "☀️";
   }
+}
+
+// Fake loader progress
+const bar = document.getElementById('bar');
+const loader = document.getElementById('loader');
+let p = 0;
+const int = setInterval(() => {
+  p += 10;
+  if (bar) {
+    bar.style.width = p + '%';
+  }
+  if (p >= 100) {
+    clearInterval(int);
+    setTimeout(() => {
+      if (loader) {
+        loader.style.display = 'none';
+      }
+    }, 300);
+  }
+}, 80);
 </script>
 
 </body>
