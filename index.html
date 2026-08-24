@@ -46,22 +46,36 @@
     body.dark-mode .progress { background: rgba(255,255,255,0.1); }
     .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
     
-    /* Warna Teks Brand otomatis kontras di Light & Dark Mode */
-    .brand-text {
-      font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      opacity: 0.75;
+    /* Kartu Pembungkus Seragam untuk Logo */
+    .partner-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.25rem;
+      height: 50px;
+      border-radius: 0.85rem;
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+    body.dark-mode .partner-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .partner-card img {
+      height: 24px;
+      width: auto;
+      object-fit: contain;
+      opacity: 0.85;
       transition: opacity 0.3s;
-      padding: 0 1rem;
-      color: #111827;
     }
-    body.dark-mode .brand-text {
-      color: #ffffff;
-    }
-    .brand-text:hover {
+    .partner-card:hover img {
       opacity: 1;
     }
+
+    /* Logika Switch Gambar Terang/Gelap otomatis */
+    body:not(.dark-mode) .img-dark { display: none !important; }
+    body.dark-mode .img-light { display: none !important; }
 
     /* Marquee Styling & Optimization (Anti-Lemot) */
     .marquee-wrap {
@@ -73,7 +87,7 @@
     }
     .marquee-track-left, .marquee-track-right {
       display: flex;
-      gap: 20px;
+      gap: 24px;
       width: max-content;
       will-change: transform;
       align-items: center;
@@ -140,28 +154,42 @@
   <!-- Investors & Partners Section -->
   <section class="px-6 max-w-7xl mx-auto pb-12">
     <div class="mt-10">
-      <!-- Investors -->
+      <!-- Investors (Menggunakan link gambar khusus mode terang & gelap yang kamu berikan) -->
       <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
       <div class="marquee-wrap">
         <div class="marquee-track-left">
-          <span class="brand-text">SUSQUEHANNA</span>
-          <span class="brand-text">COINBASE</span>
-          <span class="brand-text">PANTERA</span>
-          <span class="brand-text">EDGE CAPITAL</span>
-          <span class="brand-text">PITCHBOOK</span>
-          <span class="brand-text">FABRIC VC</span>
-          <span class="brand-text">MYSTEN LABS</span>
-          <span class="brand-text">VESTBEE</span>
-          
-          <!-- Duplikat Looping Mulus -->
-          <span class="brand-text">SUSQUEHANNA</span>
-          <span class="brand-text">COINBASE</span>
-          <span class="brand-text">PANTERA</span>
-          <span class="brand-text">EDGE CAPITAL</span>
-          <span class="brand-text">PITCHBOOK</span>
-          <span class="brand-text">FABRIC VC</span>
-          <span class="brand-text">MYSTEN LABS</span>
-          <span class="brand-text">VESTBEE</span>
+          <!-- Susquehanna -->
+          <div class="partner-card">
+            <img src="https://sig.com/media/p2kh1kdv/og_susquehanna_logo.png" alt="Susquehanna Light" class="img-light">
+            <img src="https://encrypted-tbn0.gstatic.com/images?t=ANd9GcSz0_wNqYkGNQ8OcW2Z3z4l8QDHibhSHbUsxRNB6KexD4KALlvbHnDd-UWb&s=10" alt="Susquehanna Dark" class="img-dark">
+          </div>
+          <!-- Investor Lainnya / Group 1 -->
+          <div class="partner-card">
+            <img src="https://images.ctfassets.net/enatj8r8y1g4/2Hf6HGaE2Ss2ppv1b14NPe/de4a27ea668a3dc8207caa12baebd300/share-card.jpg" alt="Investor Light" class="img-light">
+            <img src="https://image.blocktempo.com/2021/12/1500x500.jpg" alt="Investor Dark" class="img-dark">
+          </div>
+          <div class="partner-card"><img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital"></div>
+          <div class="partner-card"><img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook"></div>
+          <div class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D5616AQE8eo4ghP1x_w/profile-displaybackgroundimage-shrink_200_800/B56Zb7.9EzH4AY-/0/1747984306882?e=2147483647&v=beta&t=hD6heH__D07eXMpGQUJS6uC-bo2zz-GKv2I1fwbiX1s" alt="VC Logo"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/idyLR0_e27_logos.svg" alt="Rialo Logo"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs"></div>
+          <div class="partner-card"><img src="https://res.cloudinary.com/vestbee/image/upload/v1705351310/strapi-legacy-media-files/introducing_f256bb2f96.png.png" alt="Vestbee"></div>
+
+          <!-- Duplikat untuk Looping Mulus -->
+          <div class="partner-card">
+            <img src="https://sig.com/media/p2kh1kdv/og_susquehanna_logo.png" alt="Susquehanna Light" class="img-light">
+            <img src="https://encrypted-tbn0.gstatic.com/images?t=ANd9GcSz0_wNqYkGNQ8OcW2Z3z4l8QDHibhSHbUsxRNB6KexD4KALlvbHnDd-UWb&s=10" alt="Susquehanna Dark" class="img-dark">
+          </div>
+          <div class="partner-card">
+            <img src="https://images.ctfassets.net/enatj8r8y1g4/2Hf6HGaE2Ss2ppv1b14NPe/de4a27ea668a3dc8207caa12baebd300/share-card.jpg" alt="Investor Light" class="img-light">
+            <img src="https://image.blocktempo.com/2021/12/1500x500.jpg" alt="Investor Dark" class="img-dark">
+          </div>
+          <div class="partner-card"><img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital"></div>
+          <div class="partner-card"><img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook"></div>
+          <div class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D5616AQE8eo4ghP1x_w/profile-displaybackgroundimage-shrink_200_800/B56Zb7.9EzH4AY-/0/1747984306882?e=2147483647&v=beta&t=hD6heH__D07eXMpGQUJS6uC-bo2zz-GKv2I1fwbiX1s" alt="VC Logo"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/idyLR0_e27_logos.svg" alt="Rialo Logo"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs"></div>
+          <div class="partner-card"><img src="https://res.cloudinary.com/vestbee/image/upload/v1705351310/strapi-legacy-media-files/introducing_f256bb2f96.png.png" alt="Vestbee"></div>
         </div>
       </div>
 
@@ -169,22 +197,22 @@
       <p class="text-xs opacity-60 text-center mt-12 mb-5 uppercase tracking-widest font-semibold">Partners</p>
       <div class="marquee-wrap">
         <div class="marquee-track-right">
-          <span class="brand-text">NASDAQ</span>
-          <span class="brand-text">NYSE</span>
-          <span class="brand-text">CBOE</span>
-          <span class="brand-text">KEPLR</span>
-          <span class="brand-text">PREDICATE</span>
-          <span class="brand-text">DOUBLEZERO</span>
-          <span class="brand-text">M0</span>
+          <div class="partner-card"><img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/nyse.svg" alt="NYSE"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/cboe.png" alt="CBOE"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/keplr.png" alt="Keplr"></div>
+          <div class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D563DAQF81Ozz-xgSnA/image-scale_191_1128/image-scale_191_1128/0/1728960542506/predicatenetwork_cover?e=2147483647&v=beta&t=mbzy6EytP_G81rm14LyQahYA-Mxv0KJvEfB6pXWkAOg" alt="Predicate"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/m0.jpeg" alt="M0"></div>
           
-          <!-- Duplikat Looping Mulus -->
-          <span class="brand-text">NASDAQ</span>
-          <span class="brand-text">NYSE</span>
-          <span class="brand-text">CBOE</span>
-          <span class="brand-text">KEPLR</span>
-          <span class="brand-text">PREDICATE</span>
-          <span class="brand-text">DOUBLEZERO</span>
-          <span class="brand-text">M0</span>
+          <!-- Duplikat Looping -->
+          <div class="partner-card"><img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/nyse.svg" alt="NYSE"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/cboe.png" alt="CBOE"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/keplr.png" alt="Keplr"></div>
+          <div class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D563DAQF81Ozz-xgSnA/image-scale_191_1128/image-scale_191_1128/0/1728960542506/predicatenetwork_cover?e=2147483647&v=beta&t=mbzy6EytP_G81rm14LyQahYA-Mxv0KJvEfB6pXWkAOg" alt="Predicate"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero"></div>
+          <div class="partner-card"><img src="https://rialo.io/images/m0.jpeg" alt="M0"></div>
         </div>
       </div>
     </div>
