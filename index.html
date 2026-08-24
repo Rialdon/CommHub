@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rialo Games — Introduction & Partners</title>
+<title>Rialo — What is Rialo</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   html, body { height: 100%; }
@@ -114,8 +114,8 @@
 <!-- Loading Screen -->
 <div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
   <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
-    <img src="https://i.imgur.com/wKWNeZe.png" class="w-20 h-20 mx-auto logo-glow" alt="Rialo Games Logo"/>
-    <h1 class="mt-4 font-bold text-xl">Rialo Games</h1>
+    <img src="https://i.imgur.com/wKWNeZe.png" class="w-20 h-20 mx-auto logo-glow" alt="Rialo Logo"/>
+    <h1 class="mt-4 font-bold text-xl">Rialo</h1>
     <p class="text-sm opacity-70 mt-1">Loading experience…</p>
     <div class="progress mt-4"><div id="bar" class="progress-bar"></div></div>
     <p class="italic text-xs mt-2 opacity-60">Powered by Rialo Community</p>
@@ -125,7 +125,7 @@
 <!-- Navbar -->
 <header class="glass p-4 flex justify-between items-center sticky top-0 z-20">
   <a href="https://rialo.io" target="_blank" class="flex items-center gap-2" style="text-decoration:none; color:inherit;">
-    <img src="https://i.imgur.com/wKWNeZe.png" class="w-8 h-8 logo-glow" alt="Rialo Games"/>
+    <img src="https://i.imgur.com/wKWNeZe.png" class="w-8 h-8 logo-glow" alt="Rialo"/>
     <span class="font-bold">Rialo</span>
   </a>
   <div class="flex gap-3 items-center">
@@ -135,19 +135,27 @@
 </header>
 
 <main class="flex-1">
-  <!-- About -->
-  <section id="about" class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+  <!-- Hero Section (What is Rialo) -->
+  <section class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
     <div>
-      <h2 class="text-3xl font-bold" data-en="What is Rialo Games?" data-id="Apa itu Rialo Games?">What is Rialo Games?</h2>
-      <p class="mt-3 text-gray-300" data-en="Rialo Games is a community-driven gaming platform built for interactive and on-chain experiences. Powered by Community, it connects players and creators to play, build, and contribute to the Rialo ecosystem." data-id="Rialo Games adalah platform gaming berbasis komunitas yang dibangun untuk pengalaman interaktif dan on-chain. Didukung oleh Community, platform ini menghubungkan pemain dan kreator untuk bermain, membangun, dan berkontribusi pada ekosistem Rialo.">Rialo Games is a community-driven gaming platform built for interactive and on-chain experiences. Powered by Community, it connects players and creators to play, build, and contribute to the Rialo ecosystem.</p>
+      <h1 id="heroTitle" class="text-4xl sm:text-5xl font-extrabold">
+        What is Rialo?
+      </h1>
+      <p id="heroText" class="mt-4 text-lg text-gray-300 opacity-90">
+        Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.
+      </p>
+      <div class="mt-6 flex gap-3">
+        <a href="games.html" class="btn" id="openHub">Open Games Hub</a>
+        <a href="https://rialo.io" target="_blank" class="btn bg-gray-600" id="learnMore">Learn More</a>
+      </div>
     </div>
     <div class="glass rounded-2xl overflow-hidden shadow-md">
-      <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Hero visual"/>
+      <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
     </div>
   </section>
 
   <!-- Investors & Partners Section -->
-  <section class="px-6 max-w-7xl mx-auto py-12">
+  <section class="px-6 max-w-7xl mx-auto pb-12">
     <div class="mt-4">
       <!-- Investors -->
       <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
@@ -222,10 +230,10 @@
 
 <!-- Footer -->
 <footer class="p-6 text-center mt-auto">
-  <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo Games"/>
+  <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo"/>
   <p>
-    <span data-en="© 2026 Rialo Games." data-id="© 2026 Rialo Games.">© 2026 Rialo Games.</span><br>
-    <span class="footer-sub" data-en="Powered by Rialo Community" data-id="Didukung oleh Rialo Community">Powered by Rialo Community</span>
+    <span>© 2026 Rialo.</span><br>
+    <span class="footer-sub text-xs">Powered by Rialo Community</span>
   </p>
 </footer>
 
@@ -236,11 +244,17 @@
   function toggleLang(){
     lang = (lang === "EN") ? "ID" : "EN";
     document.getElementById("langToggle").innerText = lang;
-
-    const targetAttr = (lang === "ID") ? "data-id" : "data-en";
-    document.querySelectorAll("[data-en]").forEach(el => {
-      el.innerText = el.getAttribute(targetAttr);
-    });
+    if(lang === "ID"){
+      document.getElementById("heroTitle").innerText = "Apa itu Rialo?";
+      document.getElementById("heroText").innerText = "Rialo adalah platform blockchain generasi berikutnya yang dibangun untuk menjembatani Web3 dan dunia nyata. Platform ini memungkinkan smart contract terhubung langsung dengan pembayaran data real-time, harga, cuaca, dan apa pun tanpa memerlukan oracle atau middleware yang rumit. Singkatnya, Rialo membuat aplikasi blockchain berjalan sehalus aplikasi yang Anda gunakan setiap hari.";
+      document.getElementById("openHub").innerText = "Buka Games Hub";
+      document.getElementById("learnMore").innerText = "Pelajari Lebih";
+    } else {
+      document.getElementById("heroTitle").innerText = "What is Rialo?";
+      document.getElementById("heroText").innerText = "Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.";
+      document.getElementById("openHub").innerText = "Open Games Hub";
+      document.getElementById("learnMore").innerText = "Learn More";
+    }
   }
 
   // Mode toggle
