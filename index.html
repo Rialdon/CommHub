@@ -38,27 +38,23 @@
     .game-img { height:160px; object-fit:contain; background:#111; border-radius:.5rem; }
     .light-mode .game-img { background:#e5e7eb; }
 
+    /* Marquee Styling & Optimization (Anti-Lemot) */
     .marquee-wrap {
       overflow: hidden;
       width: 100%;
       position: relative;
-      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     }
     .marquee-track-left, .marquee-track-right {
       display: flex;
-      gap: 40px;
+      gap: 50px;
       width: max-content;
+      will-change: transform;
+      align-items: center;
     }
-    .marquee-track-left { animation: scrollLeft 22s linear infinite; }
-    .marquee-track-right { animation: scrollRight 22s linear infinite; }
-    .marquee-track-left span, .marquee-track-right span {
-      font-weight: 600;
-      color: #555;
-      white-space: nowrap;
-      font-size: 15px;
-    }
-    .dark-mode .marquee-track-left span, .dark-mode .marquee-track-right span { color: #9ca3af; }
+    .marquee-track-left { animation: scrollLeft 25s linear infinite; }
+    .marquee-track-right { animation: scrollRight 25s linear infinite; }
 
     @keyframes scrollLeft {
       from { transform: translateX(0); }
@@ -116,32 +112,38 @@
     </div>
   </section>
 
-    <!-- Marquee Section (Investors & Partners dengan Logo) -->
-  <section class="px-6 max-w-7xl mx-auto pb-10">
+  <!-- Investors & Partners Section (Clean & Smooth) -->
+  <section class="px-6 max-w-7xl mx-auto pb-12">
     <div class="mt-10">
-      <p class="text-sm text-gray-500 text-center mb-4 uppercase tracking-wider">Investors</p>
+      <!-- Investors -->
+      <p class="text-xs text-gray-500 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
       <div class="marquee-wrap">
-        <div class="marquee-track-left items-center">
-          <!-- Ganti link src dengan logo investor pilihanmu -->
-          <img src="https://api.iconify.design/simple-icons:coinbase.svg?color=%23888888" alt="Coinbase" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
-          <img src="https://api.iconify.design/simple-icons:pantera.svg?color=%23888888" alt="Pantera" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
-          <img src="https://api.iconify.design/simple-icons:mystenlabs.svg?color=%23888888" alt="Mysten Labs" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
-          <!-- Duplikat untuk efek infinite scroll yang mulus -->
-          <img src="https://api.iconify.design/simple-icons:coinbase.svg?color=%23888888" alt="Coinbase" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
-          <img src="https://api.iconify.design/simple-icons:pantera.svg?color=%23888888" alt="Pantera" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
-          <img src="https://api.iconify.design/simple-icons:mystenlabs.svg?color=%23888888" alt="Mysten Labs" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
+        <div class="marquee-track-left">
+          <span class="text-xl font-bold tracking-tight opacity-75 hover:opacity-100 transition">COINBASE</span>
+          <span class="text-xl font-black tracking-widest opacity-75 hover:opacity-100 transition">PANTERA</span>
+          <span class="text-xl font-semibold tracking-wide opacity-75 hover:opacity-100 transition">Mysten Labs</span>
+          <span class="text-xl font-bold tracking-tight opacity-75 hover:opacity-100 transition">SUSQUEHANNA</span>
+          <!-- Duplikat untuk kelancaran looping -->
+          <span class="text-xl font-bold tracking-tight opacity-75 hover:opacity-100 transition">COINBASE</span>
+          <span class="text-xl font-black tracking-widest opacity-75 hover:opacity-100 transition">PANTERA</span>
+          <span class="text-xl font-semibold tracking-wide opacity-75 hover:opacity-100 transition">Mysten Labs</span>
+          <span class="text-xl font-bold tracking-tight opacity-75 hover:opacity-100 transition">SUSQUEHANNA</span>
         </div>
       </div>
 
-      <p class="text-sm text-gray-500 text-center mt-10 mb-4 uppercase tracking-wider">Partners</p>
+      <!-- Partners -->
+      <p class="text-xs text-gray-500 text-center mt-12 mb-5 uppercase tracking-widest font-semibold">Partners</p>
       <div class="marquee-wrap">
-        <div class="marquee-track-right items-center">
-          <!-- Ganti link src dengan logo partner pilihanmu -->
-          <img src="https://api.iconify.design/simple-icons:nasdaq.svg?color=%23888888" alt="Nasdaq" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
-          <img src="https://api.iconify.design/simple-icons:keplr.svg?color=%23888888" alt="Keplr" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
-          <!-- Duplikat untuk efek infinite scroll -->
-          <img src="https://api.iconify.design/simple-icons:nasdaq.svg?color=%23888888" alt="Nasdaq" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
-          <img src="https://api.iconify.design/simple-icons:keplr.svg?color=%23888888" alt="Keplr" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition">
+        <div class="marquee-track-right">
+          <span class="text-xl font-extrabold tracking-tighter opacity-75 hover:opacity-100 transition">Nasdaq</span>
+          <span class="text-xl font-bold tracking-tight opacity-75 hover:opacity-100 transition">Keplr</span>
+          <span class="text-xl font-black tracking-widest opacity-75 hover:opacity-100 transition">CBOE</span>
+          <span class="text-xl font-semibold tracking-wide opacity-75 hover:opacity-100 transition">NYSE</span>
+          <!-- Duplikat untuk kelancaran looping -->
+          <span class="text-xl font-extrabold tracking-tighter opacity-75 hover:opacity-100 transition">Nasdaq</span>
+          <span class="text-xl font-bold tracking-tight opacity-75 hover:opacity-100 transition">Keplr</span>
+          <span class="text-xl font-black tracking-widest opacity-75 hover:opacity-100 transition">CBOE</span>
+          <span class="text-xl font-semibold tracking-wide opacity-75 hover:opacity-100 transition">NYSE</span>
         </div>
       </div>
     </div>
