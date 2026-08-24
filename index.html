@@ -1,23 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rialo Games — Introduction & Arcade</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-body {font-family: system-ui, sans-serif;}
-.glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.1); }
-.btn { padding:.6rem 1.2rem; border-radius:.75rem; background:#0ea5e9; color:white; cursor:pointer; font-weight:600;}
-.chip { border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.3rem .9rem; cursor:pointer; font-size:.85rem;}
-.logo-glow { filter: drop-shadow(0 0 10px rgba(0,255,183,0.9)) drop-shadow(0 0 30px rgba(0,255,183,0.55)); }
-.progress {height: 10px; border-radius:999px; background:rgba(255,255,255,.1); overflow:hidden;}
-.progress-bar {height:100%;width:0;background:linear-gradient(90deg,#00ffb7,#6ee7b7);box-shadow:0 0 12px rgba(0,255,183,0.7);}
-.dark-mode { background:#05060a; color:#e5e7eb;}
-.light-mode { background:#f9fafb; color:#111827;}
-.light-mode .glass { background: rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1);}
-.light-mode .text-gray-300 { color:#374151; } /* lebih gelap di light mode */
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rialo Games  — Introduction & Arcade</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {font-family: system-ui, sans-serif; overflow-x:hidden;}
+    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.1); }
+    .btn { padding:.6rem 1.2rem; border-radius:.75rem; background:#0ea5e9; color:white; cursor:pointer; font-weight:600;}
+    .chip { border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.3rem .9rem; cursor:pointer; font-size:.85rem;}
+    .logo-glow { filter: drop-shadow(0 0 10px rgba(201,168,118,0.9)) drop-shadow(0 0 30px rgba(201,168,118,0.55)); }
+    .progress {height: 10px; border-radius:999px; background:rgba(255,255,255,.1); overflow:hidden;}
+    .progress-bar {height:100%;width:0;background:linear-gradient(90deg,#00ffb7,#6ee7b7);box-shadow:0 0 12px rgba(0,255,183,0.7);}
+    .dark-mode { background:#05060a; color:#e5e7eb;}
+    .light-mode { background:#f9fafb; color:#111827;}
+    .light-mode .glass { background: rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1);}
+    .light-mode .text-gray-300 { color:#374151; } /* lebih gelap di light mode */
+    .game-img { height:160px; object-fit:contain; background:#111; border-radius:.5rem; }
+    .light-mode .game-img { background:#e5e7eb; }
+    .marquee-wrap {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+.marquee-track-left, .marquee-track-right {
+  display: flex;
+  gap: 40px;
+  width: max-content;
+}
+.marquee-track-left {
+  animation: scrollLeft 22s linear infinite;
+}
+.marquee-track-right {
+  animation: scrollRight 22s linear infinite;
+}
+.marquee-track-left span, .marquee-track-right span {
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+  font-size: 15px;
+}
+@keyframes scrollLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes scrollRight {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+  </style>
 </head>
 <body class="min-h-screen flex flex-col light-mode" id="body">
 
