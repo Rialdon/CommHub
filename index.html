@@ -1,24 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rialo Games — Introduction & Partners</title>
+<title>Rialo Games — Games Hub</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  html, body { height: 100%; }
-  body { 
-    font-family: system-ui, sans-serif; 
-    overflow-x: hidden; 
-    display: flex; 
-    flex-direction: column; 
-    transition: background 0.3s, color 0.3s; 
-  }
-  
+  body { font-family: system-ui, sans-serif; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
   .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); }
-  .light-mode .glass { background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); }
-
-  .btn { padding: .6rem 1.2rem; border-radius: .75rem; background: #0ea5e9; color: white; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; text-align: center; }
+  .btn { padding: .6rem 1.2rem; border-radius: .75rem; background: #0ea5e9; color: white; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; }
   
   /* Tombol Chip */
   .chip { 
@@ -37,35 +27,50 @@
   }
 
   .logo-glow { filter: drop-shadow(0 0 10px rgba(201,168,118,0.9)) drop-shadow(0 0 30px rgba(201,168,118,0.55)); }
-  
-  /* Tema Terang & Gelap */
-  .dark-mode { background: #05060a; color: #e5e7eb; }
-  .light-mode { background: #f9fafb; color: #111827; }
-  
-  .light-mode .text-gray-300 { color: #374151; }
-  .footer-sub { color: #9ca3af; }
-  .light-mode .footer-sub { color: #4b5563; }
+  .dark-mode { background: #05060a; color: #e5e7eb;}
+  .light-mode { background: #f9fafb; color: #111827;}
+  .light-mode .glass { background: rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1);}
+  .light-mode .text-gray-300 { color:#374151; }
 
-  /* Progress Bar Loader */
-  .progress { height: 10px; border-radius: 999px; background: rgba(0,0,0,0.08); overflow: hidden; }
-  .dark-mode .progress { background: rgba(255,255,255,0.1); }
-  .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
+  /* Kartu Game */
+  .game-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  body.dark-mode .game-card {
+    background: #0f1117 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
 
-  /* Kartu Partner/Investor */
+  .game-img { 
+    height: 160px; 
+    object-fit: contain; 
+    background: #f3f4f6; 
+    border-radius: .5rem; 
+    width: 100%;
+  }
+  body.dark-mode .game-img { 
+    background: #1a1d24; 
+  }
+
+  /* Kartu Partner/Investor yang bisa diklik */
   .partner-card {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.6rem 1.25rem;
-    height: 50px;
-    border-radius: 0.85rem;
+    padding: 0.5rem 1rem;
+    height: 45px;
+    border-radius: 0.75rem;
     background: rgba(0, 0, 0, 0.03);
     border: 1px solid rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     text-decoration: none;
-    gap: 8px;
   }
-  .dark-mode .partner-card {
+  body.dark-mode .partner-card {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
@@ -74,13 +79,11 @@
     border-color: #0ea5e9;
   }
   .partner-card img {
-    height: 24px;
+    height: 20px;
     width: auto;
     object-fit: contain;
     opacity: 0.85;
-    transition: opacity 0.3s;
   }
-  .partner-card:hover img { opacity: 1; }
 
   /* Marquee Styling */
   .marquee-wrap {
@@ -92,7 +95,7 @@
   }
   .marquee-track-left, .marquee-track-right {
     display: flex;
-    gap: 24px;
+    gap: 20px;
     width: max-content;
     will-change: transform;
     align-items: center;
@@ -112,22 +115,11 @@
 </head>
 <body class="min-h-screen flex flex-col light-mode" id="body">
 
-<!-- Loading Screen -->
-<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
-  <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
-    <img src="https://i.imgur.com/wKWNeZe.png" class="w-20 h-20 mx-auto logo-glow" alt="Rialo Games Logo"/>
-    <h1 class="mt-4 font-bold text-xl">Rialo Games</h1>
-    <p class="text-sm opacity-70 mt-1">Loading experience…</p>
-    <div class="progress mt-4"><div id="bar" class="progress-bar"></div></div>
-    <p class="italic text-xs mt-2 opacity-60">Powered by Rialo Community</p>
-  </div>
-</div>
-
 <!-- Navbar -->
 <header class="glass p-4 flex justify-between items-center sticky top-0 z-20">
-  <a href="https://rialo.io" target="_blank" class="flex items-center gap-2" style="text-decoration:none; color:inherit;">
+<a href="https://rialo.io" target="_blank" class="flex items-center gap-2" style="text-decoration:none; color:inherit;">
     <img src="https://i.imgur.com/wKWNeZe.png" class="w-8 h-8 logo-glow" alt="Rialo Games"/>
-    <span class="font-bold">Rialo</span>
+    <span class="font-bold">Rialo </span>
   </a>
   <div class="flex gap-3 items-center">
     <button onclick="toggleLang()" class="chip" id="langToggle">EN</button>
@@ -137,112 +129,127 @@
 
 <main class="flex-1">
   <!-- About -->
-  <section id="about" class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+  <section id="about" class="px-6 py-12 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
     <div>
       <h2 class="text-3xl font-bold" data-en="What is Rialo Games?" data-id="Apa itu Rialo Games?">What is Rialo Games?</h2>
       <p class="mt-3 text-gray-300" data-en="Rialo Games is a community-driven gaming platform built for interactive and on-chain experiences. Powered by Community, it connects players and creators to play, build, and contribute to the Rialo ecosystem." data-id="Rialo Games adalah platform gaming berbasis komunitas yang dibangun untuk pengalaman interaktif dan on-chain. Didukung oleh Community, platform ini menghubungkan pemain dan kreator untuk bermain, membangun, dan berkontribusi pada ekosistem Rialo.">Rialo Games is a community-driven gaming platform built for interactive and on-chain experiences. Powered by Community, it connects players and creators to play, build, and contribute to the Rialo ecosystem.</p>
     </div>
-    <div class="glass rounded-2xl overflow-hidden shadow-md">
+    <div class="glass rounded-2xl overflow-hidden">
       <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Hero visual"/>
     </div>
   </section>
 
-  <!-- Investors & Partners Section -->
-  <section class="px-6 max-w-7xl mx-auto py-12">
-    <div class="mt-4">
-      <!-- Investors -->
-      <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
-      <div class="marquee-wrap">
-        <div class="marquee-track-left">
-          <a href="https://www.sig.com" target="_blank" class="partner-card" style="background: #000; border-color: rgba(255,255,255,0.1);">
-            <img src="https://i0.wp.com/price-target.com/wp-content/uploads/2025/11/Susquehanna_BlackBG.png?fit=8000%2C4500&ssl=1" alt="Susquehanna">
-          </a>
-          <!-- Coinbase Logo Badge -->
-          <a href="https://www.coinbase.com" target="_blank" class="partner-card">
-            <svg class="h-5 w-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 18c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z"/></svg>
-            <span class="font-extrabold tracking-wide text-sm">COINBASE</span>
-          </a>
-          <!-- Pantera Logo Badge -->
-          <a href="https://panteracapital.com" target="_blank" class="partner-card">
-            <span class="font-black tracking-widest text-sm">PANTERA</span>
-          </a>
-          <a href="https://edgecapital.xyz" target="_blank" class="partner-card">
-            <img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital">
-          </a>
-          <a href="https://pitchbook.com" target="_blank" class="partner-card">
-            <img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook">
-          </a>
-          <a href="https://mystenlabs.com" target="_blank" class="partner-card">
-            <img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs">
-          </a>
-          <a href="https://vestbee.com" target="_blank" class="partner-card">
-            <img src="https://res.cloudinary.com/vestbee/image/upload/v1705351310/strapi-legacy-media-files/introducing_f256bb2f96.png.png" alt="Vestbee">
-          </a>
+  <!-- Investors & Partners Section (Logo langsung menuju website masing-masing) -->
+  <section class="px-6 pb-8 max-w-7xl mx-auto">
+    <!-- Investors -->
+    <p class="text-xs opacity-60 text-center mb-3 uppercase tracking-widest font-semibold">Investors</p>
+    <div class="marquee-wrap mb-6">
+      <div class="marquee-track-left">
+        <a href="https://www.sig.com" target="_blank" class="partner-card" style="background: #000; border-color: rgba(255,255,255,0.1);">
+          <img src="https://i0.wp.com/price-target.com/wp-content/uploads/2025/11/Susquehanna_BlackBG.png?fit=8000%2C4500&ssl=1" alt="Susquehanna">
+        </a>
+        <a href="https://www.coinbase.com/ventures" target="_blank" class="partner-card">
+          <span class="font-extrabold px-2 text-xs">COINBASE VENTURES</span>
+        </a>
+        <a href="https://panteracapital.com" target="_blank" class="partner-card">
+          <span class="font-black px-2 text-xs">PANTERA</span>
+        </a>
+        <a href="https://edgecapital.xyz" target="_blank" class="partner-card">
+          <img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital">
+        </a>
+        <a href="https://pitchbook.com" target="_blank" class="partner-card">
+          <img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook">
+        </a>
+        <a href="https://mystenlabs.com" target="_blank" class="partner-card">
+          <img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs">
+        </a>
 
-          <!-- Duplikat Looping Mulus -->
-          <a href="https://www.sig.com" target="_blank" class="partner-card" style="background: #000; border-color: rgba(255,255,255,0.1);">
-            <img src="https://i0.wp.com/price-target.com/wp-content/uploads/2025/11/Susquehanna_BlackBG.png?fit=8000%2C4500&ssl=1" alt="Susquehanna">
-          </a>
-          <a href="https://www.coinbase.com" target="_blank" class="partner-card">
-            <svg class="h-5 w-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 18c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z"/></svg>
-            <span class="font-extrabold tracking-wide text-sm">COINBASE</span>
-          </a>
-          <a href="https://panteracapital.com" target="_blank" class="partner-card">
-            <span class="font-black tracking-widest text-sm">PANTERA</span>
-          </a>
-          <a href="https://edgecapital.xyz" target="_blank" class="partner-card">
-            <img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital">
-          </a>
-          <a href="https://pitchbook.com" target="_blank" class="partner-card">
-            <img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook">
-          </a>
-          <a href="https://mystenlabs.com" target="_blank" class="partner-card">
-            <img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs">
-          </a>
-          <a href="https://vestbee.com" target="_blank" class="partner-card">
-            <img src="https://res.cloudinary.com/vestbee/image/upload/v1705351310/strapi-legacy-media-files/introducing_f256bb2f96.png.png" alt="Vestbee">
-          </a>
-        </div>
+        <!-- Duplikat untuk Looping Mulus -->
+        <a href="https://www.sig.com" target="_blank" class="partner-card" style="background: #000; border-color: rgba(255,255,255,0.1);">
+          <img src="https://i0.wp.com/price-target.com/wp-content/uploads/2025/11/Susquehanna_BlackBG.png?fit=8000%2C4500&ssl=1" alt="Susquehanna">
+        </a>
+        <a href="https://www.coinbase.com/ventures" target="_blank" class="partner-card">
+          <span class="font-extrabold px-2 text-xs">COINBASE VENTURES</span>
+        </a>
+        <a href="https://panteracapital.com" target="_blank" class="partner-card">
+          <span class="font-black px-2 text-xs">PANTERA</span>
+        </a>
+        <a href="https://edgecapital.xyz" target="_blank" class="partner-card">
+          <img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital">
+        </a>
+        <a href="https://pitchbook.com" target="_blank" class="partner-card">
+          <img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook">
+        </a>
+        <a href="https://mystenlabs.com" target="_blank" class="partner-card">
+          <img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs">
+        </a>
       </div>
+    </div>
 
-      <!-- Partners -->
-      <p class="text-xs opacity-60 text-center mt-12 mb-5 uppercase tracking-widest font-semibold">Partners</p>
-      <div class="marquee-wrap">
-        <div class="marquee-track-right">
-          <a href="https://www.nasdaq.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq"></a>
-          <a href="https://www.nyse.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nyse.svg" alt="NYSE"></a>
-          <a href="https://www.cboe.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/cboe.png" alt="CBOE"></a>
-          <a href="https://keplr.app" target="_blank" class="partner-card"><img src="https://rialo.io/images/keplr.png" alt="Keplr"></a>
-          <a href="https://predicate.io" target="_blank" class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D563DAQF81Ozz-xgSnA/image-scale_191_1128/image-scale_191_1128/0/1728960542506/predicatenetwork_cover?e=2147483647&v=beta&t=mbzy6EytP_G81rm14LyQahYA-Mxv0KJvEfB6pXWkAOg" alt="Predicate"></a>
-          <a href="https://rialo.io" target="_blank" class="partner-card"><img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero"></a>
-          <a href="https://m0.xyz" target="_blank" class="partner-card"><img src="https://rialo.io/images/m0.jpeg" alt="M0"></a>
-          
-          <!-- Duplikat Looping Mulus -->
-          <a href="https://www.nasdaq.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq"></a>
-          <a href="https://www.nyse.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nyse.svg" alt="NYSE"></a>
-          <a href="https://www.cboe.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/cboe.png" alt="CBOE"></a>
-          <a href="https://keplr.app" target="_blank" class="partner-card"><img src="https://rialo.io/images/keplr.png" alt="Keplr"></a>
-          <a href="https://predicate.io" target="_blank" class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D563DAQF81Ozz-xgSnA/image-scale_191_1128/image-scale_191_1128/0/1728960542506/predicatenetwork_cover?e=2147483647&v=beta&t=mbzy6EytP_G81rm14LyQahYA-Mxv0KJvEfB6pXWkAOg" alt="Predicate"></a>
-          <a href="https://rialo.io" target="_blank" class="partner-card"><img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero"></a>
-          <a href="https://m0.xyz" target="_blank" class="partner-card"><img src="https://rialo.io/images/m0.jpeg" alt="M0"></a>
-        </div>
+    <!-- Partners -->
+    <p class="text-xs opacity-60 text-center mb-3 uppercase tracking-widest font-semibold">Partners</p>
+    <div class="marquee-wrap">
+      <div class="marquee-track-right">
+        <a href="https://www.nasdaq.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq"></a>
+        <a href="https://www.nyse.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nyse.svg" alt="NYSE"></a>
+        <a href="https://www.cboe.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/cboe.png" alt="CBOE"></a>
+        <a href="https://keplr.app" target="_blank" class="partner-card"><img src="https://rialo.io/images/keplr.png" alt="Keplr"></a>
+        <a href="https://predicate.io" target="_blank" class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D563DAQF81Ozz-xgSnA/image-scale_191_1128/image-scale_191_1128/0/1728960542506/predicatenetwork_cover?e=2147483647&v=beta&t=mbzy6EytP_G81rm14LyQahYA-Mxv0KJvEfB6pXWkAOg" alt="Predicate"></a>
+        <a href="https://rialo.io" target="_blank" class="partner-card"><img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero"></a>
+        <a href="https://m0.xyz" target="_blank" class="partner-card"><img src="https://rialo.io/images/m0.jpeg" alt="M0"></a>
+
+        <!-- Duplikat untuk Looping Mulus -->
+        <a href="https://www.nasdaq.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq"></a>
+        <a href="https://www.nyse.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nyse.svg" alt="NYSE"></a>
+        <a href="https://www.cboe.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/cboe.png" alt="CBOE"></a>
+        <a href="https://keplr.app" target="_blank" class="partner-card"><img src="https://rialo.io/images/keplr.png" alt="Keplr"></a>
+        <a href="https://predicate.io" target="_blank" class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D563DAQF81Ozz-xgSnA/image-scale_191_1128/image-scale_191_1128/0/1728960542506/predicatenetwork_cover?e=2147483647&v=beta&t=mbzy6EytP_G81rm14LyQahYA-Mxv0KJvEfB6pXWkAOg" alt="Predicate"></a>
+        <a href="https://rialo.io" target="_blank" class="partner-card"><img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero"></a>
+        <a href="https://m0.xyz" target="_blank" class="partner-card"><img src="https://rialo.io/images/m0.jpeg" alt="M0"></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Games hub -->
+  <section class="px-6 py-8 max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-2" data-en="Play Now" data-id="Main Sekarang">Play Now</h1>
+    <p class="text-center text-gray-300 mb-8" data-en="Select a Game" data-id="Pilih Game">Select a Game</p>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div id="card" class="game-card text-center scroll-mt-24">
+        <img src="https://i.imgur.com/T1CygAB.jpeg" class="w-full game-img mb-3"/>
+        <h3 class="font-semibold" data-en="Rialo Card" data-id="Rialo Card">Rialo Card</h3>
+        <a href="https://rialogames.vercel.app/#card" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
+      </div>
+      <div id="puzzle" class="game-card text-center scroll-mt-24">
+        <img src="https://i.imgur.com/ptUTioc.jpeg" class="w-full game-img mb-3"/>
+        <h3 class="font-semibold" data-en="Rialo Puzzle" data-id="Rialo Puzzle">Rialo Puzzle</h3>
+        <a href="https://rialogames.vercel.app/#puzzle" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
+      </div>
+      <div id="snake" class="game-card text-center scroll-mt-24">
+        <img src="https://i.imgur.com/PGYHth2.jpeg" class="w-full game-img mb-3"/>
+        <h3 class="font-semibold" data-en="Rialo Snake" data-id="Rialo Snake">Rialo Snake</h3>
+        <a href="https://rialogames.vercel.app/#snake" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
+      </div>
+      <div id="flappy" class="game-card text-center scroll-mt-24">
+        <img src="https://i.imgur.com/9HWW4lG.jpeg" class="w-full game-img mb-3"/>
+        <h3 class="font-semibold" data-en="Rialo Flappy" data-id="Rialo Flappy">Rialo Flappy</h3>
+        <a href="https://rialogames.vercel.app/#flappy" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
       </div>
     </div>
   </section>
 </main>
 
-<!-- Footer -->
-<footer class="p-6 text-center mt-auto">
+<footer class="p-6 text-center">
   <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo Games"/>
   <p>
     <span data-en="© 2026 Rialo Games." data-id="© 2026 Rialo Games.">© 2026 Rialo Games.</span><br>
-    <span class="footer-sub" data-en="Powered by Rialo Community" data-id="Didukung oleh Rialo Community">Powered by Rialo Community</span>
+    <span class="text-gray-500 text-xs" data-en="Powered by Rialo Community" data-id="Didukung oleh Rialo Community">Powered by Rialo Community</span>
   </p>
 </footer>
 
-<!-- JavaScript -->
 <script>
-  // Language toggle
+  // Language toggle — otomatis mengubah SEMUA elemen yang punya data-en / data-id
   let lang = "EN";
   function toggleLang(){
     lang = (lang === "EN") ? "ID" : "EN";
@@ -258,30 +265,13 @@
   function toggleMode(){
     const body = document.getElementById("body");
     if(body.classList.contains("dark-mode")){
-      body.classList.remove("dark-mode"); 
-      body.classList.add("light-mode");
+      body.classList.remove("dark-mode"); body.classList.add("light-mode");
       document.getElementById("modeToggle").innerText = "🌙";
     } else {
-      body.classList.remove("light-mode"); 
-      body.classList.add("dark-mode");
+      body.classList.remove("light-mode"); body.classList.add("dark-mode");
       document.getElementById("modeToggle").innerText = "☀️";
     }
   }
-
-  // Fake loader progress
-  const bar = document.getElementById('bar');
-  const loader = document.getElementById('loader');
-  let p = 0;
-  const int = setInterval(() => {
-    p += 15;
-    if (bar) bar.style.width = p + '%';
-    if (p >= 100) {
-      clearInterval(int);
-      setTimeout(() => {
-        if (loader) loader.style.display = 'none';
-      }, 250);
-    }
-  }, 60);
 </script>
 
 </body>
