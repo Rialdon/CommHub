@@ -7,7 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     html, body { height: 100%; }
-    /* Paksa background putih secara default di body agar tidak hitam */
     body { 
       font-family: system-ui, sans-serif; 
       overflow-x: hidden; 
@@ -18,7 +17,7 @@
       transition: background 0.3s, color 0.3s; 
     }
     
-    /* Mode Gelap (Aktif jika tombol diklik) */
+    /* Mode Gelap */
     body.dark-mode { background-color: #05060a !important; color: #e5e7eb !important; }
 
     .glass { background: rgba(0,0,0,0.03); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.08); }
@@ -47,6 +46,26 @@
     body.dark-mode .progress { background: rgba(255,255,255,0.1); }
     .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
     
+    /* Otomatis Ubah Warna Logo Partner Sesuai Mode (Light = Hitam, Dark = Putih) */
+    .marquee-track-right img {
+      height: 26px;
+      width: auto;
+      object-fit: contain;
+      transition: filter 0.3s ease, opacity 0.3s ease;
+      opacity: 0.75;
+    }
+    .marquee-track-right img:hover {
+      opacity: 1;
+    }
+    /* Light Mode: Ubah logo jadi siluet hitam agar kontras di latar putih */
+    body:not(.dark-mode) .marquee-track-right img {
+      filter: brightness(0) opacity(0.85);
+    }
+    /* Dark Mode: Ubah logo jadi siluet putih agar kontras di latar gelap */
+    body.dark-mode .marquee-track-right img {
+      filter: brightness(0) invert(1) opacity(0.85);
+    }
+
     /* Marquee Styling & Optimization (Anti-Lemot) */
     .marquee-wrap {
       overflow: hidden;
@@ -78,7 +97,7 @@
 <body class="min-h-screen flex flex-col" id="body">
 
 <!-- Loading screen -->
-<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white z-50">
+<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
   <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
     <img src="https://i.imgur.com/wKWNeZe.png" class="w-20 h-20 mx-auto logo-glow" alt="Rialo Games Logo"/>
     <h1 class="mt-4 font-bold text-xl">Rialo Games</h1>
@@ -144,22 +163,22 @@
       <p class="text-xs opacity-60 text-center mt-12 mb-5 uppercase tracking-widest font-semibold">Partners</p>
       <div class="marquee-wrap">
         <div class="marquee-track-right">
-          <img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/nyse.svg" alt="NYSE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/cboe.png" alt="CBOE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/keplr.png" alt="Keplr" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/Predicate_Logo-Color-Inverted.png" alt="Predicate" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/m0.jpeg" alt="M0" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq">
+          <img src="https://rialo.io/images/nyse.svg" alt="NYSE">
+          <img src="https://rialo.io/images/cboe.png" alt="CBOE">
+          <img src="https://rialo.io/images/keplr.png" alt="Keplr">
+          <img src="https://rialo.io/images/Predicate_Logo-Color-Inverted.png" alt="Predicate">
+          <img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero">
+          <img src="https://rialo.io/images/m0.jpeg" alt="M0">
           
           <!-- Duplikat Looping -->
-          <img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/nyse.svg" alt="NYSE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/cboe.png" alt="CBOE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/keplr.png" alt="Keplr" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/Predicate_Logo-Color-Inverted.png" alt="Predicate" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/m0.jpeg" alt="M0" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq">
+          <img src="https://rialo.io/images/nyse.svg" alt="NYSE">
+          <img src="https://rialo.io/images/cboe.png" alt="CBOE">
+          <img src="https://rialo.io/images/keplr.png" alt="Keplr">
+          <img src="https://rialo.io/images/Predicate_Logo-Color-Inverted.png" alt="Predicate">
+          <img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero">
+          <img src="https://rialo.io/images/m0.jpeg" alt="M0">
         </div>
       </div>
     </div>
