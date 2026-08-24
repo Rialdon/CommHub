@@ -32,8 +32,85 @@
     <button onclick="toggleMode()" class="chip" id="modeToggle">☀️</button>
   </div>
 </header>
+
+<main class="flex-1">
   <!-- About -->
   <section id="about" class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10">
+    <div>
+      <h2 class="text-3xl font-bold" data-en="What is Rialo Games?" data-id="Apa itu Rialo Games?">What is Rialo Games?</h2>
+      <p class="mt-3 text-gray-300" data-en="Rialo Games is a community-driven gaming platform built for interactive and on-chain experiences. Powered by Community, it connects players and creators to play, build, and contribute to the Rialo ecosystem." data-id="Rialo Games adalah platform gaming berbasis komunitas yang dibangun untuk pengalaman interaktif dan on-chain. Didukung oleh Community, platform ini menghubungkan pemain dan kreator untuk bermain, membangun, dan berkontribusi pada ekosistem Rialo.">Rialo Games is a community-driven gaming platform built for interactive and on-chain experiences. Powered by Community, it connects players and creators to play, build, and contribute to the Rialo ecosystem.</p>
+    </div>
+    <div class="glass rounded-2xl overflow-hidden">
+      <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Hero visual"/>
+    </div>
+  </section>
+
+  <!-- Games hub -->
+  <section class="px-6 py-10 max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-2" data-en="Play Now" data-id="Main Sekarang">Play Now</h1>
+    <p class="text-center text-gray-300 mb-8" data-en="Select a Game" data-id="Pilih Game">Select a Game</p>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div id="card" class="glass p-4 text-center scroll-mt-24">
+        <img src="https://i.imgur.com/T1CygAB.jpeg" class="w-full game-img mb-3"/>
+        <h3 class="font-semibold" data-en="Rialo Card" data-id="Rialo Card">Rialo Card</h3>
+        <a href="https://rialogames.vercel.app/#card" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
+      </div>
+      <div id="puzzle" class="glass p-4 text-center scroll-mt-24">
+        <img src="https://i.imgur.com/ptUTioc.jpeg" class="w-full game-img mb-3"/>
+        <h3 class="font-semibold" data-en="Rialo Puzzle" data-id="Rialo Puzzle">Rialo Puzzle</h3>
+        <a href="https://rialogames.vercel.app/#puzzle" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
+      </div>
+      <div id="snake" class="glass p-4 text-center scroll-mt-24">
+        <img src="https://i.imgur.com/PGYHth2.jpeg" class="w-full game-img mb-3"/>
+        <h3 class="font-semibold" data-en="Rialo Snake" data-id="Rialo Snake">Rialo Snake</h3>
+        <a href="https://rialogames.vercel.app/#snake" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
+      </div>
+      <div id="flappy" class="glass p-4 text-center scroll-mt-24">
+        <img src="https://i.imgur.com/9HWW4lG.jpeg" class="w-full game-img mb-3"/>
+        <h3 class="font-semibold" data-en="Rialo Flappy" data-id="Rialo Flappy">Rialo Flappy</h3>
+        <a href="https://rialogames.vercel.app/#flappy" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="glass p-6 text-center">
+  <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo Games"/>
+  <p>
+    <span data-en="© 2026 Rialo Games." data-id="© 2026 Rialo Games.">© 2026 Rialo Games.</span><br>
+    <span class="text-gray-700" data-en="Powered by Rialo Community" data-id="Didukung oleh Rialo Community">Powered by Rialo Community</span>
+  </p>
+</footer>
+
+<script>
+  // Language toggle — otomatis mengubah SEMUA elemen yang punya data-en / data-id
+  let lang = "EN";
+  function toggleLang(){
+    lang = (lang === "EN") ? "ID" : "EN";
+    document.getElementById("langToggle").innerText = lang;
+
+    const targetAttr = (lang === "ID") ? "data-id" : "data-en";
+    document.querySelectorAll("[data-en]").forEach(el => {
+      el.innerText = el.getAttribute(targetAttr);
+    });
+  }
+
+  // Mode toggle
+  function toggleMode(){
+    const body = document.getElementById("body");
+    if(body.classList.contains("dark-mode")){
+      body.classList.remove("dark-mode"); body.classList.add("light-mode");
+      document.getElementById("modeToggle").innerText = "🌙";
+    } else {
+      body.classList.remove("light-mode"); body.classList.add("dark-mode");
+      document.getElementById("modeToggle").innerText = "☀️";
+    }
+  }
+</script>
+
+</body>
+</html>
     <div>
       <h2 class="text-3xl font-bold" id="aboutTitle">What is Rialo Games?</h2>
       <p class="mt-3 text-gray-300" id="aboutText">Rialo Games is a community-driven gaming platform built for interactive and on-chain experiences. Powered by Community, it connects players and creators to play, build, and contribute to the Rialo ecosystem.</p>
