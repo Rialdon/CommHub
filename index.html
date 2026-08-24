@@ -201,20 +201,13 @@ function toggleMode(){
 
 // Fake loader progress
 const bar = document.getElementById('bar');
-const loader = document.getElementById('loader');
-let p = 0;
+let p=0;
+const int=setInterval(()=>{
+  p+=5;
+  bar.style.width=p+'%';
+  if(p>=100){clearInterval(int);setTimeout(()=>{document.getElementById('loader').style.display='none';},400);}
+},100);
+</script>
 
-const int = setInterval(() => {
-  p += 5;
-  if (bar) {
-    bar.style.width = p + '%';
-  }
-  if (p >= 100) {
-    clearInterval(int);
-    setTimeout(() => {
-      if (loader) {
-        loader.style.display = 'none';
-      }
-    }, 400);
-  }
-}, 100);
+</body>
+</html>
