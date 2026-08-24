@@ -19,6 +19,38 @@
     .light-mode .text-gray-300 { color:#374151; } /* lebih gelap di light mode */
     .game-img { height:160px; object-fit:contain; background:#111; border-radius:.5rem; }
     .light-mode .game-img { background:#e5e7eb; }
+    .marquee-wrap {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+.marquee-track-left, .marquee-track-right {
+  display: flex;
+  gap: 40px;
+  width: max-content;
+}
+.marquee-track-left {
+  animation: scrollLeft 22s linear infinite;
+}
+.marquee-track-right {
+  animation: scrollRight 22s linear infinite;
+}
+.marquee-track-left span, .marquee-track-right span {
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+  font-size: 15px;
+}
+@keyframes scrollLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes scrollRight {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
   </style>
 </head>
 <body class="min-h-screen flex flex-col light-mode" id="body">
