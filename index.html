@@ -46,7 +46,7 @@
     body.dark-mode .progress { background: rgba(255,255,255,0.1); }
     .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
     
-    /* Kartu Pembungkus Seragam untuk Logo */
+    /* Kartu Pembungkus Logo */
     .partner-card {
       display: flex;
       align-items: center;
@@ -67,15 +67,16 @@
       width: auto;
       object-fit: contain;
       opacity: 0.85;
-      transition: opacity 0.3s;
+      transition: all 0.3s ease;
+    }
+    /* Otomatis jadikan logo putih terang di mode gelap agar sangat jelas dibaca */
+    body.dark-mode .partner-card img {
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
     }
     .partner-card:hover img {
       opacity: 1;
     }
-
-    /* Logika Switch Gambar Terang/Gelap otomatis */
-    body:not(.dark-mode) .img-dark { display: none !important; }
-    body.dark-mode .img-light { display: none !important; }
 
     /* Marquee Styling & Optimization (Anti-Lemot) */
     .marquee-wrap {
@@ -154,20 +155,12 @@
   <!-- Investors & Partners Section -->
   <section class="px-6 max-w-7xl mx-auto pb-12">
     <div class="mt-10">
-      <!-- Investors (Menggunakan link gambar khusus mode terang & gelap yang kamu berikan) -->
+      <!-- Investors -->
       <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
       <div class="marquee-wrap">
         <div class="marquee-track-left">
-          <!-- Susquehanna -->
-          <div class="partner-card">
-            <img src="https://sig.com/media/p2kh1kdv/og_susquehanna_logo.png" alt="Susquehanna Light" class="img-light">
-            <img src="https://encrypted-tbn0.gstatic.com/images?t=ANd9GcSz0_wNqYkGNQ8OcW2Z3z4l8QDHibhSHbUsxRNB6KexD4KALlvbHnDd-UWb&s=10" alt="Susquehanna Dark" class="img-dark">
-          </div>
-          <!-- Investor Lainnya / Group 1 -->
-          <div class="partner-card">
-            <img src="https://images.ctfassets.net/enatj8r8y1g4/2Hf6HGaE2Ss2ppv1b14NPe/de4a27ea668a3dc8207caa12baebd300/share-card.jpg" alt="Investor Light" class="img-light">
-            <img src="https://image.blocktempo.com/2021/12/1500x500.jpg" alt="Investor Dark" class="img-dark">
-          </div>
+          <div class="partner-card"><img src="https://sig.com/media/p2kh1kdv/og_susquehanna_logo.png" alt="Susquehanna"></div>
+          <div class="partner-card"><img src="https://images.ctfassets.net/enatj8r8y1g4/2Hf6HGaE2Ss2ppv1b14NPe/de4a27ea668a3dc8207caa12baebd300/share-card.jpg" alt="Investor"></div>
           <div class="partner-card"><img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital"></div>
           <div class="partner-card"><img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook"></div>
           <div class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D5616AQE8eo4ghP1x_w/profile-displaybackgroundimage-shrink_200_800/B56Zb7.9EzH4AY-/0/1747984306882?e=2147483647&v=beta&t=hD6heH__D07eXMpGQUJS6uC-bo2zz-GKv2I1fwbiX1s" alt="VC Logo"></div>
@@ -175,15 +168,9 @@
           <div class="partner-card"><img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs"></div>
           <div class="partner-card"><img src="https://res.cloudinary.com/vestbee/image/upload/v1705351310/strapi-legacy-media-files/introducing_f256bb2f96.png.png" alt="Vestbee"></div>
 
-          <!-- Duplikat untuk Looping Mulus -->
-          <div class="partner-card">
-            <img src="https://sig.com/media/p2kh1kdv/og_susquehanna_logo.png" alt="Susquehanna Light" class="img-light">
-            <img src="https://encrypted-tbn0.gstatic.com/images?t=ANd9GcSz0_wNqYkGNQ8OcW2Z3z4l8QDHibhSHbUsxRNB6KexD4KALlvbHnDd-UWb&s=10" alt="Susquehanna Dark" class="img-dark">
-          </div>
-          <div class="partner-card">
-            <img src="https://images.ctfassets.net/enatj8r8y1g4/2Hf6HGaE2Ss2ppv1b14NPe/de4a27ea668a3dc8207caa12baebd300/share-card.jpg" alt="Investor Light" class="img-light">
-            <img src="https://image.blocktempo.com/2021/12/1500x500.jpg" alt="Investor Dark" class="img-dark">
-          </div>
+          <!-- Duplikat Looping Mulus -->
+          <div class="partner-card"><img src="https://sig.com/media/p2kh1kdv/og_susquehanna_logo.png" alt="Susquehanna"></div>
+          <div class="partner-card"><img src="https://images.ctfassets.net/enatj8r8y1g4/2Hf6HGaE2Ss2ppv1b14NPe/de4a27ea668a3dc8207caa12baebd300/share-card.jpg" alt="Investor"></div>
           <div class="partner-card"><img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital"></div>
           <div class="partner-card"><img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook"></div>
           <div class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D5616AQE8eo4ghP1x_w/profile-displaybackgroundimage-shrink_200_800/B56Zb7.9EzH4AY-/0/1747984306882?e=2147483647&v=beta&t=hD6heH__D07eXMpGQUJS6uC-bo2zz-GKv2I1fwbiX1s" alt="VC Logo"></div>
