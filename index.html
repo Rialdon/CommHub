@@ -7,37 +7,38 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     html, body { height: 100%; }
-    body { font-family: system-ui, sans-serif; overflow-x: hidden; display: flex; flex-direction: column; }
-    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.1); }
-    .btn { padding:.6rem 1.2rem; border-radius:.75rem; background:#0ea5e9; color:white; cursor:pointer; font-weight:600;}
+    body { font-family: system-ui, sans-serif; overflow-x: hidden; display: flex; flex-direction: column; transition: background 0.3s, color 0.3s; }
     
-    /* Warna Chip / Tombol */
+    /* Mode Gelap & Terang */
+    .dark-mode { background: #05060a; color: #e5e7eb; }
+    .light-mode { background: #ffffff; color: #111827; }
+
+    .glass { background: rgba(0,0,0,0.03); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.08); }
+    .dark-mode .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+
+    .btn { padding: .6rem 1.2rem; border-radius: .75rem; background: #0ea5e9; color: white; cursor: pointer; font-weight: 600; }
+    
+    /* Tombol Chip */
     .chip { 
-      background: #ffffff; 
-      color: #000000; 
-      border: 1px solid #ffffff; 
+      background: #000000; 
+      color: #ffffff; 
+      border: 1px solid #000000; 
       border-radius: 999px; 
       padding: .3rem .9rem; 
       cursor: pointer; 
       font-size: .85rem;
     }
-    .light-mode .chip { 
-      background: #000000; 
-      color: #ffffff; 
-      border: 1px solid #000000;
+    .dark-mode .chip { 
+      background: #ffffff; 
+      color: #000000; 
+      border: 1px solid #ffffff; 
     }
 
     .logo-glow { filter: drop-shadow(0 0 10px rgba(201,168,118,0.9)) drop-shadow(0 0 30px rgba(201,168,118,0.55)); }
     .progress { height: 10px; border-radius: 999px; background: rgba(0,0,0,0.08); overflow: hidden; }
+    .dark-mode .progress { background: rgba(255,255,255,0.1); }
     .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
     
-    .dark-mode { background:#05060a; color:#e5e7eb;}
-    .light-mode { background:#f9fafb; color:#111827;}
-    .light-mode .glass { background: rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1);}
-    .light-mode .text-gray-300 { color:#374151; }
-    .game-img { height:160px; object-fit:contain; background:#111; border-radius:.5rem; }
-    .light-mode .game-img { background:#e5e7eb; }
-
     /* Marquee Styling & Optimization (Anti-Lemot) */
     .marquee-wrap {
       overflow: hidden;
@@ -69,13 +70,13 @@
 <body class="min-h-screen flex flex-col light-mode" id="body">
 
 <!-- Loading screen -->
-<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white z-50">
-  <div class="glass rounded-2xl p-8 w-80 text-center bg-white shadow-xl">
+<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
+  <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
     <img src="https://i.imgur.com/wKWNeZe.png" class="w-20 h-20 mx-auto logo-glow" alt="Rialo Games Logo"/>
-    <h1 class="mt-4 font-bold text-xl text-gray-800">Rialo Games</h1>
-    <p class="text-sm text-gray-600 mt-1">Loading experience…</p>
+    <h1 class="mt-4 font-bold text-xl">Rialo Games</h1>
+    <p class="text-sm opacity-70 mt-1">Loading experience…</p>
     <div class="progress mt-4"><div id="bar" class="progress-bar"></div></div>
-    <p class="italic text-xs mt-2 text-gray-700">Powered by Rialo Community</p>
+    <p class="italic text-xs mt-2 opacity-60">Powered by Rialo Community</p>
   </div>
 </div>
 
@@ -87,7 +88,7 @@
   </a>
   <div class="flex gap-3 items-center">
     <button onclick="toggleLang()" class="chip" id="langToggle">EN</button>
-    <button onclick="toggleMode()" class="chip" id="modeToggle">☀️</button>
+    <button onclick="toggleMode()" class="chip" id="modeToggle">🌙</button>
   </div>
 </header>
 
@@ -99,7 +100,7 @@
       <h1 id="heroTitle" class="text-4xl sm:text-5xl font-extrabold">
         What is Rialo?
       </h1>
-      <p id="heroText" class="mt-4 text-lg text-gray-300">
+      <p id="heroText" class="mt-4 text-lg opacity-80">
         Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.
       </p>
       <div class="mt-6 flex gap-3">
@@ -107,38 +108,47 @@
         <a href="https://rialo.io" target="_blank" class="btn bg-gray-600" id="learnMore">Learn More</a>
       </div>
     </div>
-    <div class="glass rounded-2xl overflow-hidden">
-      <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Hero visual"/>
+    <div class="glass rounded-2xl overflow-hidden shadow-md">
+      <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
     </div>
   </section>
 
-  <!-- Investors & Partners Section dengan Logo Resmi Rialo -->
+  <!-- Investors & Partners Section -->
   <section class="px-6 max-w-7xl mx-auto pb-12">
     <div class="mt-10">
       <!-- Investors -->
-      <p class="text-xs text-gray-500 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
+      <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
       <div class="marquee-wrap">
         <div class="marquee-track-left">
-          <img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/nyse.svg" alt="NYSE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/cboe.png" alt="CBOE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/keplr.png" alt="Keplr" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <!-- Duplikat untuk kelancaran looping -->
-          <img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/nyse.svg" alt="NYSE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/cboe.png" alt="CBOE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <img src="https://rialo.io/images/keplr.png" alt="Keplr" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <span class="text-xl font-extrabold tracking-wider opacity-75 hover:opacity-100 transition">COINBASE</span>
+          <span class="text-xl font-black tracking-widest opacity-75 hover:opacity-100 transition">PANTERA</span>
+          <span class="text-xl font-bold tracking-wide opacity-75 hover:opacity-100 transition">MYSTEN LABS</span>
+          <span class="text-xl font-extrabold tracking-wider opacity-75 hover:opacity-100 transition">SUSQUEHANNA</span>
+          <!-- Duplikat Looping -->
+          <span class="text-xl font-extrabold tracking-wider opacity-75 hover:opacity-100 transition">COINBASE</span>
+          <span class="text-xl font-black tracking-widest opacity-75 hover:opacity-100 transition">PANTERA</span>
+          <span class="text-xl font-bold tracking-wide opacity-75 hover:opacity-100 transition">MYSTEN LABS</span>
+          <span class="text-xl font-extrabold tracking-wider opacity-75 hover:opacity-100 transition">SUSQUEHANNA</span>
         </div>
       </div>
 
       <!-- Partners -->
-      <p class="text-xs text-gray-500 text-center mt-12 mb-5 uppercase tracking-widest font-semibold">Partners</p>
+      <p class="text-xs opacity-60 text-center mt-12 mb-5 uppercase tracking-widest font-semibold">Partners</p>
       <div class="marquee-wrap">
         <div class="marquee-track-right">
+          <img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <img src="https://rialo.io/images/nyse.svg" alt="NYSE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <img src="https://rialo.io/images/cboe.png" alt="CBOE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <img src="https://rialo.io/images/keplr.png" alt="Keplr" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
           <img src="https://rialo.io/images/Predicate_Logo-Color-Inverted.png" alt="Predicate" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
           <img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
           <img src="https://rialo.io/images/m0.jpeg" alt="M0" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
-          <!-- Duplikat untuk kelancaran looping -->
+          
+          <!-- Duplikat Looping -->
+          <img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <img src="https://rialo.io/images/nyse.svg" alt="NYSE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <img src="https://rialo.io/images/cboe.png" alt="CBOE" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
+          <img src="https://rialo.io/images/keplr.png" alt="Keplr" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
           <img src="https://rialo.io/images/Predicate_Logo-Color-Inverted.png" alt="Predicate" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
           <img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
           <img src="https://rialo.io/images/m0.jpeg" alt="M0" class="h-6 sm:h-7 w-auto object-contain opacity-75 hover:opacity-100 transition">
@@ -149,9 +159,9 @@
 </main>
 
 <!-- Footer -->
-<footer class="p-6 text-center mt-auto">
+<footer class="p-6 text-center mt-auto opacity-75">
   <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo Games"/>
-  <p>© 2026 Rialo Games.<br><span class="opacity-70">Powered by Rialo Community</span></p>
+  <p>© 2026 Rialo Games.<br><span class="opacity-60 text-xs">Powered by Rialo Community</span></p>
 </footer>
 
 <!-- JavaScript -->
@@ -174,17 +184,17 @@ function toggleLang(){
   }
 }
 
-// Mode toggle
+// Mode toggle (Light/Dark Switch)
 function toggleMode(){
   const body = document.getElementById("body");
   if(body.classList.contains("dark-mode")){
     body.classList.remove("dark-mode");
     body.classList.add("light-mode");
-    document.getElementById("modeToggle").innerText="🌙";
+    document.getElementById("modeToggle").innerText = "🌙";
   } else {
     body.classList.remove("light-mode");
     body.classList.add("dark-mode");
-    document.getElementById("modeToggle").innerText="☀️";
+    document.getElementById("modeToggle").innerText = "☀️";
   }
 }
 
