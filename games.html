@@ -84,16 +84,49 @@
   </footer>
 
   <script>
-    function toggleMode(){
-      const body = document.getElementById("body");
-      if(body.classList.contains("dark-mode")){
-        body.classList.remove("dark-mode");body.classList.add("light-mode");
-        document.getElementById("modeToggle").innerText="🌙";
-      } else {
-        body.classList.remove("light-mode");body.classList.add("dark-mode");
-        document.getElementById("modeToggle").innerText="☀️";
-      }
-    }
-  </script>
+    // Language toggle
+let lang = "EN";
+function toggleLang(){
+  lang = (lang==="EN")?"ID":"EN";
+  document.getElementById("langToggle").innerText = lang;
+  if(lang==="ID"){
+    document.getElementById("heroTitle").innerText = "Dunia Rialo Games — bermain, bereksperimen, dan bersinar.";
+    document.getElementById("heroText").innerText = "Sebuah ekosistem mini-game dan alat yang dirancang dengan estetika neon-tech. Masuk, coba, dan rasakan pengalaman modern ala gim besar.";
+    document.getElementById("openHub").innerText = "Buka Games Hub";
+    document.getElementById("learnMore").innerText = "Pelajari Lebih";
+    document.getElementById("aboutTitle").innerText = "Apa itu Rialo Games?";
+    document.getElementById("aboutText").innerText = "Rialo Games adalah merek playground digital yang menggabungkan visual neon-tech dengan pengalaman interaktif. Misinya sederhana: membuat hal-hal berguna menjadi menyenangkan dan tampak epik.";
+  } else {
+    document.getElementById("heroTitle").innerText = "The world of Rialo Games — play, experiment, and shine.";
+    document.getElementById("heroText").innerText = "An ecosystem of mini games and tools designed with a neon tech aesthetic. Jump in, try it out, and feel a modern big game experience.";
+    document.getElementById("openHub").innerText = "Open Games Hub";
+    document.getElementById("learnMore").innerText = "Learn More";
+    document.getElementById("aboutTitle").innerText = "What is Rialo Games?";
+    document.getElementById("aboutText").innerText = "Rialo Games is a digital playground brand combining neon tech visuals with interactive experiences. Its mission is simple: make useful things fun and epic looking.";
+  }
+}
+
+// Mode toggle
+function toggleMode(){
+  const body = document.getElementById("body");
+  if(body.classList.contains("dark-mode")){
+    body.classList.remove("dark-mode");body.classList.add("light-mode");
+    document.getElementById("modeToggle").innerText="🌙";
+  } else {
+    body.classList.remove("light-mode");body.classList.add("dark-mode");
+    document.getElementById("modeToggle").innerText="☀️";
+  }
+}
+
+// Fake loader progress
+const bar = document.getElementById('bar');
+let p=0;
+const int=setInterval(()=>{
+  p+=5;
+  bar.style.width=p+'%';
+  if(p>=100){clearInterval(int);setTimeout(()=>{document.getElementById('loader').style.display='none';},400);}
+},100);
+</script>
+
 </body>
 </html>
