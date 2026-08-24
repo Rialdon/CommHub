@@ -46,7 +46,7 @@
     body.dark-mode .progress { background: rgba(255,255,255,0.1); }
     .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
     
-    /* Kartu Pembungkus Logo */
+    /* Kartu Pembungkus Partner */
     .partner-card {
       display: flex;
       align-items: center;
@@ -67,9 +67,8 @@
       width: auto;
       object-fit: contain;
       opacity: 0.85;
-      transition: all 0.3s ease;
+      transition: opacity 0.3s;
     }
-    /* Otomatis jadikan logo putih terang di mode gelap agar sangat jelas dibaca */
     body.dark-mode .partner-card img {
       filter: brightness(0) invert(1);
       opacity: 0.9;
@@ -88,7 +87,7 @@
     }
     .marquee-track-left, .marquee-track-right {
       display: flex;
-      gap: 24px;
+      gap: 30px;
       width: max-content;
       will-change: transform;
       align-items: center;
@@ -155,28 +154,28 @@
   <!-- Investors & Partners Section -->
   <section class="px-6 max-w-7xl mx-auto pb-12">
     <div class="mt-10">
-      <!-- Investors -->
+      <!-- Investors (Tipografi Logo Premium yang otomatis menyesuaikan Light/Dark Mode) -->
       <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
       <div class="marquee-wrap">
         <div class="marquee-track-left">
-          <div class="partner-card"><img src="https://sig.com/media/p2kh1kdv/og_susquehanna_logo.png" alt="Susquehanna"></div>
-          <div class="partner-card"><img src="https://images.ctfassets.net/enatj8r8y1g4/2Hf6HGaE2Ss2ppv1b14NPe/de4a27ea668a3dc8207caa12baebd300/share-card.jpg" alt="Investor"></div>
-          <div class="partner-card"><img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital"></div>
-          <div class="partner-card"><img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook"></div>
-          <div class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D5616AQE8eo4ghP1x_w/profile-displaybackgroundimage-shrink_200_800/B56Zb7.9EzH4AY-/0/1747984306882?e=2147483647&v=beta&t=hD6heH__D07eXMpGQUJS6uC-bo2zz-GKv2I1fwbiX1s" alt="VC Logo"></div>
-          <div class="partner-card"><img src="https://rialo.io/images/idyLR0_e27_logos.svg" alt="Rialo Logo"></div>
-          <div class="partner-card"><img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs"></div>
-          <div class="partner-card"><img src="https://res.cloudinary.com/vestbee/image/upload/v1705351310/strapi-legacy-media-files/introducing_f256bb2f96.png.png" alt="Vestbee"></div>
-
+          <span class="text-xl font-extrabold tracking-wider opacity-75 hover:opacity-100 transition px-3">SUSQUEHANNA</span>
+          <span class="text-xl font-black tracking-widest opacity-75 hover:opacity-100 transition px-3">COINBASE</span>
+          <span class="text-xl font-bold tracking-wide opacity-75 hover:opacity-100 transition px-3">PANTERA</span>
+          <span class="text-xl font-extrabold tracking-wider opacity-75 hover:opacity-100 transition px-3">EDGE CAPITAL</span>
+          <span class="text-xl font-bold tracking-widest opacity-75 hover:opacity-100 transition px-3">PITCHBOOK</span>
+          <span class="text-xl font-black tracking-wider opacity-75 hover:opacity-100 transition px-3">FABRIC VC</span>
+          <span class="text-xl font-semibold tracking-wide opacity-75 hover:opacity-100 transition px-3">MYSTEN LABS</span>
+          <span class="text-xl font-bold tracking-tight opacity-75 hover:opacity-100 transition px-3">VESTBEE</span>
+          
           <!-- Duplikat Looping Mulus -->
-          <div class="partner-card"><img src="https://sig.com/media/p2kh1kdv/og_susquehanna_logo.png" alt="Susquehanna"></div>
-          <div class="partner-card"><img src="https://images.ctfassets.net/enatj8r8y1g4/2Hf6HGaE2Ss2ppv1b14NPe/de4a27ea668a3dc8207caa12baebd300/share-card.jpg" alt="Investor"></div>
-          <div class="partner-card"><img src="https://edgecapital.xyz/favicon.png" alt="Edge Capital"></div>
-          <div class="partner-card"><img src="https://image.pitchbook.com/sVk0IHJKpC6yFveV0EMxeV7qxE81762262485527_200x200" alt="Pitchbook"></div>
-          <div class="partner-card"><img src="https://media.licdn.com/dms/image/v2/D5616AQE8eo4ghP1x_w/profile-displaybackgroundimage-shrink_200_800/B56Zb7.9EzH4AY-/0/1747984306882?e=2147483647&v=beta&t=hD6heH__D07eXMpGQUJS6uC-bo2zz-GKv2I1fwbiX1s" alt="VC Logo"></div>
-          <div class="partner-card"><img src="https://rialo.io/images/idyLR0_e27_logos.svg" alt="Rialo Logo"></div>
-          <div class="partner-card"><img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs"></div>
-          <div class="partner-card"><img src="https://res.cloudinary.com/vestbee/image/upload/v1705351310/strapi-legacy-media-files/introducing_f256bb2f96.png.png" alt="Vestbee"></div>
+          <span class="text-xl font-extrabold tracking-wider opacity-75 hover:opacity-100 transition px-3">SUSQUEHANNA</span>
+          <span class="text-xl font-black tracking-widest opacity-75 hover:opacity-100 transition px-3">COINBASE</span>
+          <span class="text-xl font-bold tracking-wide opacity-75 hover:opacity-100 transition px-3">PANTERA</span>
+          <span class="text-xl font-extrabold tracking-wider opacity-75 hover:opacity-100 transition px-3">EDGE CAPITAL</span>
+          <span class="text-xl font-bold tracking-widest opacity-75 hover:opacity-100 transition px-3">PITCHBOOK</span>
+          <span class="text-xl font-black tracking-wider opacity-75 hover:opacity-100 transition px-3">FABRIC VC</span>
+          <span class="text-xl font-semibold tracking-wide opacity-75 hover:opacity-100 transition px-3">MYSTEN LABS</span>
+          <span class="text-xl font-bold tracking-tight opacity-75 hover:opacity-100 transition px-3">VESTBEE</span>
         </div>
       </div>
 
