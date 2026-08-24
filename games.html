@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rialo Games — Games Hub</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {font-family: system-ui, sans-serif; overflow-x:hidden;}
+  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.1); }
+  .btn { padding:.6rem 1.2rem; border-radius:.75rem; background:#0ea5e9; color:white; cursor:pointer; font-weight:600;}
+  .chip { border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:.3rem .9rem; cursor:pointer; font-size:.85rem;}
+  .logo-glow { filter: drop-shadow(0 0 10px rgba(201,168,118,0.9)) drop-shadow(0 0 30px rgba(201,168,118,0.55)); }
+  .dark-mode { background:#05060a; color:#e5e7eb;}
+  .light-mode { background:#f9fafb; color:#111827;}
+  .light-mode .glass { background: rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.1);}
+  .light-mode .text-gray-300 { color:#374151; }
+  .game-img { height:160px; object-fit:contain; background:#111; border-radius:.5rem; }
+  .light-mode .game-img { background:#e5e7eb; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col light-mode" id="body">
+
+  <!-- Navbar -->
+  <header class="glass p-4 flex justify-between items-center sticky top-0 z-20">
+    <a href="index.html" class="flex items-center gap-2" style="text-decoration:none; color:inherit;">
+      <img src="https://i.imgur.com/wKWNeZe.png" class="w-8 h-8 logo-glow" alt="Rialo Games"/>
+      <span class="font-bold">Rialo</span>
+    </a>
+    <div class="flex gap-3 items-center">
+      <a href="index.html" class="chip">← Beranda</a>
+      <button onclick="toggleMode()" class="chip" id="modeToggle">☀️</button>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <!-- Games hub langsung tampil di atas, tanpa perlu scroll -->
+    <section class="px-6 py-10 max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold text-center mb-2">Games Hub</h1>
+      <p class="text-center text-gray-300 mb-8">Pilih game yang mau kamu mainkan</p>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div id="card" class="glass p-4 text-center scroll-mt-24">
+          <img src="https://i.imgur.com/T1CygAB.jpeg" class="w-full game-img mb-3"/>
+          <h3 class="font-semibold">Rialo Card</h3>
+          <a href="https://rialogames.vercel.app/#card" class="btn mt-3 inline-block">Play</a>
+        </div>
+        <div id="puzzle" class="glass p-4 text-center scroll-mt-24">
+          <img src="https://i.imgur.com/ptUTioc.jpeg" class="w-full game-img mb-3"/>
+          <h3 class="font-semibold">Rialo Puzzle</h3>
+          <a href="https://rialogames.vercel.app/#puzzle" class="btn mt-3 inline-block">Play</a>
+        </div>
+        <div id="snake" class="glass p-4 text-center scroll-mt-24">
+          <img src="https://i.imgur.com/PGYHth2.jpeg" class="w-full game-img mb-3"/>
+          <h3 class="font-semibold">Rialo Snake</h3>
+          <a href="https://rialogames.vercel.app/#snake" class="btn mt-3 inline-block">Play</a>
+        </div>
+        <div id="flappy" class="glass p-4 text-center scroll-mt-24">
+          <img src="https://i.imgur.com/9HWW4lG.jpeg" class="w-full game-img mb-3"/>
+          <h3 class="font-semibold">Rialo Flappy</h3>
+          <a href="https://rialogames.vercel.app/#flappy" class="btn mt-3 inline-block">Play</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="glass p-6 text-center">
+    <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo Games"/>
+    <p>© 2026 Rialo Games.<br><span class="text-gray-700">Powered by Rialo Community</span></p>
+  </footer>
+
+  <script>
+    function toggleMode(){
+      const body = document.getElementById("body");
+      if(body.classList.contains("dark-mode")){
+        body.classList.remove("dark-mode");body.classList.add("light-mode");
+        document.getElementById("modeToggle").innerText="🌙";
+      } else {
+        body.classList.remove("light-mode");body.classList.add("dark-mode");
+        document.getElementById("modeToggle").innerText="☀️";
+      }
+    }
+  </script>
+</body>
+</html>
