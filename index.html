@@ -150,82 +150,85 @@
         <a href="https://discord.gg/rialo" target="_blank" class="btn col-span-2" style="background-color: #8b5cf6;" id="JoinCommunity">Join Community</a>
       </div>
     </div>
-        <div class="glass rounded-2xl overflow-hidden shadow-md">
+            <div class="glass rounded-2xl overflow-hidden shadow-md">
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoMw10F4miJE831A_lcCDS6vKMRSpDUsPaLOFU5oGWkHHvoDnxgiPTM8nT&s=10" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
     </div>
 
-    <!-- ================= START LIVE CHART SECTION ================= -->
-    <div style="margin-top: 24px; width: 100%;">
-      <!-- Navigasi Tombol Koin -->
-      <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center;">
-        <button id="btn-btc" onclick="showChart('BINANCE:BTCUSDT', 'btn-btc')" style="flex: 1; max-width: 90px; padding: 10px 0; background: #2962ff; color: #fff; border: 1px solid #2962ff; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;">BTC</button>
-        <button id="btn-bnb" onclick="showChart('BINANCE:BNBUSDT', 'btn-bnb')" style="flex: 1; max-width: 90px; padding: 10px 0; background: #1e222d; color: #d1d4dc; border: 1px solid #363c4e; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;">BNB</button>
-        <button id="btn-eth" onclick="showChart('BINANCE:ETHUSDT', 'btn-eth')" style="flex: 1; max-width: 90px; padding: 10px 0; background: #1e222d; color: #d1d4dc; border: 1px solid #363c4e; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;">ETH</button>
-        <button id="btn-rialo" onclick="showSoon('btn-rialo')" style="flex: 1; max-width: 90px; padding: 10px 0; background: #1e222d; color: #d1d4dc; border: 1px solid #363c4e; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;">Rialo</button>
+    <!-- ================= MINI CHART TICKERS (BTC, BNB, ETH, RIALO) ================= -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+      
+      <!-- Bitcoin (BTC) -->
+      <div class="glass p-2 rounded-2xl h-36 overflow-hidden border border-white/10">
+        <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {
+            "symbol": "BINANCE:BTCUSDT",
+            "width": "100%",
+            "height": "100%",
+            "locale": "id",
+            "dateRange": "1D",
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "autosize": true,
+            "largeChartUrl": ""
+          }
+          </script>
+        </div>
       </div>
 
-      <!-- Container Chart & Placeholder Soon -->
-      <div id="main_chart_container" style="height: 420px; width: 100%; border-radius: 16px; overflow: hidden; background: #181c27; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1);"></div>
-    </div>
-
-    <!-- TradingView Logic -->
-    <script src="https://s3.tradingview.com/tv.js"></script>
-    <script>
-      function updateActiveBtn(activeId) {
-        ['btn-btc', 'btn-bnb', 'btn-eth', 'btn-rialo'].forEach(function(id) {
-          var btn = document.getElementById(id);
-          if (btn) {
-            if (id === activeId) {
-              btn.style.background = '#2962ff';
-              btn.style.borderColor = '#2962ff';
-              btn.style.color = '#fff';
-            } else {
-              btn.style.background = '#1e222d';
-              btn.style.borderColor = '#363c4e';
-              btn.style.color = '#d1d4dc';
-            }
+      <!-- BNB -->
+      <div class="glass p-2 rounded-2xl h-36 overflow-hidden border border-white/10">
+        <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {
+            "symbol": "BINANCE:BNBUSDT",
+            "width": "100%",
+            "height": "100%",
+            "locale": "id",
+            "dateRange": "1D",
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "autosize": true,
+            "largeChartUrl": ""
           }
-        });
-      }
+          </script>
+        </div>
+      </div>
 
-      function showChart(symbol, btnId) {
-        updateActiveBtn(btnId);
-        var container = document.getElementById('main_chart_container');
-        container.innerHTML = '<div id="tv_chart_element" style="height:100%;width:100%;"></div>';
-        
-        new TradingView.widget({
-          "autosize": true,
-          "symbol": symbol,
-          "interval": "D",
-          "timezone": "Asia/Jakarta",
-          "theme": "dark",
-          "style": "1",
-          "locale": "id",
-          "enable_publishing": false,
-          "allow_symbol_change": true,
-          "container_id": "tv_chart_element"
-        });
-      }
+      <!-- Ethereum (ETH) -->
+      <div class="glass p-2 rounded-2xl h-36 overflow-hidden border border-white/10">
+        <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {
+            "symbol": "BINANCE:ETHUSDT",
+            "width": "100%",
+            "height": "100%",
+            "locale": "id",
+            "dateRange": "1D",
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "autosize": true,
+            "largeChartUrl": ""
+          }
+          </script>
+        </div>
+      </div>
 
-      function showSoon(btnId) {
-        updateActiveBtn(btnId);
-        var container = document.getElementById('main_chart_container');
-        container.innerHTML = `
-          <div style="text-align: center; padding: 24px; background: #1e222d; border-radius: 12px; border: 1px solid #2a2e3d; max-width: 300px;">
-            <span style="display: inline-block; background: rgba(41, 98, 255, 0.2); color: #2962ff; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-bottom: 10px; font-weight: bold;">UPCOMING</span>
-            <h3 style="font-size: 20px; margin: 0 0 8px 0; color: #fff;">Rialo Chart Soon </h3>
-            <p style="color: #848e9c; font-size: 13px; margin: 0; line-height: 1.4;"> </p>
-          </div>
-        `;
-      }
+      <!-- Rialo Token (Soon) -->
+      <div class="glass p-4 rounded-2xl h-36 flex flex-col items-center justify-center text-center border border-white/10">
+        <span class="text-[10px] font-bold bg-blue-500/20 text-blue-400 px-2.5 py-1 rounded-full mb-1">UPCOMING</span>
+        <h4 class="font-bold text-white text-sm">Rialo Token</h4>
+        <p class="text-[11px] text-gray-400 mt-1">Chart Live Soon</p>
+      </div>
 
-      document.addEventListener("DOMContentLoaded", function() {
-        showChart('BINANCE:BTCUSDT', 'btn-btc');
-      });
-    </script>
-    <!-- ================= END LIVE CHART SECTION ================= -->
+    </div>
+    <!-- ============================================================================= -->
 
   </section>
+
 
 
   <!-- Investors & Partners Section -->
