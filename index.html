@@ -154,86 +154,118 @@
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoMw10F4miJE831A_lcCDS6vKMRSpDUsPaLOFU5oGWkHHvoDnxgiPTM8nT&s=10" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
     </div>
 
-            <!-- ================= MINI CHART TICKERS (BERSIH TANPA LOGO & TANGGAL) ================= -->
+                <!-- ================= OKX-STYLE MINI SPARKLINE TICKERS ================= -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
       
-      <!-- Bitcoin (BTC) -->
-      <div class="glass rounded-2xl h-44 overflow-hidden border border-white/10 relative">
-        <div class="w-full h-full scale-[1.28] -translate-y-1 pointer-events-none">
-          <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-            {
-              "symbol": "BINANCE:BTCUSDT",
-              "width": "100%",
-              "height": "100%",
-              "locale": "id",
-              "dateRange": "1D",
-              "colorTheme": "dark",
-              "isTransparent": true,
-              "autosize": true,
-              "largeChartUrl": ""
-            }
-            </script>
+      <!-- BTC Card -->
+      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold text-white text-sm">Bitcoin (BTC)</h4>
+          <div class="flex items-center gap-1.5 mt-1">
+            <span id="btc-price" class="text-xs text-gray-300 font-semibold">$0</span>
+            <span id="btc-change" class="text-xs font-bold text-gray-400">0.00%</span>
           </div>
         </div>
+        <div id="btc-sparkline" class="w-full h-12"></div>
       </div>
 
-      <!-- BNB -->
-      <div class="glass rounded-2xl h-44 overflow-hidden border border-white/10 relative">
-        <div class="w-full h-full scale-[1.28] -translate-y-1 pointer-events-none">
-          <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-            {
-              "symbol": "BINANCE:BNBUSDT",
-              "width": "100%",
-              "height": "100%",
-              "locale": "id",
-              "dateRange": "1D",
-              "colorTheme": "dark",
-              "isTransparent": true,
-              "autosize": true,
-              "largeChartUrl": ""
-            }
-            </script>
+      <!-- BNB Card -->
+      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold text-white text-sm">BNB</h4>
+          <div class="flex items-center gap-1.5 mt-1">
+            <span id="bnb-price" class="text-xs text-gray-300 font-semibold">$0</span>
+            <span id="bnb-change" class="text-xs font-bold text-gray-400">0.00%</span>
           </div>
         </div>
+        <div id="bnb-sparkline" class="w-full h-12"></div>
       </div>
 
-      <!-- Ethereum (ETH) -->
-      <div class="glass rounded-2xl h-44 overflow-hidden border border-white/10 relative">
-        <div class="w-full h-full scale-[1.28] -translate-y-1 pointer-events-none">
-          <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-            {
-              "symbol": "BINANCE:ETHUSDT",
-              "width": "100%",
-              "height": "100%",
-              "locale": "id",
-              "dateRange": "1D",
-              "colorTheme": "dark",
-              "isTransparent": true,
-              "autosize": true,
-              "largeChartUrl": ""
-            }
-            </script>
+      <!-- ETH Card -->
+      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold text-white text-sm">Ethereum (ETH)</h4>
+          <div class="flex items-center gap-1.5 mt-1">
+            <span id="eth-price" class="text-xs text-gray-300 font-semibold">$0</span>
+            <span id="eth-change" class="text-xs font-bold text-gray-400">0.00%</span>
           </div>
         </div>
+        <div id="eth-sparkline" class="w-full h-12"></div>
       </div>
 
-      <!-- Rialo Token (Soon) -->
-      <div class="glass p-4 rounded-2xl h-44 flex flex-col items-center justify-center text-center border border-white/10">
-        <span class="text-[10px] font-bold bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full mb-2">UPCOMING</span>
-        <h4 class="font-bold text-white text-base">Rialo Token</h4>
-        <p class="text-xs text-gray-400 mt-1">Chart Live Soon</p>
+      <!-- Rialo Card (Soon) -->
+      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold text-white text-sm">Rialo Token</h4>
+          <span class="inline-block mt-1 text-[10px] font-bold bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full">UPCOMING</span>
+        </div>
+        <p class="text-xs text-gray-400 mb-2">Chart Live Soon</p>
       </div>
 
     </div>
 
-    <!-- ============================================================================= -->
+    <!-- Script Fetch Data & Draw Sparkline -->
+    <script>
+      async function loadCoinData(symbol, coinKey) {
+        try {
+          // Fetch 24 jam kline (24 data poin untuk grafik)
+          const klineRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
+          const klineData = await klineRes.json();
+          const prices = klineData.map(item => parseFloat(item[4])); // harga closing
 
+          // Fetch harga terkini & % perubahan 24h
+          const tickerRes = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
+          const tickerData = await tickerRes.json();
+          const change = parseFloat(tickerData.priceChangePercent);
+          const price = parseFloat(tickerData.lastPrice);
+
+          // Update teks harga & persentase
+          const priceElem = document.getElementById(`${coinKey}-price`);
+          const changeElem = document.getElementById(`${coinKey}-change`);
+          
+          priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+          changeElem.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+          changeElem.className = `text-xs font-bold ${change >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+          // Gambar garis grafik SVG
+          renderSparkline(prices, `${coinKey}-sparkline`, change >= 0);
+        } catch (err) {
+          console.error(`Gagal muat data ${symbol}:`, err);
+        }
+      }
+
+      function renderSparkline(prices, containerId, isPositive) {
+        const width = 140;
+        const height = 40;
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+        const range = max - min || 1;
+
+        const points = prices.map((val, i) => {
+          const x = (i / (prices.length - 1)) * width;
+          const y = height - ((val - min) / range) * (height - 8) - 4;
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(' L ');
+
+        const color = isPositive ? '#22c55e' : '#f43f5e'; // Hijau jika naik, Merah jika turun
+        
+        document.getElementById(containerId).innerHTML = `
+          <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
+            <path d="M ${points}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        `;
+      }
+
+      function updateAllCharts() {
+        loadCoinData('BTCUSDT', 'btc');
+        loadCoinData('BNBUSDT', 'bnb');
+        loadCoinData('ETHUSDT', 'eth');
+      }
+
+      updateAllCharts();
+      setInterval(updateAllCharts, 10000); // Auto refresh tiap 10 detik
+    </script>
+    <!-- ===================================================================== -->
   </section>
 
 
