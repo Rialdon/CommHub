@@ -154,76 +154,7 @@
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoMw10F4miJE831A_lcCDS6vKMRSpDUsPaLOFU5oGWkHHvoDnxgiPTM8nT&s=10" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
     </div>
 
-                <!-- ================= OKX-STYLE MINI SPARKLINE TICKERS ================= -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-      
-      <!-- BTC Card -->
-      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold text-white text-sm">Bitcoin (BTC)</h4>
-          <div class="flex items-center gap-1.5 mt-1">
-            <span id="btc-price" class="text-xs text-gray-300 font-semibold">$0</span>
-            <span id="btc-change" class="text-xs font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="btc-sparkline" class="w-full h-12"></div>
-      </div>
-
-      <!-- BNB Card -->
-      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold text-white text-sm">BNB</h4>
-          <div class="flex items-center gap-1.5 mt-1">
-            <span id="bnb-price" class="text-xs text-gray-300 font-semibold">$0</span>
-            <span id="bnb-change" class="text-xs font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="bnb-sparkline" class="w-full h-12"></div>
-      </div>
-
-      <!-- ETH Card -->
-      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold text-white text-sm">Ethereum (ETH)</h4>
-          <div class="flex items-center gap-1.5 mt-1">
-            <span id="eth-price" class="text-xs text-gray-300 font-semibold">$0</span>
-            <span id="eth-change" class="text-xs font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="eth-sparkline" class="w-full h-12"></div>
-      </div>
-
-      <!-- Rialo Card (Soon) -->
-      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold text-white text-sm">Rialo</h4>
-          <span class="inline-block mt-1 text-[10px] font-bold bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full">UPCOMING</span>
-        </div>
-        <p class="text-xs text-gray-400 mb-2">Chart Live Soon</p>
-      </div>
-
-    </div>
-
-    <!-- Script Fetch Data & Draw Sparkline -->
-    <script>
-      async function loadCoinData(symbol, coinKey) {
-        try {
-          // Fetch 24 jam kline (24 data poin untuk grafik)
-          const klineRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
-          const klineData = await klineRes.json();
-          const prices = klineData.map(item => parseFloat(item[4])); // harga closing
-
-          // Fetch harga terkini & % perubahan 24h
-          const tickerRes = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
-          const tickerData = await tickerRes.json();
-          const change = parseFloat(tickerData.priceChangePercent);
-          const price = parseFloat(tickerData.lastPrice);
-
-          // Update teks harga & persentase
-          const priceElem = document.getElementById(`${coinKey}-price`);
-          const changeElem = document.getElementById(`${coinKey}-change`);
-          
-          priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+                
     <!-- ================= SECTION HEADER ================= -->
     <div class="flex items-center justify-between mt-6 mb-3 px-1">
       <h3 class="text-slate-900 dark:text-white font-bold text-base md:text-lg flex items-center gap-2">
@@ -232,10 +163,7 @@
       </h3>
       <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Binance Real-time</span>
     </div>
-
-    <!-- ================= OKX-STYLE MINI SPARKLINE TICKERS ================= -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      
+    
       <!-- BTC Card -->
       <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
