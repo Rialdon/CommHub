@@ -155,24 +155,33 @@
     </div>
 
                 
-        <!-- ================= SECTION HEADER & TICKERS (COMPACT) ================= -->
+            <!-- CSS Adaptif Tema (Memperbaiki Warna Teks Mode Gelap) -->
+    <style>
+      .crypto-text-title { color: #0f172a; }
+      .crypto-text-sub { color: #334155; }
+      
+      /* Otomatis ubah jadi putih saat mode gelap aktif */
+      .dark .crypto-text-title, [data-theme="dark"] .crypto-text-title, body.dark .crypto-text-title, html.dark .crypto-text-title { color: #ffffff !important; }
+      .dark .crypto-text-sub, [data-theme="dark"] .crypto-text-sub, body.dark .crypto-text-sub, html.dark .crypto-text-sub { color: #cbd5e1 !important; }
+    </style>
+
+    <!-- ================= SECTION HEADER & TICKERS ================= -->
     <div class="flex items-center justify-between mt-6 mb-3 px-1">
-      <h3 class="text-slate-900 dark:text-white font-bold text-sm md:text-base flex items-center gap-2">
+      <h3 class="crypto-text-title font-bold text-sm md:text-base flex items-center gap-2">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        Pasar Kripto Live
+        Market Overview
       </h3>
-      <span class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium">Binance Real-time</span>
+      <span class="text-[10px] md:text-xs text-gray-400 font-medium">Live Price Feeds</span>
     </div>
 
-    <!-- Paksa 2 kolom di HP (grid-cols-2), jarak diperkecil (gap-2) -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
       
       <!-- BTC Card -->
       <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-xs">Bitcoin (BTC)</h4>
+          <h4 class="font-bold crypto-text-title text-xs">Bitcoin (BTC)</h4>
           <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="btc-price" class="text-[11px] text-slate-700 dark:text-gray-300 font-semibold">$0</span>
+            <span id="btc-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
             <span id="btc-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
           </div>
         </div>
@@ -182,9 +191,9 @@
       <!-- BNB Card -->
       <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-xs">BNB</h4>
+          <h4 class="font-bold crypto-text-title text-xs">BNB</h4>
           <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="bnb-price" class="text-[11px] text-slate-700 dark:text-gray-300 font-semibold">$0</span>
+            <span id="bnb-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
             <span id="bnb-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
           </div>
         </div>
@@ -194,9 +203,9 @@
       <!-- ETH Card -->
       <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-xs">Ethereum (ETH)</h4>
+          <h4 class="font-bold crypto-text-title text-xs">Ethereum (ETH)</h4>
           <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="eth-price" class="text-[11px] text-slate-700 dark:text-gray-300 font-semibold">$0</span>
+            <span id="eth-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
             <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
           </div>
         </div>
@@ -206,13 +215,14 @@
       <!-- Rialo Card (Soon) -->
       <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-xs">Rialo Token</h4>
-          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-500 dark:text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
+          <h4 class="font-bold crypto-text-title text-xs">Rialo Token</h4>
+          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
         </div>
-        <p class="text-[10px] text-gray-500 dark:text-gray-400 mb-1">Chart Live Soon</p>
+        <p class="text-[10px] text-gray-400 mb-1">Chart Live Soon</p>
       </div>
 
     </div>
+
 
 
     <!-- Script Fetch Data & Draw Sparkline -->
