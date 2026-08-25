@@ -46,6 +46,12 @@
   .footer-sub { color: #9ca3af; }
   .light-mode .footer-sub { color: #4b5563; }
 
+  /* Warna Teks Crypto Adaptive */
+  .crypto-title { color: #111827; }
+  .crypto-sub { color: #4b5563; }
+  .dark-mode .crypto-title { color: #ffffff !important; }
+  .dark-mode .crypto-sub { color: #9ca3af !important; }
+
   /* Progress Bar Loader */
   .progress { height: 10px; border-radius: 999px; background: rgba(0,0,0,0.08); overflow: hidden; }
   .dark-mode .progress { background: rgba(255,255,255,0.1); }
@@ -150,88 +156,53 @@
         <a href="https://discord.gg/rialo" target="_blank" class="btn col-span-2" style="background-color: #8b5cf6;" id="JoinCommunity">Join Community</a>
       </div>
     </div>
-            <div class="glass rounded-2xl overflow-hidden shadow-md">
+    
+    <div class="glass rounded-2xl overflow-hidden shadow-md">
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoMw10F4miJE831A_lcCDS6vKMRSpDUsPaLOFU5oGWkHHvoDnxgiPTM8nT&s=10" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
     </div>
-    <!-- Script Fetch     
-    
+  </section>
 
-    <!-- Script Fetch Data & Dynamic Theme Detector -->
-    <script>
-      // Detector Tema Otomatis
-      function syncCryptoTheme() {
-        const bodyStyle = window.getComputedStyle(document.body);
-        const bg = bodyStyle.backgroundColor;
-        const color = bodyStyle.color;
-        
-        // Cek kecerahan warna background body
-        let isDark = false;
-        const rgb = bg.match(/\d+/g);
-        if (rgb) {
-          const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
-          isDark = brightness < 128;
-        } else {
-          isDark = color.includes('255') || document.documentElement.classList.contains('dark') || document.body.classList.contains('dark');
-        }
+  <!-- Market Overview Section -->
+  <section class="px-6 max-w-7xl mx-auto mb-10">
+    <div class="flex items-center justify-between mb-3 px-1">
+      <h3 class="crypto-title font-bold text-sm md:text-base flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Market Overview
+      </h3>
+      <span class="crypto-sub text-[10px] md:text-xs font-medium">Live Price Feeds</span>
+    </div>
 
-        document.querySelectorAll('.crypto-text-title').forEach(el => {
-          el.style.color = isDark ? '#ffffff' : '#0f172a';
-        });
-        document.querySelectorAll('.crypto-text-sub').forEach(el => {
-          el.style.color = isDark ? '#cbd5e1' : '#475569';
-        });
-      }
-
-      // Pantau perubahan mode terang/gelap saat tombol diklik
-      const themeObserver = new MutationObserver(syncCryptoTheme);
-      themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
-      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
-      
-      window.addEventListener('DOMContentLoaded', syncCryptoTheme);
-      window.addEventListener('load', syncCryptoTheme);
-
-      // Fetch Data Binance
-      async function loadCoinData(symbol, coinKey) {
-        try {
-          const klineRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
-          const klineData = await klineRes.json();
-          const prices = klineData.map(item => parseFloat(item[4]));
-
-          const tickerRes = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
-          const tickerData = await tickerRes.json();
-          const change = parseFloat(tickerData.priceChangePercent);
-          const price = parseFloat(tickerData.lastPrice);
-
-          const priceElem = document.getElementById(`${coinKey}-price`);
-          const changeElem = document.getElementById(`${coinKey}-change`);
-          
-          priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
-          changeElem.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
-          changeElem.className = `text-[11px] font-bold ${change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
-
-          renderSparkline(prices, `${coinKey}-sparkline`, change >= 0);
-          syncCryptoTheme();
-        } catch (err) {
-          console.error(`Gagal muat data ${symbol}:`, err);
-        }
-      }
-
-      function renderSparkline(prices, containerId, isPositive) {
-        const width = 140;
-        const height = 40;
-        const min = Math.min(...prices);
-        const max = Math.max(...prices);
-        const range = max - min || 1;
-
-        const points = prices.map((val, i) => {
-          const x = (i / (prices.length - 1)) * width;
-          const y = height - ((val - min) / range) * (height - 8) - 4;
-<!-- ETH Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+      <!-- BTC Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold crypto-text-title text-xs">Ethereum (ETH)</h4>
+          <h4 class="font-bold crypto-title text-xs">Bitcoin (BTC)</h4>
           <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="eth-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
+            <span id="btc-price" class="text-[11px] crypto-sub font-semibold">$0</span>
+            <span id="btc-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="btc-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
+
+      <!-- BNB Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-title text-xs">BNB</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="bnb-price" class="text-[11px] crypto-sub font-semibold">$0</span>
+            <span id="bnb-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="bnb-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
+
+      <!-- ETH Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-title text-xs">Ethereum (ETH)</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="eth-price" class="text-[11px] crypto-sub font-semibold">$0</span>
             <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
           </div>
         </div>
@@ -239,22 +210,19 @@
       </div>
 
       <!-- Rialo Card (Soon) -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold crypto-text-title text-xs">Rialo Token</h4>
-          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-500 dark:text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
+          <h4 class="font-bold crypto-title text-xs">Rialo Token</h4>
+          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
         </div>
-        <p class="crypto-text-sub text-[10px] mb-1">Chart Live Soon</p>
+        <p class="crypto-sub text-[10px] mb-1">Chart Live Soon</p>
       </div>
-
     </div>
   </section>
 
-
-
   <!-- Investors & Partners Section -->
   <section class="px-6 max-w-7xl mx-auto pb-12">
-    <div class="mt-4">
+    <div>
       <!-- Investors -->
       <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
       <div class="marquee-wrap">
@@ -278,7 +246,7 @@
             <img src="https://rialo.io/images/Mysten-Labs-logo.png" alt="Mysten Labs">
           </a>
 
-          <!-- Duplikat Looping Mulus -->
+          <!-- Duplikat Looping -->
           <a href="https://www.sig.com" target="_blank" class="partner-card" style="background: #000; border-color: rgba(255,255,255,0.1);">
             <img src="https://i0.wp.com/price-target.com/wp-content/uploads/2025/11/Susquehanna_BlackBG.png?fit=8000%2C4500&ssl=1" alt="Susquehanna">
           </a>
@@ -312,7 +280,7 @@
           <a href="https://doublezero.xyz/" target="_blank" class="partner-card"><img src="https://rialo.io/images/doublezero_logo_3x.png" alt="DoubleZero"></a>
           <a href="https://m0.xyz" target="_blank" class="partner-card"><img src="https://rialo.io/images/m0.jpeg" alt="M0"></a>
           
-          <!-- Duplikat Looping Mulus -->
+          <!-- Duplikat Looping -->
           <a href="https://www.nasdaq.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nasdaq-black.png" alt="Nasdaq"></a>
           <a href="https://www.nyse.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/nyse.svg" alt="NYSE"></a>
           <a href="https://www.cboe.com" target="_blank" class="partner-card"><img src="https://rialo.io/images/cboe.png" alt="CBOE"></a>
@@ -335,7 +303,7 @@
   </p>
 </footer>
 
-<!-- JavaScript -->
+<!-- JavaScript Utama -->
 <script>
   // Language toggle
   let lang = "EN";
@@ -371,7 +339,7 @@
     }
   }
 
-  // Fake loader progress
+  // Loader progress
   const bar = document.getElementById('bar');
   const loader = document.getElementById('loader');
   let p = 0;
@@ -385,7 +353,68 @@
       }, 250);
     }
   }, 60);
+
+  // Binance Live Tickers
+  async function loadCoinData(symbol, coinKey) {
+    try {
+      const klineRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
+      const klineData = await klineRes.json();
+      const prices = klineData.map(item => parseFloat(item[4]));
+
+      const tickerRes = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
+      const tickerData = await tickerRes.json();
+      const change = parseFloat(tickerData.priceChangePercent);
+      const price = parseFloat(tickerData.lastPrice);
+
+      const priceElem = document.getElementById(`${coinKey}-price`);
+      const changeElem = document.getElementById(`${coinKey}-change`);
+      
+      if(priceElem) priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+      if(changeElem) {
+        changeElem.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+        changeElem.className = `text-[11px] font-bold ${change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+      }
+
+      renderSparkline(prices, `${coinKey}-sparkline`, change >= 0);
+    } catch (err) {
+      console.error(`Gagal muat data ${symbol}:`, err);
+    }
+  }
+
+  function renderSparkline(prices, containerId, isPositive) {
+    const width = 140;
+    const height = 40;
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    const range = max - min || 1;
+
+    const points = prices.map((val, i) => {
+      const x = (i / (prices.length - 1)) * width;
+      const y = height - ((val - min) / range) * (height - 8) - 4;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' L ');
+
+    const color = isPositive ? '#10b981' : '#f43f5e';
+    const el = document.getElementById(containerId);
+    if(el) {
+      el.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
+          <path d="M ${points}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      `;
+    }
+  }
+
+  function updateAllCharts() {
+    loadCoinData('BTCUSDT', 'btc');
+    loadCoinData('BNBUSDT', 'bnb');
+    loadCoinData('ETHUSDT', 'eth');
+  }
+
+  updateAllCharts();
+  setInterval(updateAllCharts, 10000);
 </script>
 
 </body>
-</html>
+          </html>
+          
