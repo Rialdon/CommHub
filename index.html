@@ -343,13 +343,15 @@
   }, 60);
 
   // Binance Live Tickers
+    // Binance Live Tickers (Endpoint Anti-Block Web3)
   async function loadCoinData(symbol, coinKey) {
     try {
-      const klineRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
+      // Gunakan api.binance.vision agar tidak diblokir shield Mises Browser
+      const klineRes = await fetch(`https://api.binance.vision/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
       const klineData = await klineRes.json();
       const prices = klineData.map(item => parseFloat(item[4]));
 
-      const tickerRes = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
+      const tickerRes = await fetch(`https://api.binance.vision/api/v3/ticker/24hr?symbol=${symbol}`);
       const tickerData = await tickerRes.json();
       const change = parseFloat(tickerData.priceChangePercent);
       const price = parseFloat(tickerData.lastPrice);
@@ -368,6 +370,7 @@
       console.error(`Gagal muat data ${symbol}:`, err);
     }
   }
+
 
   function renderSparkline(prices, containerId, isPositive) {
     const width = 140;
