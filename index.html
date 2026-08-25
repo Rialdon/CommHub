@@ -153,135 +153,8 @@
             <div class="glass rounded-2xl overflow-hidden shadow-md">
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoMw10F4miJE831A_lcCDS6vKMRSpDUsPaLOFU5oGWkHHvoDnxgiPTM8nT&s=10" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
     </div>
-
-                
-            <!-- CSS Adaptif Tema (Memperbaiki Warna Teks Mode Gelap) -->
-    <style>
-      .crypto-text-title { color: #0f172a; }
-      .crypto-text-sub { color: #334155; }
-      
-      /* Otomatis ubah jadi putih saat mode gelap aktif */
-      .dark .crypto-text-title, [data-theme="dark"] .crypto-text-title, body.dark .crypto-text-title, html.dark .crypto-text-title { color: #ffffff !important; }
-      .dark .crypto-text-sub, [data-theme="dark"] .crypto-text-sub, body.dark .crypto-text-sub, html.dark .crypto-text-sub { color: #cbd5e1 !important; }
-    </style>
-
-    <!-- ================= SECTION HEADER & TICKERS ================= -->
-    <div class="flex items-center justify-between mt-6 mb-3 px-1">
-      <h3 class="crypto-text-title font-bold text-sm md:text-base flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        Market Overview
-      </h3>
-      <span class="text-[10px] md:text-xs text-gray-400 font-medium">Live Price Feeds</span>
-    </div>
-
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-      
-      <!-- BTC Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-text-title text-xs">Bitcoin (BTC)</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="btc-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
-            <span id="btc-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="btc-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
-
-      <!-- BNB Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-text-title text-xs">BNB</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="bnb-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
-            <span id="bnb-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="bnb-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
-
-      <!-- ETH Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-text-title text-xs">Ethereum (ETH)</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="eth-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
-            <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="eth-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
-
-      <!-- Rialo Card (Soon) -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-text-title text-xs">Rialo Token</h4>
-          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
-        </div>
-        <p class="text-[10px] text-gray-400 mb-1">Chart Live Soon</p>
-      </div>
-
-    </div>
-
-
-
-    <!-- Script Fetch     <!-- ================= SECTION HEADER & TICKERS ================= -->
-    <div class="flex items-center justify-between mt-6 mb-3 px-1">
-      <h3 class="crypto-text-title font-bold text-sm md:text-base flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        Market Overview
-      </h3>
-      <span class="crypto-text-sub text-[10px] md:text-xs font-medium">Live Price Feeds</span>
-    </div>
-
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-      
-      <!-- BTC Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-text-title text-xs">Bitcoin (BTC)</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="btc-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
-            <span id="btc-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="btc-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
-
-      <!-- BNB Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-text-title text-xs">BNB</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="bnb-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
-            <span id="bnb-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="bnb-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
-
-      <!-- ETH Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-text-title text-xs">Ethereum (ETH)</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="eth-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
-            <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="eth-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
-
-      <!-- Rialo Card (Soon) -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-text-title text-xs">Rialo Token</h4>
-          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-500 dark:text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
-        </div>
-        <p class="crypto-text-sub text-[10px] mb-1">Chart Live Soon</p>
-      </div>
-
-    </div>
+    <!-- Script Fetch     
+    
 
     <!-- Script Fetch Data & Dynamic Theme Detector -->
     <script>
@@ -353,30 +226,28 @@
         const points = prices.map((val, i) => {
           const x = (i / (prices.length - 1)) * width;
           const y = height - ((val - min) / range) * (height - 8) - 4;
-          return `${x.toFixed(1)},${y.toFixed(1)}`;
-        }).join(' L ');
+<!-- ETH Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-text-title text-xs">Ethereum (ETH)</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="eth-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
+            <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="eth-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
 
-        const color = isPositive ? '#10b981' : '#f43f5e';
-        
-        document.getElementById(containerId).innerHTML = `
-          <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
-            <path d="M ${points}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        `;
-      }
+      <!-- Rialo Card (Soon) -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-text-title text-xs">Rialo Token</h4>
+          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-500 dark:text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
+        </div>
+        <p class="crypto-text-sub text-[10px] mb-1">Chart Live Soon</p>
+      </div>
 
-      function updateAllCharts() {
-        loadCoinData('BTCUSDT', 'btc');
-        loadCoinData('BNBUSDT', 'bnb');
-        loadCoinData('ETHUSDT', 'eth');
-      }
-
-      updateAllCharts();
-      setInterval(updateAllCharts, 10000);
-    </script>
-
-
-    <!-- ===================================================================== -->
+    </div>
   </section>
 
 
