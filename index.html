@@ -155,61 +155,65 @@
     </div>
 
                 
-    <!-- ================= SECTION HEADER ================= -->
+        <!-- ================= SECTION HEADER & TICKERS (COMPACT) ================= -->
     <div class="flex items-center justify-between mt-6 mb-3 px-1">
-      <h3 class="text-slate-900 dark:text-white font-bold text-base md:text-lg flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <h3 class="text-slate-900 dark:text-white font-bold text-sm md:text-base flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
         Pasar Kripto Live
       </h3>
-      <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Binance Real-time</span>
+      <span class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium">Binance Real-time</span>
     </div>
-    
+
+    <!-- Paksa 2 kolom di HP (grid-cols-2), jarak diperkecil (gap-2) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+      
       <!-- BTC Card -->
-      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">Bitcoin (BTC)</h4>
-          <div class="flex items-center gap-1.5 mt-1">
-            <span id="btc-price" class="text-xs text-slate-700 dark:text-gray-300 font-semibold">$0</span>
-            <span id="btc-change" class="text-xs font-bold text-gray-400">0.00%</span>
+          <h4 class="font-bold text-slate-900 dark:text-white text-xs">Bitcoin (BTC)</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="btc-price" class="text-[11px] text-slate-700 dark:text-gray-300 font-semibold">$0</span>
+            <span id="btc-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
           </div>
         </div>
-        <div id="btc-sparkline" class="w-full h-12"></div>
+        <div id="btc-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
       </div>
 
       <!-- BNB Card -->
-      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">BNB</h4>
-          <div class="flex items-center gap-1.5 mt-1">
-            <span id="bnb-price" class="text-xs text-slate-700 dark:text-gray-300 font-semibold">$0</span>
-            <span id="bnb-change" class="text-xs font-bold text-gray-400">0.00%</span>
+          <h4 class="font-bold text-slate-900 dark:text-white text-xs">BNB</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="bnb-price" class="text-[11px] text-slate-700 dark:text-gray-300 font-semibold">$0</span>
+            <span id="bnb-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
           </div>
         </div>
-        <div id="bnb-sparkline" class="w-full h-12"></div>
+        <div id="bnb-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
       </div>
 
       <!-- ETH Card -->
-      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">Ethereum (ETH)</h4>
-          <div class="flex items-center gap-1.5 mt-1">
-            <span id="eth-price" class="text-xs text-slate-700 dark:text-gray-300 font-semibold">$0</span>
-            <span id="eth-change" class="text-xs font-bold text-gray-400">0.00%</span>
+          <h4 class="font-bold text-slate-900 dark:text-white text-xs">Ethereum (ETH)</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="eth-price" class="text-[11px] text-slate-700 dark:text-gray-300 font-semibold">$0</span>
+            <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
           </div>
         </div>
-        <div id="eth-sparkline" class="w-full h-12"></div>
+        <div id="eth-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
       </div>
 
       <!-- Rialo Card (Soon) -->
-      <div class="glass p-4 rounded-2xl h-36 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
         <div>
-          <h4 class="font-bold text-slate-900 dark:text-white text-sm">Rialo Token</h4>
-          <span class="inline-block mt-1 text-[10px] font-bold bg-blue-500/20 text-blue-500 dark:text-blue-400 px-2.5 py-0.5 rounded-full">UPCOMING</span>
+          <h4 class="font-bold text-slate-900 dark:text-white text-xs">Rialo Token</h4>
+          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-500 dark:text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
         </div>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Chart Live Soon</p>
+        <p class="text-[10px] text-gray-500 dark:text-gray-400 mb-1">Chart Live Soon</p>
       </div>
 
     </div>
+
 
     <!-- Script Fetch Data & Draw Sparkline -->
     <script>
