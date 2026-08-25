@@ -225,8 +225,99 @@
 
 
 
-    <!-- Script Fetch Data & Draw Sparkline -->
+    <!-- Script Fetch     <!-- ================= SECTION HEADER & TICKERS ================= -->
+    <div class="flex items-center justify-between mt-6 mb-3 px-1">
+      <h3 class="crypto-text-title font-bold text-sm md:text-base flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Market Overview
+      </h3>
+      <span class="crypto-text-sub text-[10px] md:text-xs font-medium">Live Price Feeds</span>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+      
+      <!-- BTC Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-text-title text-xs">Bitcoin (BTC)</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="btc-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
+            <span id="btc-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="btc-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
+
+      <!-- BNB Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-text-title text-xs">BNB</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="bnb-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
+            <span id="bnb-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="bnb-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
+
+      <!-- ETH Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-text-title text-xs">Ethereum (ETH)</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="eth-price" class="text-[11px] crypto-text-sub font-semibold">$0</span>
+            <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="eth-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
+
+      <!-- Rialo Card (Soon) -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-text-title text-xs">Rialo Token</h4>
+          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-500 dark:text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
+        </div>
+        <p class="crypto-text-sub text-[10px] mb-1">Chart Live Soon</p>
+      </div>
+
+    </div>
+
+    <!-- Script Fetch Data & Dynamic Theme Detector -->
     <script>
+      // Detector Tema Otomatis
+      function syncCryptoTheme() {
+        const bodyStyle = window.getComputedStyle(document.body);
+        const bg = bodyStyle.backgroundColor;
+        const color = bodyStyle.color;
+        
+        // Cek kecerahan warna background body
+        let isDark = false;
+        const rgb = bg.match(/\d+/g);
+        if (rgb) {
+          const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
+          isDark = brightness < 128;
+        } else {
+          isDark = color.includes('255') || document.documentElement.classList.contains('dark') || document.body.classList.contains('dark');
+        }
+
+        document.querySelectorAll('.crypto-text-title').forEach(el => {
+          el.style.color = isDark ? '#ffffff' : '#0f172a';
+        });
+        document.querySelectorAll('.crypto-text-sub').forEach(el => {
+          el.style.color = isDark ? '#cbd5e1' : '#475569';
+        });
+      }
+
+      // Pantau perubahan mode terang/gelap saat tombol diklik
+      const themeObserver = new MutationObserver(syncCryptoTheme);
+      themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] });
+      
+      window.addEventListener('DOMContentLoaded', syncCryptoTheme);
+      window.addEventListener('load', syncCryptoTheme);
+
+      // Fetch Data Binance
       async function loadCoinData(symbol, coinKey) {
         try {
           const klineRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
@@ -243,9 +334,10 @@
           
           priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
           changeElem.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
-          changeElem.className = `text-xs font-bold ${change >= 0 ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}`;
+          changeElem.className = `text-[11px] font-bold ${change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
 
           renderSparkline(prices, `${coinKey}-sparkline`, change >= 0);
+          syncCryptoTheme();
         } catch (err) {
           console.error(`Gagal muat data ${symbol}:`, err);
         }
@@ -282,6 +374,7 @@
       updateAllCharts();
       setInterval(updateAllCharts, 10000);
     </script>
+
 
     <!-- ===================================================================== -->
   </section>
