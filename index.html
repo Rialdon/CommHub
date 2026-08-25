@@ -424,14 +424,16 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script type="text/babel">
-  const { useState } = React;
+<script type="text/babel">
+  const { useState, useEffect } = React;
 
-  const ASSETS = {
-    BTC: { name: "Bitcoin", price: 79398, color: "#F7931A" },
-    ETH: { name: "Ethereum", price: 2483.99, color: "#3C3C3D" },
-    BNB: { name: "BNB", price: 700.18, color: "#F0B90B" },
-    RIALO: { name: "Rialo", price: 0.42, color: "#EDE3CE" },
+  // Harga awal (fallback) sebelum data live dari CoinGecko masuk.
+  // RIALO tetap manual karena belum ada exchange publik.
+  const INITIAL_ASSETS = {
+    BTC: { name: "Bitcoin", price: 79398, color: "#F7931A", coingeckoId: "bitcoin" },
+    ETH: { name: "Ethereum", price: 2483.99, color: "#3C3C3D", coingeckoId: "ethereum" },
+    BNB: { name: "BNB", price: 700.18, color: "#F0B90B", coingeckoId: "binancecoin" },
+    RIALO: { name: "Rialo", price: 0.42, color: "#EDE3CE", coingeckoId: null },
   };
 
   const c = {
@@ -449,7 +451,6 @@
     mintBg: "rgba(45,212,191,0.1)",
   };
 
-  // Ikon dibuat inline pakai SVG sendiri, tidak bergantung ke lucide-react
   function IconArrowDownUp({ size = 15, color = "#fff" }) {
     return (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -479,8 +480,8 @@
     );
   }
 
-  function CoinIcon({ symbol, size = 20 }) {
-    const asset = ASSETS[symbol];
+  function CoinIcon({ symbol, assets, size = 20 }) {
+    const asset = assets[symbol];
     const wrap = {
       width: size, height: size, borderRadius: "50%", backgroundColor: asset.color,
       display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden",
@@ -518,21 +519,21 @@
     return <div style={wrap} />;
   }
 
-  function TokenPicker({ open, onClose, onSelect, exclude }) {
+  function TokenPicker({ open, onClose, onSelect, exclude, assets }) {
     if (!open) return null;
     return (
       <div style={{
         position: "absolute", right: 0, top: "100%", marginTop: 8, width: 176, borderRadius: 16,
         backgroundColor: c.card, border: `1px solid ${c.border}`, zIndex: 20, overflow: "hidden",
       }}>
-        {Object.entries(ASSETS).filter(([sym]) => sym !== exclude).map(([sym, a]) => (
+        {Object.entries(assets).filter(([sym]) => sym !== exclude).map(([sym, a]) => (
           <button key={sym} onClick={() => { onSelect(sym); onClose(); }} style={{
             width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "10px 12px",
             background: "transparent", border: "none", cursor: "pointer", textAlign: "left",
           }}
             onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
             onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-            <CoinIcon symbol={sym} size={20} />
+            <CoinIcon symbol={sym} assets={assets} size={20} />
             <span style={{ fontSize: 14, color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>{sym}</span>
             <span style={{ fontSize: 12, color: c.textDim, marginLeft: "auto" }}>{a.name}</span>
           </button>
@@ -541,9 +542,9 @@
     );
   }
 
-  function TokenField({ label, symbol, amount, onAmountChange, onSymbol, exclude, readOnly }) {
+  function TokenField({ label, symbol, amount, onAmountChange, onSymbol, exclude, readOnly, assets }) {
     const [pickerOpen, setPickerOpen] = useState(false);
-    const asset = ASSETS[symbol];
+    const asset = assets[symbol];
     return (
       <div style={{ borderRadius: 16, backgroundColor: c.field, border: `1px solid ${c.borderSoft}`, padding: "12px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
@@ -561,11 +562,11 @@
               display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.05)",
               border: "none", borderRadius: 999, padding: "6px 10px 6px 6px", cursor: "pointer",
             }}>
-              <CoinIcon symbol={symbol} size={20} />
+              <CoinIcon symbol={symbol} assets={assets} size={20} />
               <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{symbol}</span>
               <IconChevronDown size={14} color="rgba(255,255,255,0.5)" />
             </button>
-            <TokenPicker open={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={onSymbol} exclude={exclude} />
+            <TokenPicker open={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={onSymbol} exclude={exclude} assets={assets} />
           </div>
         </div>
       </div>
@@ -573,12 +574,54 @@
   }
 
   function SwapDemo() {
+    const [assets, setAssets] = useState(INITIAL_ASSETS);
+    const [priceStatus, setPriceStatus] = useState("loading"); // loading | live | fallback
     const [expanded, setExpanded] = useState(false);
     const [fromSym, setFromSym] = useState("BTC");
     const [toSym, setToSym] = useState("RIALO");
     const [fromAmt, setFromAmt] = useState("0.01");
 
-    const rate = ASSETS[fromSym].price / ASSETS[toSym].price;
+    useEffect(() => {
+      let cancelled = false;
+
+      async function fetchPrices() {
+        const ids = Object.values(INITIAL_ASSETS)
+          .map((a) => a.coingeckoId)
+          .filter(Boolean)
+          .join(",");
+        try {
+          const res = await fetch(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`
+          );
+          if (!res.ok) throw new Error("CoinGecko request failed");
+          const data = await res.json();
+          if (cancelled) return;
+
+          setAssets((prev) => {
+            const next = { ...prev };
+            for (const sym of Object.keys(next)) {
+              const id = INITIAL_ASSETS[sym].coingeckoId;
+              if (id && data[id] && typeof data[id].usd === "number") {
+                next[sym] = { ...next[sym], price: data[id].usd };
+              }
+            }
+            return next;
+          });
+          setPriceStatus("live");
+        } catch (err) {
+          if (!cancelled) setPriceStatus("fallback");
+        }
+      }
+
+      fetchPrices();
+      const interval = setInterval(fetchPrices, 60000); // CoinGecko rate limit — jangan terlalu sering
+      return () => {
+        cancelled = true;
+        clearInterval(interval);
+      };
+    }, []);
+
+    const rate = assets[fromSym].price / assets[toSym].price;
     const toAmt = fromAmt ? (Number(fromAmt) * rate).toFixed(6) : "";
 
     function flip() { setFromSym(toSym); setToSym(fromSym); }
@@ -605,9 +648,14 @@
             }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 4px 4px" }}>
                 <span style={{ fontSize: 14, fontWeight: 500, color: c.textMuted }}>Swap</span>
+                <span style={{ fontSize: 10, color: priceStatus === "live" ? c.mint : c.textFaint }}>
+                  {priceStatus === "loading" && "Memuat harga..."}
+                  {priceStatus === "live" && "● Harga live"}
+                  {priceStatus === "fallback" && "Harga fallback"}
+                </span>
               </div>
 
-              <TokenField label="From" symbol={fromSym} amount={fromAmt} onAmountChange={setFromAmt} onSymbol={setFromSym} exclude={toSym} />
+              <TokenField label="From" symbol={fromSym} amount={fromAmt} onAmountChange={setFromAmt} onSymbol={setFromSym} exclude={toSym} assets={assets} />
 
               <div style={{ display: "flex", justifyContent: "center", margin: "-4px 0", position: "relative", zIndex: 10 }}>
                 <button onClick={flip} style={{
@@ -618,7 +666,7 @@
                 </button>
               </div>
 
-              <TokenField label="To (estimated)" symbol={toSym} amount={toAmt} onAmountChange={() => {}} onSymbol={setToSym} exclude={fromSym} readOnly />
+              <TokenField label="To (estimated)" symbol={toSym} amount={toAmt} onAmountChange={() => {}} onSymbol={setToSym} exclude={fromSym} readOnly assets={assets} />
 
               <div style={{ fontSize: 11, color: c.textFaint, padding: "4px 4px 0" }}>
                 1 {fromSym} ≈ {rate.toLocaleString(undefined, { maximumFractionDigits: 6 })} {toSym}
@@ -634,6 +682,9 @@
 
               <p style={{ fontSize: 10, color: c.textFaint, textAlign: "center", padding: "4px 8px 0" }}>
                 Preview only. Swap is not functional yet — no real transactions or wallet/blockchain connection.
+                {priceStatus !== "loading" && (
+                  <> Harga BTC/ETH/BNB dari CoinGecko, RIALO masih manual.</>
+                )}
               </p>
             </div>
           </div>
@@ -643,7 +694,7 @@
   }
 
   ReactDOM.createRoot(document.getElementById('swap-root')).render(<SwapDemo />);
-          </script>
-  
+</script>
+
 </body>
 </html>
