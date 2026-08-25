@@ -343,35 +343,41 @@
   }
    }, 60);
 
-  // Binance Live Tickers
-    // Binance Live Tickers (Endpoint Anti-Block Web3)
-  async function loadCoinData(symbol, coinKey) {
+<script>
+  // Live Tickers — CoinGecko (gratis, CORS aktif, tanpa API key)
+  const COINGECKO_IDS = { btc: 'bitcoin', bnb: 'binancecoin', eth: 'ethereum' };
+
+  async function updateAllCharts() {
     try {
-      // Gunakan api.binance.vision agar tidak diblokir shield Mises Browser
-      const klineRes = await fetch(`https://api.binance.vision/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
-      const klineData = await klineRes.json();
-      const prices = klineData.map(item => parseFloat(item[4]));
+      const ids = Object.values(COINGECKO_IDS).join(',');
+      const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&sparkline=true&price_change_percentage=24h`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('CoinGecko unavailable');
+      const data = await res.json();
 
-      const tickerRes = await fetch(`https://api.binance.vision/api/v3/ticker/24hr?symbol=${symbol}`);
-      const tickerData = await tickerRes.json();
-      const change = parseFloat(tickerData.priceChangePercent);
-      const price = parseFloat(tickerData.lastPrice);
+      for (const [coinKey, geckoId] of Object.entries(COINGECKO_IDS)) {
+        const coin = data.find(c => c.id === geckoId);
+        if (!coin) continue;
 
-      const priceElem = document.getElementById(`${coinKey}-price`);
-      const changeElem = document.getElementById(`${coinKey}-change`);
-      
-      if(priceElem) priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
-      if(changeElem) {
-        changeElem.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
-        changeElem.className = `text-[11px] font-bold ${change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+        const price = coin.current_price;
+        const change = coin.price_change_percentage_24h ?? 0;
+        const prices = coin.sparkline_in_7d?.price?.slice(-24) || [];
+
+        const priceElem = document.getElementById(`${coinKey}-price`);
+        const changeElem = document.getElementById(`${coinKey}-change`);
+
+        if (priceElem) priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+        if (changeElem) {
+          changeElem.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+          changeElem.className = `text-[11px] font-bold ${change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+        }
+
+        if (prices.length > 0) renderSparkline(prices, `${coinKey}-sparkline`, change >= 0);
       }
-
-      renderSparkline(prices, `${coinKey}-sparkline`, change >= 0);
     } catch (err) {
-      console.error(`Gagal muat data ${symbol}:`, err);
+      console.error('Gagal muat data harga:', err);
     }
   }
-
 
   function renderSparkline(prices, containerId, isPositive) {
     const width = 140;
@@ -397,17 +403,10 @@
     }
   }
 
-  function updateAllCharts() {
-    loadCoinData('BTCUSDT', 'btc');
-    loadCoinData('BNBUSDT', 'bnb');
-    loadCoinData('ETHUSDT', 'eth');
-  }
-
   updateAllCharts();
-  setInterval(updateAllCharts, 10000);
+  // CoinGecko rate limit lebih ketat dari Binance, jadi interval diperlonggar jadi 60 detik
+  setInterval(updateAllCharts, 60000);
 </script>
 
 </body>
-  </html>
-
-              
+</html>
