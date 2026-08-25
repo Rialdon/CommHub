@@ -83,9 +83,13 @@
     width: auto;
     object-fit: contain;
     opacity: 0.85;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, filter 0.3s;
   }
   .partner-card:hover img { opacity: 1; }
+
+  /* Filter Warna Otomatis Logo Gambar */
+  .light-mode .partner-card img { filter: brightness(0); }
+  .dark-mode .partner-card img { filter: brightness(0) invert(1); }
 
   /* Marquee Styling */
   .marquee-wrap {
@@ -141,7 +145,7 @@
 </header>
 
 <main class="flex-1">
-  <!-- Hero Section (What is Rialo) -->
+  <!-- Hero Section -->
   <section class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
     <div>
       <h1 id="heroTitle" class="text-4xl sm:text-5xl font-extrabold">
@@ -228,8 +232,7 @@
     </div>
   </section>
 
-
-    <!-- Investors & Partners Section -->
+  <!-- Investors & Partners Section -->
   <section class="px-6 max-w-7xl mx-auto pb-12">
     <div>
       <!-- Investors -->
@@ -243,7 +246,7 @@
           <a href="https://edgecapital.xyz" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">EDGE CAPITAL</span></a>
           <a href="https://mystenlabs.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">MYSTEN LABS</span></a>
 
-          <!-- Duplikat Looping Mulus -->
+          <!-- Duplikat Looping -->
           <a href="https://www.sig.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">SUSQUEHANNA (SIG)</span></a>
           <a href="https://www.coinbase.com/ventures" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">COINBASE VENTURES</span></a>
           <a href="https://panteracapital.com" target="_blank" class="partner-card"><span class="font-black px-2 text-xs">PANTERA</span></a>
@@ -261,23 +264,22 @@
           <a href="https://www.nyse.com" target="_blank" class="partner-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/New_York_Stock_Exchange_logo.svg/512px-New_York_Stock_Exchange_logo.svg.png" alt="NYSE"></a>
           <a href="https://www.cboe.com" target="_blank" class="partner-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Cboe_Global_Markets_logo.svg/512px-Cboe_Global_Markets_logo.svg.png" alt="Cboe"></a>
           <a href="https://keplr.app" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">KEPLR</span></a>
-          <a href="https://predicate.io" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">PREDICATE</span></a>
+          <a href="https://predicate.io" target="_blank" class="partner-card"><img src="https://rialo.io/images/Predicate_Logo-Color-Inverted.png" alt="Predicate"></a>
           <a href="https://doublezero.xyz/" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">DOUBLEZERO</span></a>
           <a href="https://m0.xyz" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">M0</span></a>
           
-          <!-- Duplikat Looping Mulus -->
+          <!-- Duplikat Looping -->
           <a href="https://www.nasdaq.com" target="_blank" class="partner-card"><img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Nasdaq_Logo.svg" alt="Nasdaq"></a>
           <a href="https://www.nyse.com" target="_blank" class="partner-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/New_York_Stock_Exchange_logo.svg/512px-New_York_Stock_Exchange_logo.svg.png" alt="NYSE"></a>
           <a href="https://www.cboe.com" target="_blank" class="partner-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Cboe_Global_Markets_logo.svg/512px-Cboe_Global_Markets_logo.svg.png" alt="Cboe"></a>
           <a href="https://keplr.app" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">KEPLR</span></a>
-          <a href="https://predicate.io" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">PREDICATE</span></a>
+          <a href="https://predicate.io" target="_blank" class="partner-card"><img src="https://rialo.io/images/Predicate_Logo-Color-Inverted.png" alt="Predicate"></a>
           <a href="https://doublezero.xyz/" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">DOUBLEZERO</span></a>
           <a href="https://m0.xyz" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs">M0</span></a>
         </div>
       </div>
     </div>
   </section>
-
 </main>
 
 <!-- Footer -->
@@ -402,5 +404,6 @@
 </script>
 
 </body>
-          </html>
+  </html>
+  
           
