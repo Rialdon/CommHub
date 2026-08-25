@@ -337,37 +337,55 @@
     }
   }, 1200);
 
-  // Live Tickers dengan Dual API Fallback (Binance -> CoinCap)
-  async function loadCoinData(symbol, coinCapId, coinKey) {
-    try {
-      // 1. Coba Binance Vision API
-      const klineRes = await fetch(`https://api.binance.vision/api/v3/klines?symbol=${symbol}&interval=1h&limit=24`);
-      if (!klineRes.ok) throw new Error("Binance Blocked");
-      const klineData = await klineRes.json();
-      const prices = klineData.map(item => parseFloat(item[4]));
+  // Live Tickers — sumber utama: CoinGecko (gratis, CORS aktif, tanpa API key)
+  // Fallback: CoinPaprika (juga gratis & tanpa API key) jika CoinGecko kena rate-limit
+  const COINGECKO_IDS = { btc: 'bitcoin', bnb: 'binancecoin', eth: 'ethereum' };
+  const COINPAPRIKA_IDS = { btc: 'btc-bitcoin', bnb: 'bnb-binance-coin', eth: 'eth-ethereum' };
 
-      const tickerRes = await fetch(`https://api.binance.vision/api/v3/ticker/24hr?symbol=${symbol}`);
-      const tickerData = await tickerRes.json();
-      const change = parseFloat(tickerData.priceChangePercent);
-      const price = parseFloat(tickerData.lastPrice);
+  async function loadAllCoinsGecko() {
+    const ids = Object.values(COINGECKO_IDS).join(',');
+    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&sparkline=true&price_change_percentage=24h`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('CoinGecko unavailable');
+    const data = await res.json();
 
+    for (const [coinKey, geckoId] of Object.entries(COINGECKO_IDS)) {
+      const coin = data.find(c => c.id === geckoId);
+      if (!coin) continue;
+      const price = coin.current_price;
+      const change = coin.price_change_percentage_24h ?? 0;
+      const prices = coin.sparkline_in_7d?.price?.slice(-24) || [];
       updateUI(coinKey, price, change, prices);
-    } catch (err) {
-      // 2. Fallback ke CoinCap API jika Binance diblokir Web3 Shield / Geo-block
-      try {
-        const res = await fetch(`https://api.coincap.io/v2/assets/${coinCapId}`);
-        const data = await res.json();
-        const price = parseFloat(data.data.priceUsd);
-        const change = parseFloat(data.data.changePercent24Hr);
-        
-        const histRes = await fetch(`https://api.coincap.io/v2/assets/${coinCapId}/history?interval=h1`);
-        const histData = await histRes.json();
-        const prices = histData.data.slice(-24).map(item => parseFloat(item.priceUsd));
+    }
+  }
 
-        updateUI(coinKey, price, change, prices);
-      } catch (fallbackErr) {
-        console.error(`Gagal muat data ${symbol}:`, fallbackErr);
+  async function loadCoinFallback(coinKey) {
+    try {
+      const paprikaId = COINPAPRIKA_IDS[coinKey];
+      const tickerRes = await fetch(`https://api.coinpaprika.com/v1/tickers/${paprikaId}`);
+      if (!tickerRes.ok) throw new Error('CoinPaprika unavailable');
+      const ticker = await tickerRes.json();
+      const price = ticker.quotes.USD.price;
+      const change = ticker.quotes.USD.percent_change_24h;
+
+      const histRes = await fetch(`https://api.coinpaprika.com/v1/tickers/${paprikaId}/historical?start=${new Date(Date.now() - 24*3600*1000).toISOString()}&interval=1h`);
+      let prices = [];
+      if (histRes.ok) {
+        const hist = await histRes.json();
+        prices = hist.map(h => h.price);
       }
+      updateUI(coinKey, price, change, prices);
+    } catch (fallbackErr) {
+      console.error(`Gagal muat data ${coinKey}:`, fallbackErr);
+    }
+  }
+
+  async function loadCoinData() {
+    try {
+      await loadAllCoinsGecko();
+    } catch (err) {
+      // Kalau CoinGecko gagal (mis. rate limit), coba tiap koin lewat CoinPaprika
+      Object.keys(COINGECKO_IDS).forEach(loadCoinFallback);
     }
   }
 
@@ -381,25 +399,4 @@
       changeElem.className = `text-[11px] font-bold ${change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
     }
 
-    if(prices && prices.length > 0) {
-      renderSparkline(prices, `${coinKey}-sparkline`, change >= 0);
-    }
-  }
-
-  function renderSparkline(prices, containerId, isPositive) {
-    const width = 140;
-    const height = 40;
-    const min = Math.min(...prices);
-    const max = Math.max(...prices);
-    const range = max - min || 1;
-
-    const points = prices.map((val, i) => {
-      const x = (i / (prices.length - 1)) * width;
-      const y = height - ((val - min) / range) * (height - 8) - 4;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    }).join(' L ');
-
-    const color = isPositive ? '#10b981' : '#f43f5e';
-    const el = document.getElementById(containerId);
-    if(el) {
-      el.in
+    if(prices && prices.length >
