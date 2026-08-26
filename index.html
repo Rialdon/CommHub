@@ -1,61 +1,396 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en" class="h-full">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404 - Halaman Tidak Ditemukan</title>
+<title>Rialo Community</title>
+
+<!-- Open Graph -->
+<meta property="og:title" content="Rialo Community">
+<meta property="og:description" content="The community hub for Rialo  updates, activities, and tools built with the community.">
+<meta property="og:image" content="https://community-rialo.vercel.app/logo_transparent.png">
+<meta property="og:url" content="https://community-rialo.vercel.app/">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rialo Community">
+<meta name="twitter:description" content="The community hub for Rialo  updates, activities, and tools built with the community.">
+<meta name="twitter:image" content="https://community-rialo.vercel.app/logo_transparent.png">
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0b0b0f;
-    color: #f5f5f5;
-    height: 100vh;
+  html, body { height: 100%; }
+  body { 
+    font-family: system-ui, sans-serif; 
+    overflow-x: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    transition: background 0.3s, color 0.3s; 
+  }
+  
+  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); }
+  .light-mode .glass { background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); }
+
+  .btn { padding: .6rem 1.2rem; border-radius: .75rem; background: #0ea5e9; color: white; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; text-align: center; }
+  
+  /* Tombol Chip */
+  .chip { 
+    background: #ffffff; 
+    color: #000000; 
+    border: 1px solid #ffffff; 
+    border-radius: 999px; 
+    padding: .3rem .9rem; 
+    cursor: pointer; 
+    font-size: .85rem;
+  }
+  .light-mode .chip { 
+    background: #000000; 
+    color: #ffffff; 
+    border: 1px solid #000000;
+  }
+
+  .logo-glow { filter: drop-shadow(0 0 10px rgba(201,168,118,0.9)) drop-shadow(0 0 30px rgba(201,168,118,0.55)); }
+  
+  /* Tema Terang & Gelap */
+  .dark-mode { background: #05060a; color: #e5e7eb; }
+  .light-mode { background: #f9fafb; color: #111827; }
+  
+  .light-mode .text-gray-300 { color: #374151; }
+  .footer-sub { color: #9ca3af; }
+  .light-mode .footer-sub { color: #4b5563; }
+
+  /* Warna Teks Crypto Adaptive */
+  .crypto-title { color: #111827; }
+  .crypto-sub { color: #4b5563; }
+  .dark-mode .crypto-title { color: #ffffff !important; }
+  .dark-mode .crypto-sub { color: #9ca3af !important; }
+
+  /* Progress Bar Loader */
+  .progress { height: 10px; border-radius: 999px; background: rgba(0,0,0,0.08); overflow: hidden; }
+  .dark-mode .progress { background: rgba(255,255,255,0.1); }
+  .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
+
+  /* Kartu Partner/Investor */
+  .partner-card {
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    padding: 20px;
-  }
-  .container {
-    max-width: 480px;
-  }
-  h1 {
-    font-size: 6rem;
-    font-weight: 800;
-    letter-spacing: -2px;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  p {
-    margin-top: 12px;
-    font-size: 1.05rem;
-    color: #a1a1aa;
-    line-height: 1.5;
-  }
-  a {
-    display: inline-block;
-    margin-top: 28px;
-    padding: 10px 24px;
-    border: 1px solid #3f3f46;
-    border-radius: 8px;
-    color: #f5f5f5;
+    padding: 0.6rem 1.25rem;
+    height: 50px;
+    border-radius: 0.85rem;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
     text-decoration: none;
-    font-size: 0.95rem;
-    transition: background 0.2s ease;
   }
-  a:hover {
-    background: #18181b;
+  .dark-mode .partner-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .partner-card:hover {
+    transform: translateY(-2px);
+    border-color: #0ea5e9;
+  }
+  .partner-card img {
+    height: 24px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.85;
+    transition: opacity 0.3s, filter 0.3s;
+  }
+  .partner-card:hover img { opacity: 1; }
+
+  /* Filter Warna Otomatis Logo Gambar */
+  .light-mode .partner-card img { filter: brightness(0); }
+  .dark-mode .partner-card img { filter: brightness(0) invert(1); }
+
+    /* Marquee Styling */
+  .marquee-wrap {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  }
+  .marquee-track-left, .marquee-track-right {
+    display: flex;
+    gap: 24px;
+    width: max-content;
+    will-change: transform;
+    align-items: center;
+  }
+  .marquee-track-left { animation: scrollLeft 25s linear infinite; }
+  .marquee-track-right { animation: scrollRight 25s linear infinite; }
+
+  @keyframes scrollLeft {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes scrollRight {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
   }
 </style>
 </head>
-<body>
-  <div class="container">
-    <h1>404</h1>
-    <p>Halaman yang kamu cari tidak ditemukan atau sudah tidak tersedia.</p>
-    <a href="/">Kembali ke Beranda</a>
+<body class="min-h-screen flex flex-col light-mode" id="body">
+
+<!-- Loading Screen -->
+<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
+  <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
+    <img src="https://i.imgur.com/wKWNeZe.png" class="w-20 h-20 mx-auto logo-glow" alt="Rialo Logo"/>
+    <h1 class="mt-4 font-bold text-xl">Rialo</h1>
+    <p class="text-sm opacity-70 mt-1">Loading experience…</p>
+    <div class="progress mt-4"><div id="bar" class="progress-bar"></div></div>
+    <p class="italic text-xs mt-2 opacity-60">Powered by Rialo Community</p>
   </div>
-</body>
-</html>
+</div>
+
+<!-- Navbar -->
+<header class="glass p-4 flex justify-between items-center sticky top-0 z-20">
+  <a href="https://rialo.io" target="_blank" class="flex items-center gap-2" style="text-decoration:none; color:inherit;">
+    <img src="https://i.imgur.com/wKWNeZe.png" class="w-8 h-8 logo-glow" alt="Rialo"/>
+    <span class="font-bold">Rialo</span>
+  </a>
+  <div class="flex gap-3 items-center">
+    <button onclick="toggleLang()" class="chip" id="langToggle">EN</button>
+    <button onclick="toggleMode()" class="chip" id="modeToggle">🌙</button>
+  </div>
+</header>
+
+<main class="flex-1">
+  <!-- Hero Section -->
+  <section class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+    <div>
+      <h1 id="heroTitle" class="text-4xl sm:text-5xl font-extrabold">
+        What is Rialo?
+      </h1>
+      <p id="heroText" class="mt-4 text-lg text-gray-300 opacity-90">
+        Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.
+      </p>
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <a href="games.html" class="btn" id="openHub">Play Games</a>
+        <a href="https://rialo.io" target="_blank" class="btn bg-gray-600" id="learnMore">Learn More</a>
+        <a href="https://discord.com/invite/RialoProtocol" target="_blank" class="btn col-span-2" style="background-color: #8b5cf6;" id="JoinCommunity">Join Community</a>
+      </div>
+    </div>
+    
+    <div class="glass rounded-2xl overflow-hidden shadow-md">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoMw10F4miJE831A_lcCDS6vKMRSpDUsPaLOFU5oGWkHHvoDnxgiPTM8nT&s=10" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
+    </div>
+  </section>
+
+  <!-- Market Overview Section -->
+  <section class="px-6 max-w-7xl mx-auto mb-10">
+    <div class="flex items-center justify-between mb-3 px-1">
+      <h3 class="crypto-title font-bold text-sm md:text-base flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Market Overview
+      </h3>
+      <span class="crypto-sub text-[10px] md:text-xs font-medium">Live Price Feeds</span>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+      <!-- BTC Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-title text-xs">Bitcoin (BTC)</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="btc-price" class="text-[11px] crypto-sub font-semibold">$0</span>
+            <span id="btc-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="btc-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
+
+      <!-- BNB Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-title text-xs">BNB</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="bnb-price" class="text-[11px] crypto-sub font-semibold">$0</span>
+            <span id="bnb-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="bnb-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
+
+      <!-- ETH Card -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-title text-xs">Ethereum (ETH)</h4>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="eth-price" class="text-[11px] crypto-sub font-semibold">$0</span>
+            <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
+          </div>
+        </div>
+        <div id="eth-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
+      </div>
+
+            <!-- Rialo Card (Soon) -->
+      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+        <div>
+          <h4 class="font-bold crypto-title text-xs">Rialo</h4>
+          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
+        </div>
+        <p class="crypto-sub text-[10px] mb-1">Chart Live Soon</p>
+      </div>
+
+    </div>
+
+    <!-- Tombol Trading Terminal Soon -->
+<div class="mt-4 text-center">
+  <div id="swap-root"></div>
+</div>
+  </section>
+
+  <!-- Investors & Partners Section -->
+  <section class="px-6 max-w-7xl mx-auto pb-12">
+    <div>
+      <!-- Investors -->
+      <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
+      <div class="marquee-wrap">
+        <div class="marquee-track-left">
+          <a href="https://www.sig.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">SUSQUEHANNA</span></a>
+          <a href="https://www.coinbase.com/ventures" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">COINBASE VENTURES</span></a>
+          <a href="https://panteracapital.com" target="_blank" class="partner-card"><span class="font-black px-2 text-xs crypto-title">PANTERA</span></a>
+          <a href="https://www.fabric.vc" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">FABRIC</span></a>
+          <a href="https://edgecapital.xyz" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">EDGE CAPITAL</span></a>
+          <a href="https://mystenlabs.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">MYSTEN LABS</span></a>
+
+          <!-- Duplikat Looping Mulus -->
+          <a href="https://www.sig.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">SUSQUEHANNA</span></a>
+          <a href="https://www.coinbase.com/ventures" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">COINBASE VENTURES</span></a>
+          <a href="https://panteracapital.com" target="_blank" class="partner-card"><span class="font-black px-2 text-xs crypto-title">PANTERA</span></a>
+          <a href="https://www.fabric.vc" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">FABRIC</span></a>
+          <a href="https://edgecapital.xyz" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">EDGE CAPITAL</span></a>
+          <a href="https://mystenlabs.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">MYSTEN LABS</span></a>
+        </div>
+      </div>
+
+            <!-- Partners Section (100% Teks Murni - Bebas Bug Gambar) -->
+      <p class="text-xs opacity-60 text-center mt-12 mb-5 uppercase tracking-widest font-semibold">Partners</p>
+      <div class="marquee-wrap">
+        <div class="marquee-track-right">
+          <a href="https://www.nasdaq.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">NASDAQ</span></a>
+          <a href="https://www.nyse.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">NYSE</span></a>
+          <a href="https://www.cboe.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">CBOE</span></a>
+          <a href="https://keplr.app" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">KEPLR</span></a>
+          <a href="https://predicate.io" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">PREDICATE</span></a>
+          <a href="https://doublezero.xyz/" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">DOUBLEZERO</span></a>
+          <a href="https://m0.xyz" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">M0</span></a>
+          
+          <!-- Duplikat Looping Mulus -->
+          <a href="https://www.nasdaq.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">NASDAQ</span></a>
+          <a href="https://www.nyse.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">NYSE</span></a>
+          <a href="https://www.cboe.com" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">CBOE</span></a>
+          <a href="https://keplr.app" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">KEPLR</span></a>
+          <a href="https://predicate.io" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">PREDICATE</span></a>
+          <a href="https://doublezero.xyz/" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">DOUBLEZERO</span></a>
+          <a href="https://m0.xyz" target="_blank" class="partner-card"><span class="font-extrabold px-2 text-xs crypto-title">M0</span></a>
+        </div>
+      </div>
+
+  </section>
+    <!-- About Rialo Section -->
+  <section class="px-6 py-14 border-t border-black/5 dark-about-border">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
+      <h2 class="crypto-title text-2xl sm:text-3xl font-extrabold tracking-wide leading-tight">
+      RIALO
+      </h2>
+      <div class="flex flex-col gap-4 text-base sm:text-lg font-semibold crypto-title">
+        <a href="https://www.rialo.io/" target="_blank" rel="noopener noreferrer" class="hover:opacity-60 transition">About Us</a>
+        <a href="https://rialo.io/docs" target="_blank" rel="noopener noreferrer" class="hover:opacity-60 transition">Docs</a>
+        <a href="https://www.rialo.io/blog" target="_blank" rel="noopener noreferrer" class="hover:opacity-60 transition">Blog</a>
+        <a href="https://learn.rialo.io/" target="_blank" rel="noopener noreferrer" class="hover:opacity-60 transition">Learn</a>
+        <a href="https://www.rialo.io/news" target="_blank" rel="noopener noreferrer" class="hover:opacity-60 transition">News</a>
+      </div>
+    </div>
+          </section>
+</main>
+
+<!-- Footer -->
+<footer class="p-6 text-center mt-auto">
+  <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo"/>
+  <p>
+    <span>© 2026 Rialo.</span><br>
+    <span class="footer-sub text-xs">Powered by Rialo Community</span>
+  </p>
+</footer>
+
+<!-- JavaScript Utama -->
+<script>
+  // Language toggle
+  let lang = "EN";
+  function toggleLang(){
+    lang = (lang === "EN") ? "ID" : "EN";
+    document.getElementById("langToggle").innerText = lang;
+    if(lang === "ID"){
+      document.getElementById("heroTitle").innerText = "Apa itu Rialo?";
+      document.getElementById("heroText").innerText = "Rialo adalah platform blockchain generasi berikutnya yang dibangun untuk menjembatani Web3 dan dunia nyata. Platform ini memungkinkan smart contract terhubung langsung dengan pembayaran data real-time, harga, cuaca, dan apa pun tanpa memerlukan oracle atau middleware yang rumit. Singkatnya, Rialo membuat aplikasi blockchain berjalan sehalus aplikasi yang Anda gunakan setiap hari.";
+      document.getElementById("openHub").innerText = "Mulai Bermain";
+      document.getElementById("learnMore").innerText = "Pelajari Lebih";
+      document.getElementById("JoinCommunity").innerText = "Gabung Komunitas";
+    } else {
+      document.getElementById("heroTitle").innerText = "What is Rialo?";
+      document.getElementById("heroText").innerText = "Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.";
+      document.getElementById("openHub").innerText = "Play Games";
+      document.getElementById("learnMore").innerText = "Learn More";
+      document.getElementById("JoinCommunity").innerText = "Join Community";
+    }
+  }
+
+  // Mode toggle
+  function toggleMode(){
+    const body = document.getElementById("body");
+    if(body.classList.contains("dark-mode")){
+      body.classList.remove("dark-mode"); 
+      body.classList.add("light-mode");
+      document.getElementById("modeToggle").innerText = "🌙";
+    } else {
+      body.classList.remove("light-mode"); 
+      body.classList.add("dark-mode");
+      document.getElementById("modeToggle").innerText = "☀️";
+    }
+  }
+
+  // Loader progress
+  const bar = document.getElementById('bar');
+  const loader = document.getElementById('loader');
+  let p = 0;
+  const int = setInterval(() => {
+    p += 15;
+    if (bar) bar.style.width = p + '%';
+    if (p >= 100) {
+      clearInterval(int);
+      setTimeout(() => {
+        if (loader) loader.style.display = 'none';
+      }, 250);
+  }
+   }, 60);
+</script>
+  
+  <script>
+  // Live Tickers — CoinGecko (gratis, CORS aktif, tanpa API key)
+  const COINGECKO_IDS = { btc: 'bitcoin', bnb: 'binancecoin', eth: 'ethereum' };
+
+  async function updateAllCharts() {
+    try {
+      const ids = Object.values(COINGECKO_IDS).join(',');
+      const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&sparkline=true&price_change_percentage=24h`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('CoinGecko unavailable');
+      const data = await res.json();
+
+      for (const [coinKey, geckoId] of Object.entries(COINGECKO_IDS)) {
+        const coin = data.find(c => c.id === geckoId);
+        if (!coin) continue;
+
+        const price = coin.current_price;
+        const change = coin.price_change_percentage_24h ?? 0;
+        const prices = coin.sparkline_in_7d?.price?.slice(-24) || [];
+
+        const priceElem = document.getElementById(`${coinKey}-price`);
+        const changeElem = document.getElementById(`${coinKey}-change`);
+
+        if (priceElem) priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+        if (changeElem) {
+          changeElem.innerText = `${change >= 0
