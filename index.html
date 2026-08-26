@@ -393,4 +393,356 @@
 
         if (priceElem) priceElem.innerText = `$${price.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
         if (changeElem) {
-          changeElem.innerText = `${change >= 0
+          changeElem.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+          changeElem.className = `text-[11px] font-bold ${change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+        }
+
+        if (prices.length > 0) renderSparkline(prices, `${coinKey}-sparkline`, change >= 0);
+      }
+    } catch (err) {
+      console.error('Gagal muat data harga:', err);
+    }
+  }
+
+  function renderSparkline(prices, containerId, isPositive) {
+    const width = 140;
+    const height = 40;
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    const range = max - min || 1;
+
+    const points = prices.map((val, i) => {
+      const x = (i / (prices.length - 1)) * width;
+      const y = height - ((val - min) / range) * (height - 8) - 4;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' L ');
+
+    const color = isPositive ? '#10b981' : '#f43f5e';
+    const el = document.getElementById(containerId);
+    if(el) {
+      el.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
+          <path d="M ${points}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      `;
+    }
+  }
+
+  updateAllCharts();
+  // CoinGecko rate limit lebih ketat dari Binance, jadi interval diperlonggar jadi 60 detik
+  setInterval(updateAllCharts, 60000);
+</script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script type="text/babel">
+  // @ts-nocheck
+  const { useState, useEffect } = React;
+
+  // Harga awal (fallback) sebelum data live dari CoinGecko masuk.
+  // RIALO tetap manual karena belum ada exchange publik.
+  const INITIAL_ASSETS = {
+    BTC: { name: "Bitcoin", price: 79398, color: "#F7931A", coingeckoId: "bitcoin" },
+    ETH: { name: "Ethereum", price: 2483.99, color: "#3C3C3D", coingeckoId: "ethereum" },
+    BNB: { name: "BNB", price: 700.18, color: "#F0B90B", coingeckoId: "binancecoin" },
+    RIALO: { name: "Rialo", price: 1, color: "#EDE3CE", coingeckoId: null },
+  };
+
+  const c = {
+    bg: "#0A0C0B",
+    panel: "#0E1211",
+    field: "#101413",
+    card: "#161B1A",
+    border: "rgba(255,255,255,0.08)",
+    borderSoft: "rgba(255,255,255,0.05)",
+    textDim: "rgba(255,255,255,0.35)",
+    textFaint: "rgba(255,255,255,0.25)",
+    textMuted: "rgba(255,255,255,0.55)",
+    mint: "#5EEAD4",
+    mintBorder: "rgba(45,212,191,0.3)",
+    mintBg: "rgba(45,212,191,0.1)",
+  };
+
+  function IconArrowDownUp({ size = 15, color = "#fff" }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m3 16 4 4 4-4" /><path d="M7 20V4" /><path d="m21 8-4-4-4 4" /><path d="M17 4v16" />
+      </svg>
+    );
+  }
+  function IconChevronDown({ size = 14, color = "#fff" }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    );
+  }
+  function IconLock({ size = 16, color = "#fff" }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+    );
+  }
+
+  function CoinIcon({ symbol, assets, size = 20 }) {
+    const asset = assets[symbol];
+    const wrap = {
+      width: size, height: size, borderRadius: "50%", backgroundColor: asset.color,
+      display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden",
+    };
+    if (symbol === "BTC") {
+      return <div style={wrap}><span style={{ color: "#fff", fontSize: size * 0.6, fontWeight: 800, lineHeight: 1 }}>₿</span></div>;
+    }
+    if (symbol === "ETH") {
+      return (
+        <div style={wrap}>
+          <svg width={size * 0.45} height={size * 0.72} viewBox="0 0 32 52" fill="none">
+            <path d="M16 0L15.5 1.6V35.3L16 35.8L31 27.1L16 0Z" fill="#C6C6C6" />
+            <path d="M16 0L1 27.1L16 35.8V19.1V0Z" fill="#fff" />
+            <path d="M16 38.6L15.7 39V51L16 51.9L31 30L16 38.6Z" fill="#C6C6C6" />
+            <path d="M16 51.9V38.6L1 30L16 51.9Z" fill="#fff" />
+            <path d="M16 35.8L31 27.1L16 19.1V35.8Z" fill="#8C8C8C" />
+            <path d="M1 27.1L16 35.8V19.1L1 27.1Z" fill="#C6C6C6" />
+          </svg>
+        </div>
+      );
+    }
+    if (symbol === "BNB") {
+      return (
+        <div style={wrap}>
+          <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 32 32" fill="none">
+            <rect x="10.5" y="0.5" width="11" height="11" transform="rotate(45 16 6)" fill="#fff" />
+            <rect x="1" y="10" width="11" height="11" transform="rotate(45 6.5 15.5)" fill="#fff" />
+            <rect x="20" y="10" width="11" height="11" transform="rotate(45 25.5 15.5)" fill="#fff" />
+            <rect x="10.5" y="19.5" width="11" height="11" transform="rotate(45 16 25)" fill="#fff" />
+            <rect x="12.5" y="12.5" width="7" height="7" transform="rotate(45 16 16)" fill="#fff" />
+          </svg>
+        </div>
+      );
+    }
+    return <div style={wrap} />;
+  }
+
+  function TokenPicker({ open, onClose, onSelect, exclude, assets }) {
+    if (!open) return null;
+    return (
+      <div style={{
+        position: "absolute", right: 0, top: "100%", marginTop: 8, width: 176, borderRadius: 16,
+        backgroundColor: c.card, border: `1px solid ${c.border}`, zIndex: 20, overflow: "hidden",
+      }}>
+        {Object.entries(assets).filter(([sym]) => sym !== exclude).map(([sym, a]) => (
+          <button key={sym} onClick={() => { onSelect(sym); onClose(); }} style={{
+            width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "10px 12px",
+            background: "transparent", border: "none", cursor: "pointer", textAlign: "left",
+          }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+            <CoinIcon symbol={sym} assets={assets} size={20} />
+            <span style={{ fontSize: 14, color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>{sym}</span>
+            <span style={{ fontSize: 12, color: c.textDim, marginLeft: "auto" }}>{a.name}</span>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  function TokenField({ label, symbol, amount, onAmountChange, onSymbol, exclude, readOnly, assets }) {
+    const [pickerOpen, setPickerOpen] = useState(false);
+    const asset = assets[symbol];
+    return (
+      <div style={{ borderRadius: 16, backgroundColor: c.field, border: `1px solid ${c.borderSoft}`, padding: "12px 16px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1, color: c.textFaint }}>{label}</span>
+          <span style={{ fontSize: 11, color: c.textFaint }}>
+            ${(Number(amount || 0) * asset.price).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+          </span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <input type="number" inputMode="decimal" placeholder="0.0" value={amount} readOnly={readOnly}
+            onChange={(e) => onAmountChange(e.target.value)}
+            style={{ background: "transparent", outline: "none", border: "none", fontSize: 24, fontWeight: 600, color: "#fff", width: "100%" }} />
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            <button onClick={() => setPickerOpen((v) => !v)} style={{
+              display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.05)",
+              border: "none", borderRadius: 999, padding: "6px 10px 6px 6px", cursor: "pointer",
+            }}>
+              <CoinIcon symbol={symbol} assets={assets} size={20} />
+              <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{symbol}</span>
+              <IconChevronDown size={14} color="rgba(255,255,255,0.5)" />
+            </button>
+            <TokenPicker open={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={onSymbol} exclude={exclude} assets={assets} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function SwapDemo() {
+    const [assets, setAssets] = useState(INITIAL_ASSETS);
+    const [priceStatus, setPriceStatus] = useState("loading"); // loading | live | fallback
+    const [expanded, setExpanded] = useState(false);
+    const [fromSym, setFromSym] = useState("BTC");
+    const [toSym, setToSym] = useState("RIALO");
+    const [fromAmt, setFromAmt] = useState("0.01");
+    const [account, setAccount] = useState(null);
+    const [connecting, setConnecting] = useState(false);
+    const [walletError, setWalletError] = useState("");
+
+    async function connectWallet() {
+      setWalletError("");
+      if (typeof window.ethereum === "undefined") {
+        setWalletError("Wallet tidak terdeteksi. Buka lewat browser yang punya wallet (MetaMask, Mises, Trust Wallet, dll).");
+        return;
+      }
+      try {
+        setConnecting(true);
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        setAccount(accounts[0]);
+      } catch (err) {
+        setWalletError("Koneksi wallet dibatalkan atau gagal.");
+      } finally {
+        setConnecting(false);
+      }
+    }
+
+    function shortAddr(addr) {
+      return addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
+    }
+
+    useEffect(() => {
+      let cancelled = false;
+
+      async function fetchPrices() {
+        const ids = Object.values(INITIAL_ASSETS)
+          .map((a) => a.coingeckoId)
+          .filter(Boolean)
+          .join(",");
+        try {
+          const res = await fetch(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`
+          );
+          if (!res.ok) throw new Error("CoinGecko request failed");
+          const data = await res.json();
+          if (cancelled) return;
+
+          setAssets((prev) => {
+            const next = { ...prev };
+            for (const sym of Object.keys(next)) {
+              const id = INITIAL_ASSETS[sym].coingeckoId;
+              if (id && data[id] && typeof data[id].usd === "number") {
+                next[sym] = { ...next[sym], price: data[id].usd };
+              }
+            }
+            return next;
+          });
+          setPriceStatus("live");
+        } catch (err) {
+          if (!cancelled) setPriceStatus("fallback");
+        }
+      }
+
+      fetchPrices();
+      const interval = setInterval(fetchPrices, 60000); // CoinGecko rate limit — jangan terlalu sering
+      return () => {
+        cancelled = true;
+        clearInterval(interval);
+      };
+    }, []);
+
+    const rate = assets[fromSym].price / assets[toSym].price;
+    const toAmt = fromAmt ? (Number(fromAmt) * rate).toFixed(6) : "";
+
+    function flip() { setFromSym(toSym); setToSym(fromSym); }
+
+    return (
+      <div style={{ width: "100%", maxWidth: 420, margin: "0 auto" }}>
+        <button onClick={() => setExpanded((v) => !v)} style={{
+          width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          borderRadius: 16, border: `1px solid ${c.mintBorder}`, backgroundColor: c.mintBg, color: c.mint,
+          fontWeight: 600, padding: "16px", cursor: "pointer",
+        }}>
+          {expanded ? "Close Trading" : "Trading"}
+        </button>
+
+        <div style={{
+          display: "grid", gridTemplateRows: expanded ? "1fr" : "0fr", opacity: expanded ? 1 : 0,
+          marginTop: expanded ? 12 : 0, transition: "all 300ms ease-out",
+        }}>
+          <div style={{ overflow: "hidden" }}>
+            <div style={{
+              borderRadius: 24, border: `1px solid ${c.border}`, backgroundColor: c.panel, padding: 16,
+              display: "flex", flexDirection: "column", gap: 8,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 4px 4px" }}>
+                <span style={{ fontSize: 14, fontWeight: 500, color: c.textMuted }}>Swap</span>
+                <span style={{ fontSize: 10, color: priceStatus === "live" ? c.mint : c.textFaint }}>
+                  {priceStatus === "loading" && "Memuat harga..."}
+                  {priceStatus === "live" && "● Live"}
+                  {priceStatus === "fallback" && "Harga fallback"}
+                </span>
+              </div>
+
+              <TokenField label="From" symbol={fromSym} amount={fromAmt} onAmountChange={setFromAmt} onSymbol={setFromSym} exclude={toSym} assets={assets} />
+
+              <div style={{ display: "flex", justifyContent: "center", margin: "-4px 0", position: "relative", zIndex: 10 }}>
+                <button onClick={flip} style={{
+                  width: 36, height: 36, borderRadius: "50%", backgroundColor: c.card, border: `1px solid ${c.border}`,
+                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+                }}>
+                  <IconArrowDownUp size={15} color={c.mint} />
+                </button>
+              </div>
+
+              <TokenField label="To (estimated)" symbol={toSym} amount={toAmt} onAmountChange={() => {}} onSymbol={setToSym} exclude={fromSym} readOnly assets={assets} />
+
+              <div style={{ fontSize: 11, color: c.textFaint, padding: "4px 4px 0" }}>
+                1 {fromSym} ≈ {rate.toLocaleString(undefined, { maximumFractionDigits: 6 })} {toSym}
+              </div>
+
+              {!account ? (
+                <button onClick={connectWallet} disabled={connecting} style={{
+                  width: "100%", marginTop: 8, borderRadius: 16, padding: "14px", fontWeight: 600,
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  background: c.mintBg, color: c.mint, border: `1px solid ${c.mintBorder}`, cursor: connecting ? "wait" : "pointer",
+                }}>
+                  {connecting ? "Menghubungkan..." : "Connect Wallet"}
+                </button>
+              ) : (
+                <button disabled title="Trading not yet active" style={{
+                  width: "100%", marginTop: 8, borderRadius: 16, padding: "14px", fontWeight: 600,
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "none", cursor: "not-allowed",
+                }}>
+                  <IconLock size={16} /> Locked
+                </button>
+              )}
+
+              {account && (
+                <p style={{ fontSize: 11, color: c.mint, textAlign: "center", padding: "4px 8px 0" }}>
+                  Wallet terhubung: {shortAddr(account)}
+                </p>
+              )}
+              {walletError && (
+                <p style={{ fontSize: 11, color: "#f43f5e", textAlign: "center", padding: "4px 8px 0" }}>
+                  {walletError}
+                </p>
+              )}
+
+              <p style={{ fontSize: 10, color: c.textFaint, textAlign: "center", padding: "4px 8px 0" }}>
+                Preview only. Swap is not functional yet — no real transactions on the blockchain yet.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('swap-root')).render(<SwapDemo />);
+</script>
+
+</body>
+</html>
