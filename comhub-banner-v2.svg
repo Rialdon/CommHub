@@ -27,7 +27,7 @@
   <text x="230" y="150" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="46" font-weight="800" fill="#F5F4F0">Com<tspan fill="#4CE0B3">Hub</tspan></text>
 
   <!-- headline, clear space below icon row -->
-  <text x="70" y="370" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="88" font-weight="800" fill="#F5F4F0">Welcome to <tspan fill="#4CE0B3">ComHub</tspan></text>
+  <text x="70" y="370" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="88" font-weight="800" fill="#F5F4F0">Welcome to Com<tspan fill="#4CE0B3">Hub</tspan></text>
 
   <!-- decorative accents, own arrangement, bottom-right area only -->
   <g opacity="0.95">
