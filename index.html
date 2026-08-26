@@ -490,6 +490,20 @@
       </svg>
     );
   }
+  function IconChevronDown({ size = 12, color = "#fff" }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    );
+  }
+  function IconLogOut({ size = 14, color = "#fff" }) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" />
+      </svg>
+    );
+  }
 
   function EthIcon({ size = 20 }) {
     return (
@@ -530,6 +544,7 @@
     const [slippage, setSlippage] = useState(0.5);
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
+    const [walletMenuOpen, setWalletMenuOpen] = useState(false);
 
     const payingETH = direction === "ETH_TO_TOKEN";
     const paySymbol = payingETH ? "ETH" : TOKEN_SYMBOL;
@@ -783,18 +798,45 @@
 
                 <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
                   {account && (
-                    <button
-                      onClick={disconnectWallet}
-                      title="Click to disconnect"
-                      style={{
-                        fontSize: 10, fontFamily: "monospace", color: c.textMuted,
-                        background: "rgba(255,255,255,0.05)", border: `1px solid ${c.borderSoft}`,
-                        padding: "3px 9px", borderRadius: 999, cursor: "pointer",
-                        display: "flex", alignItems: "center", gap: 5,
-                      }}>
-                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.mint, boxShadow: "0 0 5px rgba(94,234,212,0.7)" }} />
-                      {account.slice(0, 6)}...{account.slice(-4)}
-                    </button>
+                    <div style={{ position: "relative" }}>
+                      <button
+                        onClick={() => setWalletMenuOpen((v) => !v)}
+                        style={{
+                          fontSize: 10, fontFamily: "monospace", color: c.textMuted,
+                          background: "rgba(255,255,255,0.05)", border: `1px solid ${c.borderSoft}`,
+                          padding: "3px 8px 3px 9px", borderRadius: 999, cursor: "pointer",
+                          display: "flex", alignItems: "center", gap: 5,
+                        }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.mint, boxShadow: "0 0 5px rgba(94,234,212,0.7)" }} />
+                        {account.slice(0, 6)}...{account.slice(-4)}
+                        <IconChevronDown size={10} color={c.textFaint} />
+                      </button>
+
+                      {walletMenuOpen && (
+                        <React.Fragment>
+                          <div onClick={() => setWalletMenuOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 29 }} />
+                          <div style={{
+                            position: "absolute", top: "calc(100% + 6px)", right: 0, zIndex: 30, minWidth: 150,
+                            backgroundColor: c.card, border: `1px solid ${c.border}`, borderRadius: 12,
+                            overflow: "hidden", boxShadow: "0 12px 30px rgba(0,0,0,0.45)",
+                          }}>
+                            <div style={{ padding: "8px 12px", fontSize: 9, color: c.textFaint, borderBottom: `1px solid ${c.borderSoft}` }}>
+                              {account}
+                            </div>
+                            <button
+                              onClick={() => { setWalletMenuOpen(false); disconnectWallet(); }}
+                              style={{
+                                width: "100%", display: "flex", alignItems: "center", gap: 8,
+                                padding: "10px 12px", background: "transparent", border: "none", cursor: "pointer",
+                                fontSize: 12, fontWeight: 600, color: c.danger, textAlign: "left",
+                              }}>
+                              <IconLogOut size={14} color={c.danger} />
+                              Disconnect
+                            </button>
+                          </div>
+                        </React.Fragment>
+                      )}
+                    </div>
                   )}
 
                   {account && !onSepolia ? (
