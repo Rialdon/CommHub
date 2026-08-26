@@ -712,7 +712,11 @@
     };
 
     const doSwap = async () => {
-      if (!signer || !payAmount || Number(payAmount) <= 0) return;
+  if (!signer || !payAmount || Number(payAmount) <= 0) return;
+  if (!previewOut || Number(previewOut) <= 0) {
+    setStatus({ type: "error", text: "Price not loaded yet. Please wait a moment and try again." });
+    return;
+        }
       if (!onSepolia) {
         setStatus({ type: "error", text: "You're not on the Sepolia network. Click the Switch button first." });
         return;
@@ -754,16 +758,18 @@
     };
 
     const buttonLabel = !account
-      ? "Connect Wallet"
-      : !onSepolia
-      ? "Switch to Sepolia first"
-      : !configured
-      ? "Contract address not set"
-      : !payAmount
-      ? "Enter an amount"
-      : loading
-      ? "Processing..."
-      : `Swap ${paySymbol} → ${receiveSymbol}`;
+  ? "Connect Wallet"
+  : !onSepolia
+  ? "Switch to Sepolia first"
+  : !configured
+  ? "Contract address not set"
+  : !previewOut && payAmount
+  ? "Loading price..."
+  : !payAmount
+  ? "Enter an amount"
+  : loading
+  ? "Processing..."
+  : `Swap ${paySymbol} → ${receiveSymbol}`;
 
     const statusColors = {
       info: { bg: "rgba(139,127,255,0.1)", color: "#B4ACFF", border: "rgba(139,127,255,0.25)" },
