@@ -519,6 +519,7 @@
     const [provider, setProvider] = useState(null);
     const [signer, setSigner] = useState(null);
     const [account, setAccount] = useState(null);
+    const [chainIdHex, setChainIdHex] = useState(null);
     const [ethBalance, setEthBalance] = useState("0");
     const [tokenBalance, setTokenBalance] = useState("0");
     const [reserveETH, setReserveETH] = useState(null);
@@ -549,24 +550,13 @@
         await browserProvider.send("eth_requestAccounts", []);
 
         const network = await browserProvider.getNetwork();
-        if ("0x" + network.chainId.toString(16) !== SEPOLIA_CHAIN_ID_HEX) {
-          try {
-            await window.ethereum.request({
-              method: "wallet_switchEthereumChain",
-              params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }],
-            });
-          } catch (switchErr) {
-            setStatus({ type: "error", text: "Tolong pindah network ke Sepolia dulu di wallet kamu." });
-            setLoading(false);
-            return;
-          }
-        }
-
         const s = await browserProvider.getSigner();
         const addr = await s.getAddress();
+
         setProvider(browserProvider);
         setSigner(s);
         setAccount(addr);
+        setChainIdHex("0x" + network.chainId.toString(16));
         setStatus(null);
       } catch (err) {
         setStatus({ type: "error", text: "Gagal connect: " + (err.shortMessage || err.message) });
@@ -574,6 +564,25 @@
         setLoading(false);
       }
     }, []);
+
+    const switchToSepolia = useCallback(async () => {
+      if (!window.ethereum) return;
+      try {
+        setLoading(true);
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }],
+        });
+        setChainIdHex(SEPOLIA_CHAIN_ID_HEX);
+        setStatus(null);
+      } catch (err) {
+        setStatus({ type: "error", text: "Gagal ganti network: " + (err.shortMessage || err.message) });
+      } finally {
+        setLoading(false);
+      }
+    }, []);
+
+    const onSepolia = chainIdHex === SEPOLIA_CHAIN_ID_HEX;
 
     // Auto re-sync kalau user ganti akun atau ganti network dari wallet-nya sendiri
     useEffect(() => {
@@ -583,6 +592,7 @@
           setProvider(null);
           setSigner(null);
           setAccount(null);
+          setChainIdHex(null);
           setStatus(null);
         } else {
           connectWallet();
@@ -669,6 +679,10 @@
 
     const doSwap = async () => {
       if (!signer || !payAmount || Number(payAmount) <= 0) return;
+      if (!onSepolia) {
+        setStatus({ type: "error", text: "Kamu belum di network Sepolia. Klik tombol Switch dulu." });
+        return;
+      }
       setLoading(true);
       setStatus({ type: "info", text: "Menyiapkan transaksi..." });
       try {
@@ -707,6 +721,8 @@
 
     const buttonLabel = !account
       ? "Connect Wallet"
+      : !onSepolia
+      ? "Ganti ke Sepolia dulu"
       : !configured
       ? "Alamat kontrak belum diisi"
       : !payAmount
@@ -740,32 +756,56 @@
               borderRadius: 24, border: `1px solid ${c.border}`, backgroundColor: c.panel, padding: 16,
               display: "flex", flexDirection: "column", gap: 8, textAlign: "left",
             }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 4px 4px" }}>
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                flexWrap: "wrap", gap: 6, padding: "0 4px 4px",
+              }}>
                 <span style={{ fontSize: 14, fontWeight: 500, color: c.textMuted }}>Swap ETH ⇄ {TOKEN_SYMBOL}</span>
-                <span style={{ fontSize: 10, fontFamily: "monospace", color: c.mint, background: c.mintBg, border: `1px solid ${c.mintBorder}`, padding: "2px 8px", borderRadius: 999 }}>
-                  Sepolia
-                </span>
-              </div>
 
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 4px" }}>
-                <span style={{
-                  fontSize: 11, fontFamily: "monospace", display: "flex", alignItems: "center", gap: 6,
-                  color: account ? c.mint : c.textFaint,
-                }}>
-                  <span style={{
-                    width: 7, height: 7, borderRadius: "50%",
-                    background: account ? c.mint : "rgba(255,255,255,0.2)",
-                    boxShadow: account ? "0 0 6px rgba(94,234,212,0.7)" : "none",
-                  }} />
-                  {account ? `Connected: ${account.slice(0, 6)}...${account.slice(-4)}` : "Wallet belum konek"}
-                </span>
-                {account && (
-                  <button onClick={() => { setProvider(null); setSigner(null); setAccount(null); setStatus(null); }} style={{
-                    fontSize: 10, color: c.textFaint, background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline",
-                  }}>
-                    Disconnect
-                  </button>
-                )}
+                <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                  {account && (
+                    <button
+                      onClick={() => { setProvider(null); setSigner(null); setAccount(null); setChainIdHex(null); setStatus(null); }}
+                      title="Klik untuk disconnect"
+                      style={{
+                        fontSize: 10, fontFamily: "monospace", color: c.textMuted,
+                        background: "rgba(255,255,255,0.05)", border: `1px solid ${c.borderSoft}`,
+                        padding: "3px 9px", borderRadius: 999, cursor: "pointer",
+                        display: "flex", alignItems: "center", gap: 5,
+                      }}>
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.mint, boxShadow: "0 0 5px rgba(94,234,212,0.7)" }} />
+                      {account.slice(0, 6)}...{account.slice(-4)}
+                    </button>
+                  )}
+
+                  {account && !onSepolia ? (
+                    <>
+                      <span style={{
+                        fontSize: 10, fontFamily: "monospace", color: c.danger,
+                        background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.3)",
+                        padding: "3px 9px", borderRadius: 999,
+                      }}>
+                        ⚠ Wrong Network
+                      </span>
+                      <button onClick={switchToSepolia} style={{
+                        fontSize: 10, fontWeight: 600, color: "#06110C", background: c.mint,
+                        border: "none", padding: "3px 10px", borderRadius: 999, cursor: "pointer",
+                      }}>
+                        Switch
+                      </button>
+                    </>
+                  ) : (
+                    <span style={{
+                      fontSize: 10, fontFamily: "monospace",
+                      color: account ? c.mint : c.textFaint,
+                      background: account ? c.mintBg : "rgba(255,255,255,0.04)",
+                      border: `1px solid ${account ? c.mintBorder : c.borderSoft}`,
+                      padding: "3px 9px", borderRadius: 999,
+                    }}>
+                      Sepolia
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div style={{ borderRadius: 16, backgroundColor: c.field, border: `1px solid ${c.borderSoft}`, padding: "12px 16px" }}>
@@ -834,14 +874,14 @@
               </div>
 
               <button
-                disabled={loading || (account && (!configured || !payAmount))}
-                onClick={account ? doSwap : connectWallet}
+                disabled={loading || (account && onSepolia && (!configured || !payAmount))}
+                onClick={!account ? connectWallet : !onSepolia ? switchToSepolia : doSwap}
                 style={{
                   width: "100%", marginTop: 8, borderRadius: 16, padding: "14px", fontWeight: 600, fontSize: 15,
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8, border: "none",
                   cursor: loading ? "not-allowed" : "pointer",
-                  background: !account ? c.mint : (!configured || !payAmount) ? "rgba(255,255,255,0.05)" : c.mint,
-                  color: !account ? "#06110C" : (!configured || !payAmount) ? "rgba(255,255,255,0.35)" : "#06110C",
+                  background: !account ? c.mint : !onSepolia ? "#FBBF24" : (!configured || !payAmount) ? "rgba(255,255,255,0.05)" : c.mint,
+                  color: !account ? "#06110C" : !onSepolia ? "#111827" : (!configured || !payAmount) ? "rgba(255,255,255,0.35)" : "#06110C",
                 }}>
                 {!account && <IconWallet size={16} color="#06110C" />}
                 {buttonLabel}
