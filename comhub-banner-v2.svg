@@ -29,6 +29,9 @@
   <!-- headline, clear space below icon row -->
   <text x="70" y="370" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="88" font-weight="800" fill="#F5F4F0">Welcome to Com<tspan fill="#4CE0B3">Hub</tspan></text>
 
+  <!-- tagline -->
+  <text x="70" y="420" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="28" fill="#9AA3AE">Built by the community, for the community.</text>
+
   <!-- decorative accents, own arrangement, bottom-right area only -->
   <g opacity="0.95">
     <circle cx="980" cy="150" r="10" fill="#F2B705"/>
