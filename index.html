@@ -935,7 +935,7 @@
               </div>
 
               <button
-                disabled={loading || (account && onSepolia && (!configured || !payAmount))}
+                disabled={loading || (account && onSepolia && (!configured || !payAmount || !previewOut))}
                 onClick={!account ? connectWallet : !onSepolia ? switchToSepolia : doSwap}
                 style={{
                   width: "100%", marginTop: 8, borderRadius: 16, padding: "14px", fontWeight: 600, fontSize: 15,
