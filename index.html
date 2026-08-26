@@ -594,7 +594,7 @@
     async function connectWallet() {
       setWalletError("");
       if (typeof window.ethereum === "undefined") {
-        setWalletError("Wallet tidak terdeteksi. Buka lewat browser yang punya wallet (MetaMask, Mises, Trust Wallet, dll).");
+        setWalletError("No wallet detected. Open this site in a wallet-enabled browser (MetaMask, Mises, Trust Wallet, etc).");
         return;
       }
       try {
@@ -602,7 +602,7 @@
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         setAccount(accounts[0]);
       } catch (err) {
-        setWalletError("Koneksi wallet dibatalkan atau gagal.");
+        setWalletError("Wallet connection was cancelled or failed.");
       } finally {
         setConnecting(false);
       }
@@ -679,7 +679,7 @@
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 4px 4px" }}>
                 <span style={{ fontSize: 14, fontWeight: 500, color: c.textMuted }}>Swap</span>
                 <span style={{ fontSize: 10, color: priceStatus === "live" ? c.mint : c.textFaint }}>
-                  {priceStatus === "loading" && "Memuat harga..."}
+                  {priceStatus === "loading" && "Loading prices..."}
                   {priceStatus === "live" && "● Live"}
                   {priceStatus === "fallback" && "Harga fallback"}
                 </span>
@@ -708,7 +708,7 @@
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                   background: c.mintBg, color: c.mint, border: `1px solid ${c.mintBorder}`, cursor: connecting ? "wait" : "pointer",
                 }}>
-                  {connecting ? "Menghubungkan..." : "Connect Wallet"}
+                  {connecting ? "Connecting..." : "Connect Wallet"}
                 </button>
               ) : (
                 <button disabled title="Trading not yet active" style={{
@@ -722,7 +722,7 @@
 
               {account && (
                 <p style={{ fontSize: 11, color: c.mint, textAlign: "center", padding: "4px 8px 0" }}>
-                  Wallet terhubung: {shortAddr(account)}
+                  Wallet connected: {shortAddr(account)}
                 </p>
               )}
               {walletError && (
