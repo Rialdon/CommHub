@@ -446,6 +446,7 @@
   const TOKEN_ADDRESS         = "0x12934cb5e37e1eeec80e889df7614febe312ecd9";
   const TOKEN_SYMBOL          = "RIALO";
   const SEPOLIA_CHAIN_ID_HEX  = "0xaa36a7"; // 11155111
+  const RPC_URL               = "https://ethereum-sepolia-rpc.publicnode.com"; // buat baca data tanpa wallet
   /* =========================================================================== */
 
   const SWAP_ABI = [
@@ -553,6 +554,10 @@
     const configured = SWAP_CONTRACT_ADDRESS.startsWith("0x") && SWAP_CONTRACT_ADDRESS.length === 42
       && TOKEN_ADDRESS.startsWith("0x") && TOKEN_ADDRESS.length === 42;
 
+    // Provider read-only, nggak butuh wallet connect. Dipakai buat ambil reserves/estimasi
+    // dan balance (kalau account udah kebaca dari sesi sebelumnya) walau belum konek.
+    const readProvider = useMemo(() => new ethers.JsonRpcProvider(RPC_URL), []);
+
     const connectWallet = useCallback(async () => {
       if (!window.ethereum) {
         setStatus({ type: "error", text: "Wallet not detected. Open this in a browser with MetaMask (or the MetaMask app on mobile)." });
@@ -644,32 +649,32 @@
     }, [account, connectWallet]);
 
     const refreshData = useCallback(async () => {
-      if (!provider || !configured) return;
+      if (!configured) return;
       try {
-        const swap = new ethers.Contract(SWAP_CONTRACT_ADDRESS, SWAP_ABI, provider);
+        // Reserves dibaca lewat readProvider, jadi tetep update walau wallet belum konek
+        const swap = new ethers.Contract(SWAP_CONTRACT_ADDRESS, SWAP_ABI, readProvider);
         const [rETH, rToken] = await swap.getReserves();
         setReserveETH(rETH);
         setReserveToken(rToken);
 
         if (account) {
-          const ethBal = await provider.getBalance(account);
+          const ethBal = await readProvider.getBalance(account);
           setEthBalance(ethers.formatEther(ethBal));
 
-          const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, provider);
+          const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, readProvider);
           const tBal = await token.balanceOf(account);
           setTokenBalance(ethers.formatEther(tBal));
         }
       } catch (err) {
         console.error(err);
       }
-    }, [provider, account, configured]);
+    }, [readProvider, account, configured]);
 
     useEffect(() => { refreshData(); }, [refreshData]);
     useEffect(() => {
-      if (!provider) return;
       const id = setInterval(refreshData, 8000);
       return () => clearInterval(id);
-    }, [provider, refreshData]);
+    }, [refreshData]);
 
     // preview hasil swap pakai rumus constant-product yang sama kayak kontrak (fee 0.3%)
     const previewOut = useMemo(() => {
@@ -704,6 +709,17 @@
         return null;
       }
     }, [payAmount, reserveETH, reserveToken, payingETH]);
+
+    const applyPercent = (pct) => {
+      const balance = Number(payingETH ? ethBalance : tokenBalance);
+      if (!balance || balance <= 0) return;
+      let amount = balance * pct;
+      if (payingETH && pct === 1) {
+        // Max buat ETH: sisain dikit buat gas fee biar ga gagal
+        amount = Math.max(balance - 0.0015, 0);
+      }
+      setPayAmount(amount > 0 ? amount.toFixed(6) : "");
+    };
 
     const switchDirection = () => {
       setDirection(d => d === "ETH_TO_TOKEN" ? "TOKEN_TO_ETH" : "ETH_TO_TOKEN");
@@ -745,13 +761,14 @@
           tx = await swap.swapTokenForETH(amountIn, minOut);
         }
 
-        setStatus({ type: "info", text: "Waiting for confirmation: " + tx.hash.slice(0, 10) + "..." });
+        setStatus({ type: "info", text: "Waiting for confirmation...", hash: tx.hash });
         await tx.wait();
-        setStatus({ type: "success", text: "Swap successful! Tx: " + tx.hash.slice(0, 10) + "..." });
+        setStatus({ type: "success", text: "Swap successful!", hash: tx.hash });
         setPayAmount("");
         refreshData();
       } catch (err) {
-        setStatus({ type: "error", text: "Swap failed: " + (err.shortMessage || err.message || "unknown error") });
+        const failedHash = err.receipt?.hash || err.transaction?.hash || null;
+        setStatus({ type: "error", text: "Swap failed: " + (err.shortMessage || err.message || "unknown error"), hash: failedHash });
       } finally {
         setLoading(false);
       }
@@ -889,6 +906,31 @@
                     <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{paySymbol}</span>
                   </div>
                 </div>
+
+                <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                  {[
+                    { label: "25%", pct: 0.25 },
+                    { label: "50%", pct: 0.5 },
+                    { label: "75%", pct: 0.75 },
+                    { label: "Max", pct: 1 },
+                  ].map((btn) => (
+                    <button
+                      key={btn.label}
+                      type="button"
+                      onClick={() => applyPercent(btn.pct)}
+                      disabled={!account}
+                      style={{
+                        flex: 1, textAlign: "center", padding: "5px 0", borderRadius: 8, fontSize: 11,
+                        fontWeight: 600, fontFamily: "monospace", border: `1px solid ${c.borderSoft}`,
+                        color: account ? c.mint : c.textFaint,
+                        background: "rgba(255,255,255,0.03)",
+                        cursor: account ? "pointer" : "not-allowed",
+                        opacity: account ? 1 : 0.5,
+                      }}>
+                      {btn.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div style={{ display: "flex", justifyContent: "center", margin: "-4px 0", position: "relative", zIndex: 10 }}>
@@ -962,6 +1004,18 @@
                   border: `1px solid ${statusColors[status.type].border}`,
                 }}>
                   {status.text}
+                  {status.hash && (
+                    <>
+                      {" "}
+                      <a
+                        href={`https://sepolia.etherscan.io/tx/${status.hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
+                        {status.hash.slice(0, 10)}...{status.hash.slice(-6)}
+                      </a>
+                    </>
+                  )}
                 </div>
               )}
 
