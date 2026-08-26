@@ -540,7 +540,7 @@
 
     const connectWallet = useCallback(async () => {
       if (!window.ethereum) {
-        setStatus({ type: "error", text: "Wallet nggak terdeteksi. Buka lewat browser yang ada MetaMask (atau app MetaMask di HP)." });
+        setStatus({ type: "error", text: "Wallet not detected. Open this in a browser with MetaMask (or the MetaMask app on mobile)." });
         return;
       }
       try {
@@ -559,7 +559,7 @@
         setChainIdHex("0x" + network.chainId.toString(16));
         setStatus(null);
       } catch (err) {
-        setStatus({ type: "error", text: "Gagal connect: " + (err.shortMessage || err.message) });
+        setStatus({ type: "error", text: "Failed to connect: " + (err.shortMessage || err.message) });
       } finally {
         setLoading(false);
       }
@@ -576,13 +576,32 @@
         setChainIdHex(SEPOLIA_CHAIN_ID_HEX);
         setStatus(null);
       } catch (err) {
-        setStatus({ type: "error", text: "Gagal ganti network: " + (err.shortMessage || err.message) });
+        setStatus({ type: "error", text: "Failed to switch network: " + (err.shortMessage || err.message) });
       } finally {
         setLoading(false);
       }
     }, []);
 
     const onSepolia = chainIdHex === SEPOLIA_CHAIN_ID_HEX;
+
+    const disconnectWallet = useCallback(async () => {
+      // Try to actually revoke the site's permission so the wallet asks again next time.
+      // Not all wallets support this (EIP-2255), so we fall back silently either way.
+      try {
+        await window.ethereum?.request({
+          method: "wallet_revokePermissions",
+          params: [{ eth_accounts: {} }],
+        });
+      } catch (err) {
+        // Wallet doesn't support revoke, or user's wallet blocked it — that's fine,
+        // we just reset our local state below.
+      }
+      setProvider(null);
+      setSigner(null);
+      setAccount(null);
+      setChainIdHex(null);
+      setStatus(null);
+    }, []);
 
     // Auto re-sync kalau user ganti akun atau ganti network dari wallet-nya sendiri
     useEffect(() => {
@@ -680,11 +699,11 @@
     const doSwap = async () => {
       if (!signer || !payAmount || Number(payAmount) <= 0) return;
       if (!onSepolia) {
-        setStatus({ type: "error", text: "Kamu belum di network Sepolia. Klik tombol Switch dulu." });
+        setStatus({ type: "error", text: "You're not on the Sepolia network. Click the Switch button first." });
         return;
       }
       setLoading(true);
-      setStatus({ type: "info", text: "Menyiapkan transaksi..." });
+      setStatus({ type: "info", text: "Preparing transaction..." });
       try {
         const swap = new ethers.Contract(SWAP_CONTRACT_ADDRESS, SWAP_ABI, signer);
         const amountIn = ethers.parseEther(payAmount);
@@ -699,21 +718,21 @@
           const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, signer);
           const allowance = await token.allowance(account, SWAP_CONTRACT_ADDRESS);
           if (allowance < amountIn) {
-            setStatus({ type: "info", text: "Approve token dulu, konfirmasi di wallet..." });
+            setStatus({ type: "info", text: "Approving token first, confirm in your wallet..." });
             const approveTx = await token.approve(SWAP_CONTRACT_ADDRESS, amountIn);
             await approveTx.wait();
           }
-          setStatus({ type: "info", text: "Swap diajukan, konfirmasi di wallet..." });
+          setStatus({ type: "info", text: "Swap submitted, confirm in your wallet..." });
           tx = await swap.swapTokenForETH(amountIn, minOut);
         }
 
-        setStatus({ type: "info", text: "Menunggu konfirmasi: " + tx.hash.slice(0, 10) + "..." });
+        setStatus({ type: "info", text: "Waiting for confirmation: " + tx.hash.slice(0, 10) + "..." });
         await tx.wait();
-        setStatus({ type: "success", text: "Swap berhasil! Tx: " + tx.hash.slice(0, 10) + "..." });
+        setStatus({ type: "success", text: "Swap successful! Tx: " + tx.hash.slice(0, 10) + "..." });
         setPayAmount("");
         refreshData();
       } catch (err) {
-        setStatus({ type: "error", text: "Swap gagal: " + (err.shortMessage || err.message || "unknown error") });
+        setStatus({ type: "error", text: "Swap failed: " + (err.shortMessage || err.message || "unknown error") });
       } finally {
         setLoading(false);
       }
@@ -722,13 +741,13 @@
     const buttonLabel = !account
       ? "Connect Wallet"
       : !onSepolia
-      ? "Ganti ke Sepolia dulu"
+      ? "Switch to Sepolia first"
       : !configured
-      ? "Alamat kontrak belum diisi"
+      ? "Contract address not set"
       : !payAmount
-      ? "Masukkan jumlah"
+      ? "Enter an amount"
       : loading
-      ? "Memproses..."
+      ? "Processing..."
       : `Swap ${paySymbol} → ${receiveSymbol}`;
 
     const statusColors = {
@@ -765,8 +784,8 @@
                 <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
                   {account && (
                     <button
-                      onClick={() => { setProvider(null); setSigner(null); setAccount(null); setChainIdHex(null); setStatus(null); }}
-                      title="Klik untuk disconnect"
+                      onClick={disconnectWallet}
+                      title="Click to disconnect"
                       style={{
                         fontSize: 10, fontFamily: "monospace", color: c.textMuted,
                         background: "rgba(255,255,255,0.05)", border: `1px solid ${c.borderSoft}`,
@@ -810,8 +829,8 @@
 
               <div style={{ borderRadius: 16, backgroundColor: c.field, border: `1px solid ${c.borderSoft}`, padding: "12px 16px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: c.textFaint, marginBottom: 8 }}>
-                  <span>Kamu bayar</span>
-                  <span>Saldo: {Number(payingETH ? ethBalance : tokenBalance).toFixed(4)}</span>
+                  <span>You pay</span>
+                  <span>Balance: {Number(payingETH ? ethBalance : tokenBalance).toFixed(4)}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <input type="number" inputMode="decimal" placeholder="0.0" value={payAmount}
@@ -835,8 +854,8 @@
 
               <div style={{ borderRadius: 16, backgroundColor: c.field, border: `1px solid ${c.borderSoft}`, padding: "12px 16px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: c.textFaint, marginBottom: 8 }}>
-                  <span>Kamu terima (estimasi)</span>
-                  <span>Saldo: {Number(payingETH ? tokenBalance : ethBalance).toFixed(4)}</span>
+                  <span>You receive (estimated)</span>
+                  <span>Balance: {Number(payingETH ? tokenBalance : ethBalance).toFixed(4)}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <input type="text" placeholder="0.0" value={previewOut ? Number(previewOut).toFixed(6) : ""} readOnly
@@ -900,7 +919,7 @@
 
               {!configured && (
                 <p style={{ fontSize: 10, color: c.textFaint, textAlign: "center", padding: "4px 8px 0" }}>
-                  Alamat kontrak swap belum dikonfigurasi.
+                  Swap contract address not configured yet.
                 </p>
               )}
             </div>
