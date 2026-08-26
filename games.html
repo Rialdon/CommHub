@@ -1,84 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
+<!DOCTYPE html>
+<html lang="en" class="h-full">
 <head>
-<link rel="icon" type="image/png" href="https://comhub-us.vercel.app/icon-app.svg">
-<link rel="apple-touch-icon" href="https://comhub-us.vercel.app/comhub-logo-lockup.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ComHub Games </title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  body { font-family: system-ui, sans-serif; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
-  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); }
-  .btn { padding: .6rem 1.2rem; border-radius: .75rem; background: #0ea5e9; color: white; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; }
-  
-  /* Tombol Chip */
-  .chip { 
-    background: #ffffff; 
-    color: #000000; 
-    border: 1px solid #ffffff; 
-    border-radius: 999px; 
-    padding: .3rem .9rem; 
-    cursor: pointer; 
-    font-size: .85rem;
-  }
-  .light-mode .chip { 
-    background: #000000; 
-    color: #ffffff; 
-    border: 1px solid #000000;
-  }
+<title>Community Hub</title>
 
-  .logo-glow { filter: drop-shadow(0 0 10px rgba(201,168,118,0.9)) drop-shadow(0 0 30px rgba(201,168,118,0.55)); }
-  
-  /* Pengaturan Tema Terang & Gelap Menyeluruh */
-  .dark-mode { background: #05060a; color: #e5e7eb; }
-  .light-mode { background: #f9fafb; color: #111827; }
-  
-  .light-mode .glass { background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); }
-  .light-mode .text-gray-300 { color: #374151; }
-  
-  .footer-sub { color: #9ca3af; }
-  .light-mode .footer-sub { color: #4b5563; }
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="https://comhub-us.vercel.app/icon-app.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="https://comhub-us.vercel.app/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://comhub-us.vercel.app/apple-touch-icon.png">
 
-  /* Kartu Game: Otomatis Putih di Light Mode, Hitam Elegan di Dark Mode */
-  .game-card {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 1rem;
-    padding: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    transition: background 0.3s, border-color 0.3s;
-  }
-  body.dark-mode .game-card {
-    background: #0f1117 !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  }
-
-  .game-img { 
-    height: 160px; 
-    object-fit: contain; 
-    background: #f3f4f6; 
-    border-radius: .5rem; 
-    width: 100%; 
-    transition: background 0.3s;
-  }
-  body.dark-mode .game-img { 
-    background: #1a1d24 !important; 
-  }
-</style>
-</head>
-<body class="min-h-screen flex flex-col light-mode" id="body">
-
-<!-- Navbar -->
-<header class="glass p-4 flex justify-between items-center sticky top-0 z-20">
-  <a href="https://rialo.io" target="_blank" class="flex items-center gap-2" style="text-decoration:none; color:inherit;">
-    <img src="https://comhub-us.vercel.app/comhub-logo-lockup.svg" class="w-8 h-8 logo-glow" alt="ComHub Games"/>
-  </a>
-  <div class="flex gap-3 items-center">
-    <button onclick="toggleLang()" class="chip" id="langToggle">EN</button>
-    <button onclick="toggleMode()" class="chip" id="modeToggle">🌙</button>
-  </div>
-</header>
+<!-- Open Graph -->
+<meta property="og:title" content="Community Hub">
+<meta property="og:description" content="The community hub for Rialo updates, activities, and tools built with the community.">
+<meta property="og:image" content="https://comhub-us.vercel.app/icon-app.svg">
+<meta property="og:url" content="https://comhub-us.vercel.app/">
+<meta property="og:type" content="website">
 
 <main class="flex-1">
   <!-- About -->
