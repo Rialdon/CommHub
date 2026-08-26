@@ -544,7 +544,8 @@
       }
       try {
         setLoading(true);
-        const browserProvider = new ethers.BrowserProvider(window.ethereum);
+        // "any" supaya ethers nggak throw error kalau network di wallet berubah-ubah
+        const browserProvider = new ethers.BrowserProvider(window.ethereum, "any");
         await browserProvider.send("eth_requestAccounts", []);
 
         const network = await browserProvider.getNetwork();
@@ -573,6 +574,30 @@
         setLoading(false);
       }
     }, []);
+
+    // Auto re-sync kalau user ganti akun atau ganti network dari wallet-nya sendiri
+    useEffect(() => {
+      if (!window.ethereum) return;
+      const handleAccountsChanged = (accounts) => {
+        if (!accounts || accounts.length === 0) {
+          setProvider(null);
+          setSigner(null);
+          setAccount(null);
+          setStatus(null);
+        } else {
+          connectWallet();
+        }
+      };
+      const handleChainChanged = () => {
+        if (account) connectWallet();
+      };
+      window.ethereum.on?.("accountsChanged", handleAccountsChanged);
+      window.ethereum.on?.("chainChanged", handleChainChanged);
+      return () => {
+        window.ethereum.removeListener?.("accountsChanged", handleAccountsChanged);
+        window.ethereum.removeListener?.("chainChanged", handleChainChanged);
+      };
+    }, [account, connectWallet]);
 
     const refreshData = useCallback(async () => {
       if (!provider || !configured) return;
@@ -720,6 +745,27 @@
                 <span style={{ fontSize: 10, fontFamily: "monospace", color: c.mint, background: c.mintBg, border: `1px solid ${c.mintBorder}`, padding: "2px 8px", borderRadius: 999 }}>
                   Sepolia
                 </span>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 4px" }}>
+                <span style={{
+                  fontSize: 11, fontFamily: "monospace", display: "flex", alignItems: "center", gap: 6,
+                  color: account ? c.mint : c.textFaint,
+                }}>
+                  <span style={{
+                    width: 7, height: 7, borderRadius: "50%",
+                    background: account ? c.mint : "rgba(255,255,255,0.2)",
+                    boxShadow: account ? "0 0 6px rgba(94,234,212,0.7)" : "none",
+                  }} />
+                  {account ? `Connected: ${account.slice(0, 6)}...${account.slice(-4)}` : "Wallet belum konek"}
+                </span>
+                {account && (
+                  <button onClick={() => { setProvider(null); setSigner(null); setAccount(null); setStatus(null); }} style={{
+                    fontSize: 10, color: c.textFaint, background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline",
+                  }}>
+                    Disconnect
+                  </button>
+                )}
               </div>
 
               <div style={{ borderRadius: 16, backgroundColor: c.field, border: `1px solid ${c.borderSoft}`, padding: "12px 16px" }}>
