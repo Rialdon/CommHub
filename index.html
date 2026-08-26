@@ -27,11 +27,12 @@
     transition: background 0.3s, color 0.3s; 
   }
   .logo-text {
-  fill: #000000;
+  fill: #FFFFFF; 
 }
-#body:not(.light-mode) .logo-text {
-  fill: #FFFFFF;
+body.light-mode .logo-text {
+  fill: #000000; 
 }
+
   
   .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); }
   .light-mode .glass { background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); }
