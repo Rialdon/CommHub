@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
-<!DOCTYPE html>
-<html lang="en" class="h-full">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Community Hub</title>
+<title>ComHub Games</title>
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="https://comhub-us.vercel.app/icon-app.svg">
@@ -13,11 +11,133 @@
 <link rel="apple-touch-icon" href="https://comhub-us.vercel.app/apple-touch-icon.png">
 
 <!-- Open Graph -->
-<meta property="og:title" content="Community Hub">
+<meta property="og:title" content="ComHub Games">
 <meta property="og:description" content="The community hub for Rialo updates, activities, and tools built with the community.">
 <meta property="og:image" content="https://comhub-us.vercel.app/icon-app.svg">
-<meta property="og:url" content="https://comhub-us.vercel.app/">
+<meta property="og:url" content="https://comhub-us.vercel.app/games.html">
 <meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ComHub Games">
+<meta name="twitter:description" content="The community hub for Rialo  updates, activities, and tools built with the community.">
+<meta name="twitter:image" content="https://comhub-us.vercel.app//logo_transparent.png">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  html, body { height: 100%; }
+  body { 
+    font-family: system-ui, sans-serif; 
+    overflow-x: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    transition: background 0.3s, color 0.3s; 
+  }
+  .logo-text {
+  fill: #FFFFFF; 
+}
+body.light-mode .logo-text {
+  fill: #000000; 
+}
+
+  
+  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); }
+  .light-mode .glass { background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); }
+
+  .btn { padding: .6rem 1.2rem; border-radius: .75rem; background: #0ea5e9; color: white; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; text-align: center; }
+  
+  /* Tombol Chip */
+  .chip { 
+    background: #ffffff; 
+    color: #000000; 
+    border: 1px solid #ffffff; 
+    border-radius: 999px; 
+    padding: .3rem .9rem; 
+    cursor: pointer; 
+    font-size: .85rem;
+  }
+  .light-mode .chip { 
+    background: #000000; 
+    color: #ffffff; 
+    border: 1px solid #000000;
+  }
+
+  .logo-glow { filter: drop-shadow(0 0 10px rgba(201,168,118,0.9)) drop-shadow(0 0 30px rgba(201,168,118,0.55)); }
+  
+  /* Tema Terang & Gelap */
+  .dark-mode { background: #05060a; color: #e5e7eb; }
+  .light-mode { background: #f9fafb; color: #111827; }
+  
+  .light-mode .text-gray-300 { color: #374151; }
+  .footer-sub { color: #9ca3af; }
+  .light-mode .footer-sub { color: #4b5563; }
+
+  /* Kartu Game: Otomatis Putih di Light Mode, Hitam Elegan di Dark Mode */
+  .game-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  body.dark-mode .game-card {
+    background: #0f1117 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .game-img { 
+    height: 160px; 
+    object-fit: contain; 
+    background: #f3f4f6; 
+    border-radius: .5rem; 
+    width: 100%; 
+    transition: background 0.3s;
+  }
+  body.dark-mode .game-img { 
+    background: #1a1d24 !important; 
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col light-mode" id="body">
+
+<!-- Loading Screen -->
+<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
+  <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
+    
+    <img src="comhub-logo-lockup.svg" class="h-12 mx-auto logo-glow object-contain" alt="Comhub Logo"/>
+    
+    <h1 class="mt-4 font-bold text-xl">ComHub</h1>
+    <p class="text-sm opacity-70 mt-1">Loading experience…</p>
+    <div class="progress mt-4"><div id="bar" class="progress-bar"></div></div>
+    <p class="italic text-xs mt-2 opacity-60">Powered by ComHub</p>
+  </div>
+</div>
+
+<header class="glass pl-0 pr-3 py-2 flex justify-between items-center sticky top-0 z-20">
+  <a href="index.html" style="text-decoration:none; color:inherit;">
+    <svg style="width: 140px; height: 32px;" viewBox="0 0 1100 512" xmlns="http://www.w3.org/2000/svg" class="logo-glow">
+      <rect x="16" y="16" width="480" height="480" rx="110" fill="#10131C"/>
+      <line x1="256" y1="256" x2="256" y2="106" stroke="#2F3A45" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="385.9" y2="181" stroke="#2F3A45" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="256" y2="406" stroke="#2F3A45" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="126.1" y2="331" stroke="#2F3A45" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="126.1" y2="181" stroke="#2F3A45" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="404.95" y2="342" stroke="#F2B705" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="256" cy="106" r="26" fill="#4CE0B3"/>
+      <circle cx="385.9" cy="181" r="26" fill="#4CE0B3"/>
+      <circle cx="256" cy="406" r="26" fill="#4CE0B3"/>
+      <circle cx="126.1" cy="331" r="26" fill="#4CE0B3"/>
+      <circle cx="126.1" cy="181" r="26" fill="#4CE0B3"/>
+      <circle cx="404.95" cy="342" r="33" fill="#F2B705"/>
+      <circle cx="256" cy="256" r="50" fill="#F5F4F0"/>
+      <circle cx="256" cy="256" r="50" fill="none" stroke="#4CE0B3" stroke-width="7"/>
+      <text x="540" y="320" class="logo-text" font-size="220" font-weight="bold" font-family="system-ui">Com<tspan fill="#4CE0B3">Hub</tspan></text>
+    </svg>
+  </a>
+  <div class="flex gap-2 items-center">
+    <button onclick="toggleLang()" class="chip" id="langToggle">EN</button>
+    <button onclick="toggleMode()" class="chip" id="modeToggle">🌙</button>
+  </div>
+</header>
 
 <main class="flex-1">
   <!-- About -->
@@ -63,9 +183,9 @@
 
 <!-- Footer -->
 <footer class="p-6 text-center mt-auto">
-  <img src="https://i.imgur.com/wKWNeZe.png" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo"/>
+  <img src="icon-app.svg" class="w-6 h-6 mx-auto logo-glow mb-2" alt="Rialo"/>
   <p>
-    <span>© 2026 Rialo.</span><br>
+    <span>© 2026 ComHub.</span><br>
     <span class="footer-sub text-xs">Powered by ComHub</span>
   </p>
 </footer>
@@ -97,6 +217,21 @@
       document.getElementById("modeToggle").innerText = "☀️";
     }
   }
+
+  // Loader progress
+  const bar = document.getElementById('bar');
+  const loader = document.getElementById('loader');
+  let p = 0;
+  const int = setInterval(() => {
+    p += 15;
+    if (bar) bar.style.width = p + '%';
+    if (p >= 100) {
+      clearInterval(int);
+      setTimeout(() => {
+        if (loader) loader.style.display = 'none';
+      }, 250);
+  }
+   }, 60);
 </script>
 
 </body>
