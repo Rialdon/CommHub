@@ -25,7 +25,7 @@ function getClientIp(req) {
 module.exports = async (req, res) => {
   // Cuma terima method POST
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method tidak diizinkan." });
+    return res.status(405).json({ error: "Method not allowed." });
   }
 
   try {
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
 
     // 1. Validasi address
     if (!address || !ethers.isAddress(address)) {
-      return res.status(400).json({ error: "Address tidak valid." });
+      return res.status(400).json({ error: "Invalid address." });
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
@@ -85,6 +85,6 @@ module.exports = async (req, res) => {
     });
   } catch (err) {
     console.error("Faucet claim error:", err);
-    return res.status(500).json({ error: "Gagal mengirim token. Coba lagi nanti." });
+    return res.status(500).json({ error: "Failed to send token. Please try again later." });
   }
 };
