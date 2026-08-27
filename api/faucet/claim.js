@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
       if (diff < COOLDOWN_MS) {
         const remainingHours = Math.ceil((COOLDOWN_MS - diff) / (60 * 60 * 1000));
         return res.status(429).json({
-          error: `IP kamu sudah klaim. Coba lagi dalam ${remainingHours} jam.`,
+          error: `Your IP already claimed. Try again in${remainingHours} hours.`,
         });
       }
     }
