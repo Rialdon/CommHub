@@ -48,8 +48,17 @@ async function isSuspiciousIp(ip) {
     const url = `https://ipqualityscore.com/api/json/ip/${IPQS_API_KEY}/${encodeURIComponent(ip)}?strictness=1`;
     const resp = await fetch(url);
     const data = await resp.json();
-    // Tandai kalau proxy/VPN/Tor/hosting terdeteksi, atau fraud score tinggi
-    return Boolean(data.proxy || data.vpn || data.tor || (data.fraud_score ?? 0) >= 75);
+
+    // Deteksi utama: proxy/VPN/Tor eksplisit, atau fraud score tinggi
+    const flaggedByCore = Boolean(data.proxy || data.vpn || data.tor || (data.fraud_score ?? 0) >= 75);
+
+    // Deteksi tambahan: IP dari Data Center / Hosting jarang sekali dipakai user asli.
+    // Banyak VPN pakai IP baru yang belum sempat ditandai vpn=true, tapi connection_type
+    // tetap kelihatan sebagai "Data Center" karena memang disewa dari provider hosting.
+    const connectionType = (data.connection_type || "").toLowerCase();
+    const flaggedByConnectionType = connectionType.includes("data center") || connectionType.includes("hosting");
+
+    return flaggedByCore || flaggedByConnectionType;
   } catch (err) {
     console.error("IPQS check failed:", err);
     return false; // gagal cek jangan sampai memblokir user yang sah
