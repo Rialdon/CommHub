@@ -124,7 +124,7 @@
             display: "flex", alignItems: "center", justifyContent: "center",
             boxShadow: "inset 0 0 0 6px rgba(94,234,212,0.06)",
           }}>
-            <img src={HEADS_IMG} alt="Heads" style={{ width: "58%", height: "58%", objectFit: "contain" }} />
+            <img src={HEADS_IMG} alt="Heads" style={{ width: "58%", height: "58%", objectFit: "contain" }} onError={(e)=>{e.target.style.display='none';}} />
           </div>
           {/* Tails */}
           <div style={{
@@ -136,7 +136,7 @@
             display: "flex", alignItems: "center", justifyContent: "center",
             boxShadow: "inset 0 0 0 6px rgba(244,200,107,0.06)",
           }}>
-            <img src={TAILS_IMG} alt="Tails" style={{ width: "50%", height: "50%", objectFit: "contain" }} />
+            <img src={TAILS_IMG} alt="Tails" style={{ width: "50%", height: "50%", objectFit: "contain" }} onError={(e)=>{e.target.style.display='none';}} />
           </div>
         </div>
       </div>
@@ -163,7 +163,7 @@
           background: c.panel, display: "flex", alignItems: "center", justifyContent: "center",
           border: `1px solid ${c.border}`,
         }}>
-          <img src={img} alt={label} style={{ width: "60%", height: "60%", objectFit: "contain" }} />
+          <img src={img} alt={label} style={{ width: "60%", height: "60%", objectFit: "contain" }} onError={(e)=>{e.target.style.display='none';}} />
         </div>
         <span style={{
           fontSize: 13, fontWeight: 700,
@@ -184,110 +184,22 @@
     const [decimals, setDecimals] = useState(18);
     const [tokenBalance, setTokenBalance] = useState(null);
     const [allowance, setAllowance] = useState(null);
-    const [minBet, setMinBet] = useState(null);
-    const [maxBet, setMaxBet] = useState(null);
+    const [minBet, setMinBet] = useState(ethers.parseUnits("1", 18));
+    const [maxBet, setMaxBet] = useState(ethers.parseUnits("100", 18));
     const [paused, setPaused] = useState(false);
-    const [houseBalance, setHouseBalance] = useState(null);
+    const [houseBalance, setHouseBalance] = useState(ethers.parseUnits("5000", 18));
 
     const [guess, setGuess] = useState("heads"); // "heads" | "tails"
     const [betAmount, setBetAmount] = useState("");
-    const [busy, setBusy] = useState(false); // approving or flipping (tx in flight)
-    const [flipping, setFlipping] = useState(false); // coin animation playing
+    const [busy, setBusy] = useState(false);
+    const [flipping, setFlipping] = useState(false);
     const [spinIndex, setSpinIndex] = useState(0);
     const [coinFace, setCoinFace] = useState("heads");
-    const [result, setResult] = useState(null); // { won, payout, txHash }
+    const [result, setResult] = useState(null);
     const [error, setError] = useState("");
 
     const pendingResultRef = useRef(null);
-
-    const readProvider = useMemo(() => new ethers.JsonRpcProvider(RPC_URL), []);
     const onSepolia = chainIdHex === SEPOLIA_CHAIN_ID_HEX;
-
-    const connectWallet = useCallback(async () => {
-      if (!window.ethereum) {
-        setError("Wallet not detected. Open this in a browser with a wallet extension, or use a wallet's in-app browser.");
-        return;
-      }
-      try {
-        setLoadingWallet(true);
-        setError("");
-        const browserProvider = new ethers.BrowserProvider(window.ethereum, "any");
-        await browserProvider.send("eth_requestAccounts", []);
-        const network = await browserProvider.getNetwork();
-        const s = await browserProvider.getSigner();
-        const addr = await s.getAddress();
-        setSigner(s);
-        setAccount(addr);
-        setChainIdHex("0x" + network.chainId.toString(16));
-      } catch (err) {
-        setError("Failed to connect: " + (err.shortMessage || err.message));
-      } finally {
-        setLoadingWallet(false);
-      }
-    }, []);
-
-    const switchToSepolia = useCallback(async () => {
-      if (!window.ethereum) return;
-      try {
-        setLoadingWallet(true);
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }],
-        });
-        setChainIdHex(SEPOLIA_CHAIN_ID_HEX);
-      } catch (err) {
-        setError("Failed to switch network: " + (err.shortMessage || err.message));
-      } finally {
-        setLoadingWallet(false);
-      }
-    }, []);
-
-    useEffect(() => {
-      if (!window.ethereum) return;
-      const handleAccountsChanged = (accounts) => {
-        if (!accounts || accounts.length === 0) {
-          setSigner(null); setAccount(null); setChainIdHex(null);
-        } else {
-          connectWallet();
-        }
-      };
-      const handleChainChanged = () => { if (account) connectWallet(); };
-      window.ethereum.on?.("accountsChanged", handleAccountsChanged);
-      window.ethereum.on?.("chainChanged", handleChainChanged);
-      return () => {
-        window.ethereum.removeListener?.("accountsChanged", handleAccountsChanged);
-        window.ethereum.removeListener?.("chainChanged", handleChainChanged);
-      };
-    }, [account, connectWallet]);
-
-    // Ambil data kontrak & token (read-only, jalan walau wallet belum konek)
-    const refreshData = useCallback(async () => {
-      if (!configured) return;
-      try {
-        const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, readProvider);
-        const d = await token.decimals();
-        setDecimals(d);
-
-        const game = new ethers.Contract(COINFLIP_ADDRESS, COINFLIP_ABI, readProvider);
-        const [mn, mx, p, hb] = await Promise.all([
-          game.minBet(), game.maxBet(), game.paused(), game.houseBalance(),
-        ]);
-        setMinBet(mn); setMaxBet(mx); setPaused(p); setHouseBalance(hb);
-
-        if (account) {
-          const [bal, allw] = await Promise.all([
-            token.balanceOf(account),
-            token.allowance(account, COINFLIP_ADDRESS),
-          ]);
-          setTokenBalance(bal);
-          setAllowance(allw);
-        }
-      } catch (err) {
-        console.error("refreshData failed:", err);
-      }
-    }, [account, readProvider]);
-
-    useEffect(() => { refreshData(); }, [refreshData]);
 
     const betUnits = useMemo(() => {
       if (!betAmount || isNaN(Number(betAmount))) return null;
@@ -301,78 +213,26 @@
       setBetAmount(ethers.formatUnits(units, decimals));
     };
 
+    // Simulasi flip lokal, tanpa wallet/kontrak asli — cuma buat lihat animasi UI.
     const runFlip = useCallback(async () => {
       setError("");
       setResult(null);
-
-      if (!account) return connectWallet();
-      if (!onSepolia) return switchToSepolia();
-      if (!configured) {
-        setError("Game contract not deployed yet — set COINFLIP_ADDRESS first.");
-        return;
-      }
       if (betUnits === null || betUnits <= 0n) {
         setError("Enter a valid bet amount.");
         return;
       }
-      if (minBet !== null && betUnits < minBet) {
-        setError(`Minimum bet is ${fmt(minBet, decimals)} ${TOKEN_SYMBOL}.`);
-        return;
-      }
-      if (maxBet !== null && betUnits > maxBet) {
-        setError(`Maximum bet is ${fmt(maxBet, decimals)} ${TOKEN_SYMBOL}.`);
-        return;
-      }
-      if (paused) {
-        setError("Game is currently paused.");
-        return;
-      }
+      setBusy(true);
+      setFlipping(true);
+      setSpinIndex((i) => i + 1);
+      const won = Math.random() < 0.5;
+      const faceResult = Math.random() < 0.5 ? "heads" : "tails";
+      pendingResultRef.current = {
+        won, payout: won ? betUnits * 2n : 0n,
+        txHash: "0x" + Array.from({length:64}, ()=>Math.floor(Math.random()*16).toString(16)).join(""),
+        face: faceResult,
+      };
+    }, [betUnits]);
 
-      try {
-        setBusy(true);
-        const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, signer);
-        const game = new ethers.Contract(COINFLIP_ADDRESS, COINFLIP_ABI, signer);
-
-        if (needsApproval) {
-          const approveTx = await token.approve(COINFLIP_ADDRESS, betUnits);
-          await approveTx.wait();
-          setAllowance(betUnits);
-        }
-
-        const tx = await game.flip(betUnits, guess === "heads");
-        // Mulai animasi spin begitu tx terkirim, sambil nunggu confirm
-        setFlipping(true);
-        setSpinIndex((i) => i + 1);
-
-        const receipt = await tx.wait();
-
-        // Ambil hasil dari event Flipped
-        let won = false, payout = 0n, resultHeads = null;
-        for (const log of receipt.logs) {
-          try {
-            const parsed = game.interface.parseLog(log);
-            if (parsed?.name === "Flipped") {
-              won = parsed.args.won;
-              payout = parsed.args.payout;
-              resultHeads = parsed.args.result;
-              break;
-            }
-          } catch { /* log dari kontrak lain (token transfer), abaikan */ }
-        }
-
-        pendingResultRef.current = {
-          won, payout, txHash: tx.hash,
-          face: resultHeads === null ? guess : (resultHeads ? "heads" : "tails"),
-        };
-      } catch (err) {
-        setFlipping(false);
-        setBusy(false);
-        setError(err.shortMessage || err.reason || err.message || "Transaction failed.");
-      }
-    }, [account, onSepolia, betUnits, minBet, maxBet, paused, needsApproval, guess, signer, decimals]);
-
-    // Begitu animasi spin (1.65s) selesai, baru tampilkan hasilnya —
-    // supaya koin benar-benar "mendarat" di sisi yang benar sebelum teksnya muncul.
     useEffect(() => {
       if (!flipping) return;
       const t = setTimeout(() => {
@@ -380,13 +240,12 @@
         if (r) {
           setCoinFace(r.face);
           setResult({ won: r.won, payout: r.payout, txHash: r.txHash });
-          refreshData();
         }
         setFlipping(false);
         setBusy(false);
       }, 1700);
       return () => clearTimeout(t);
-    }, [flipping, refreshData]);
+    }, [flipping]);
 
     const presets = [];
     if (minBet !== null && maxBet !== null) {
@@ -394,14 +253,10 @@
       presets.push(minBet, mid, maxBet);
     }
 
-    let ctaLabel = "Flip Coin";
-    if (!account) ctaLabel = "Connect Wallet";
-    else if (!onSepolia) ctaLabel = "Switch to Sepolia";
-    else if (busy || flipping) ctaLabel = flipping ? "Flipping..." : (needsApproval ? "Approving..." : "Sending...");
-    else if (!configured) ctaLabel = "Game Not Deployed Yet";
-    else if (needsApproval && betUnits) ctaLabel = `Approve ${TOKEN_SYMBOL}`;
+    let ctaLabel = "Flip Coin (Preview)";
+    if (busy || flipping) ctaLabel = flipping ? "Flipping..." : "Sending...";
 
-    const ctaDisabled = busy || flipping || (account && onSepolia && !configured);
+    const ctaDisabled = busy || flipping;
 
     return (
       <div style={{
@@ -411,7 +266,6 @@
       }}>
         <div style={{ width: "100%", maxWidth: 420 }}>
 
-          {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
             <div>
               <div className="display" style={{ fontSize: 22, fontWeight: 700, letterSpacing: 0.2 }}>
@@ -436,13 +290,11 @@
             </div>
           </div>
 
-          {/* Main card */}
           <div style={{
             background: c.panel, borderRadius: 24, padding: "28px 22px 24px",
             border: `1px solid ${c.border}`,
           }}>
 
-            {/* Coin */}
             <div style={{ position: "relative", padding: "6px 0 4px" }}>
               <div style={{
                 position: "absolute", left: "50%", top: "52%", transform: "translate(-50%,-50%)",
@@ -454,7 +306,6 @@
               <Coin face={coinFace} spinIndex={spinIndex} flipping={flipping} />
             </div>
 
-            {/* Result / status line — reserved height so layout doesn't jump */}
             <div style={{ minHeight: 46, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 6 }}>
               {flipping ? (
                 <div style={{ fontSize: 13.5, color: c.textMuted, animation: "popIn 0.2s ease" }}>
@@ -468,13 +319,9 @@
                   }}>
                     {result.won ? `You won ${fmt(result.payout, decimals)} ${TOKEN_SYMBOL}` : "Better luck next time"}
                   </div>
-                  <a
-                    href={`https://sepolia.etherscan.io/tx/${result.txHash}`}
-                    target="_blank" rel="noopener noreferrer"
-                    style={{ fontSize: 11.5, color: c.textFaint, textDecoration: "underline" }}
-                  >
-                    {result.txHash.slice(0, 10)}...{result.txHash.slice(-6)}
-                  </a>
+                  <span style={{ fontSize: 11.5, color: c.textFaint }}>
+                    (preview mode — tx tidak nyata)
+                  </span>
                 </div>
               ) : (
                 <div style={{ fontSize: 13, color: c.textFaint }}>
@@ -483,13 +330,11 @@
               )}
             </div>
 
-            {/* Heads / Tails selector */}
             <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
               <SideButton label="Heads" img={HEADS_IMG} active={guess === "heads"} onClick={() => setGuess("heads")} accent="mint" />
               <SideButton label="Tails" img={TAILS_IMG} active={guess === "tails"} onClick={() => setGuess("tails")} accent="gold" />
             </div>
 
-            {/* Bet amount */}
             <div style={{
               background: c.field, borderRadius: 16, padding: 16, marginTop: 14,
               border: `1px solid ${c.borderSoft}`,
@@ -518,7 +363,6 @@
               </div>
             </div>
 
-            {/* Presets */}
             {presets.length > 0 && (
               <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
                 {presets.map((p, i) => (
@@ -543,7 +387,6 @@
               </div>
             )}
 
-            {/* CTA */}
             <button
               onClick={runFlip}
               disabled={ctaDisabled}
