@@ -272,6 +272,11 @@
     const [coinFace, setCoinFace] = useState("heads");
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
+    // Naik tiap kali mulai proses approve/flip baru. Dipakai sebagai `key` pada
+    // <Coin/> supaya komponennya benar-benar di-remount setiap flip/approve,
+    // bukan cuma update style -- ini yang mencegah animasi "nyangkut" (stuck)
+    // akibat CSS transition/animation yang tabrakan dengan sisa state sebelumnya.
+    const [animGen, setAnimGen] = useState(0);
 
     const onSepolia = chainIdHex === SEPOLIA_CHAIN_ID_HEX;
     const hasInjected = typeof window !== "undefined" && !!window.ethereum;
@@ -339,6 +344,43 @@
       }
     }, []);
 
+    // ---------- Disconnect wallet ----------
+    // CATATAN JUJUR soal batasannya: standar wallet browser (EIP-1193) tidak
+    // punya cara resmi untuk dApp "memutus" koneksi dari sisi wallet -- yang
+    // bisa dApp lakukan cuma membersihkan sesi di sisi web ini (provider,
+    // signer, account, balance, dst di-reset ke null, tampilan kembali ke
+    // "Not connected"). Untuk benar-benar mencabut izin di level wallet, kita
+    // coba panggil wallet_revokePermissions (EIP-2255) -- ini didukung
+    // MetaMask & beberapa wallet lain, tapi TIDAK semua wallet mobile (mis.
+    // sebagian wallet berbasis in-app browser) mendukungnya. Kalau wallet
+    // kamu tidak mendukung, sesi lokal tetap kebersihan, tapi saat klik
+    // Connect lagi wallet mungkin langsung nyambung tanpa munculin dialog
+    // approval baru -- itu keterbatasan si wallet, bukan halaman ini.
+    const disconnectWallet = useCallback(async () => {
+      setError("");
+      try {
+        if (window.ethereum && window.ethereum.request) {
+          try {
+            await window.ethereum.request({
+              method: "wallet_revokePermissions",
+              params: [{ eth_accounts: {} }],
+            });
+          } catch (revokeErr) {
+            // Wallet tidak dukung revoke permission -- lanjut bersihkan sesi lokal saja.
+          }
+        }
+      } finally {
+        setProvider(null);
+        setSigner(null);
+        setAccount(null);
+        setChainIdHex(null);
+        setTokenBalance(null);
+        setAllowance(null);
+        setResult(null);
+        setSelectedTier(null);
+      }
+    }, []);
+
     // React to account/network changes from the wallet itself
     useEffect(() => {
       if (!window.ethereum) return;
@@ -392,17 +434,23 @@
     useEffect(() => { refreshData(); }, [refreshData]);
 
     // ---------- Approve (real tx) ----------
+    // Approve sekali dengan allowance MAKSIMUM (bukan cuma sejumlah bet saat ini).
+    // Ini penting: kalau approve cuma untuk `betUnits`, ganti tier bet lain kali
+    // akan minta approve lagi setiap ganti nominal. Dengan MaxUint256, approve
+    // ini cukup dilakukan SEKALI SAJA per wallet -- semua flip berikutnya di
+    // tier manapun langsung lompat ke flip tanpa approve ulang.
     // Koin ikut berputar terus-menerus (idle spin) selama proses approve berlangsung,
     // dari saat tanda tangan dikirim sampai tx approve dikonfirmasi di jaringan.
     const doApprove = useCallback(async () => {
       if (!signer || betUnits === null) return;
       setError("");
       setBusy(true);
+      setAnimGen((g) => g + 1);
       setApproving(true);
       setBusyLabel("Confirm approval in your wallet...");
       try {
         const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, signer);
-        const tx = await token.approve(COINFLIP_ADDRESS, betUnits);
+        const tx = await token.approve(COINFLIP_ADDRESS, ethers.MaxUint256);
         setBusyLabel("Approving...");
         await tx.wait();
         await refreshData();
@@ -460,6 +508,11 @@
           setBusyLabel("");
           return;
         }
+
+        // Remount koin dari nol untuk flip ini -- membuang semua sisa state
+        // animasi/transisi CSS dari flip sebelumnya, supaya animasi selalu
+        // mulai dari kondisi bersih tiap kali (fix untuk animasi yang stuck).
+        setAnimGen((g) => g + 1);
 
         // Selama menunggu tanda tangan di wallet, koin sudah berputar idle
         // supaya user tahu sesuatu sedang berlangsung.
@@ -547,9 +600,23 @@
                 {account ? (onSepolia ? "Sepolia" : "Wrong network") : "Not connected"}
               </span>
               {account && (
-                <span style={{ fontSize: 11, color: c.textFaint }}>
-                  {short(account)}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 11, color: c.textFaint }}>
+                    {short(account)}
+                  </span>
+                  <button
+                    onClick={disconnectWallet}
+                    disabled={busy || flipping}
+                    style={{
+                      background: "none", border: "none", padding: 0,
+                      fontSize: 11, color: c.danger, textDecoration: "underline",
+                      cursor: (busy || flipping) ? "not-allowed" : "pointer",
+                      opacity: (busy || flipping) ? 0.5 : 1,
+                    }}
+                  >
+                    Disconnect
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -568,7 +635,7 @@
                 animation: (flipping || approving) ? "none" : "floatGlow 3.5s ease-in-out infinite",
                 pointerEvents: "none",
               }} />
-              <Coin face={coinFace} spinIndex={spinIndex} flipping={flipping} spinning={approving} />
+              <Coin key={animGen} face={coinFace} spinIndex={spinIndex} flipping={flipping} spinning={approving} />
             </div>
 
             <div style={{ minHeight: 46, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 6 }}>
