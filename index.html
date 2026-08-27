@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+<!DOCTYPE html>
+<html lang="en" class="h-full">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -149,7 +151,7 @@ body.light-mode .logo-text {
 <div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
   <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
     
-    <img src="icon-app.svg" class="h-12 mx-auto logo-glow object-contain" alt="Comhub Logo"/>
+    <img src="comhub-logo-lockup.svg" class="h-12 mx-auto logo-glow object-contain" alt="Comhub Logo"/>
     
     <h1 class="mt-4 font-bold text-xl">ComHub</h1>
     <p class="text-sm opacity-70 mt-1">Loading experience…</p>
@@ -183,19 +185,28 @@ body.light-mode .logo-text {
     <button onclick="toggleMode()" class="chip" id="modeToggle">🌙</button>
   </div>
 </header>
+
 <main class="flex-1">
-  
   <!-- Hero Section -->
-<div class="glass rounded-2xl overflow-hidden shadow-md mt-4">
-    <img src="comhub-banner-v2.svg" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
+  <div class="glass rounded-2xl overflow-hidden shadow-md mt-4">
+      <img src="comhub-banner-v2.svg" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
     </div>
 </section>
+
+  <!-- What is ComHub Section -->
+  <section class="px-6 py-16 max-w-7xl mx-auto">
+    <div class="max-w-3xl">
+      <h2 id="comhubTitle" class="text-3xl font-bold">What is ComHub?</h2>
+      <p id="comhubText" class="mt-3 text-gray-300">ComHub is a community hub built around Rialo. This is where players, builders, and early supporters gather to play games, and explore what can be done on Rialo.</p>
+    </div>
+  </section>
+
   <section class="px-6 py-16 max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
     <div>
-      <h1 id="heroTitle" class="text-4xl sm:text-5xl font-extrabold">
+      <h1 id="heroTitle" class="text-3xl font-bold">
         What is Rialo?
       </h1>
-      <p id="heroText" class="mt-4 text-lg text-gray-300 opacity-90">
+      <p id="heroText" class="mt-3 text-gray-300">
         Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.
       </p>
       <div class="mt-6 grid grid-cols-2 gap-3">
@@ -352,12 +363,16 @@ body.light-mode .logo-text {
     lang = (lang === "EN") ? "ID" : "EN";
     document.getElementById("langToggle").innerText = lang;
     if(lang === "ID"){
+      document.getElementById("comhubTitle").innerText = "Apa itu ComHub?";
+      document.getElementById("comhubText").innerText = "ComHub adalah komunitas hub yang dibangun di sekitar Rialo. Di sinilah pemain, builder, dan early supporter berkumpul untuk bermain game, dan mengeksplorasi apa yang bisa dilakukan di Rialo.";
       document.getElementById("heroTitle").innerText = "Apa itu Rialo?";
       document.getElementById("heroText").innerText = "Rialo adalah platform blockchain generasi berikutnya yang dibangun untuk menjembatani Web3 dan dunia nyata. Platform ini memungkinkan smart contract terhubung langsung dengan pembayaran data real-time, harga, cuaca, dan apa pun tanpa memerlukan oracle atau middleware yang rumit. Singkatnya, Rialo membuat aplikasi blockchain berjalan sehalus aplikasi yang Anda gunakan setiap hari.";
       document.getElementById("openHub").innerText = "Mulai Bermain";
       document.getElementById("learnMore").innerText = "Pelajari Lebih";
       document.getElementById("JoinCommunity").innerText = "Gabung Komunitas";
     } else {
+      document.getElementById("comhubTitle").innerText = "What is ComHub?";
+      document.getElementById("comhubText").innerText = "ComHub is a community hub built around Rialo. This is where players, builders, and early supporters gather to play games, and explore what can be done on Rialo.";
       document.getElementById("heroTitle").innerText = "What is Rialo?";
       document.getElementById("heroText").innerText = "Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.";
       document.getElementById("openHub").innerText = "Play Games";
