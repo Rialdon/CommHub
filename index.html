@@ -477,9 +477,11 @@ body.light-mode .logo-text {
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script type="text/babel">
   // @ts-nocheck
-  const { useState, useEffect, useCallback, useMemo } = React;
+  const { useState, useEffect, useCallback, useMemo, useRef } = React;
+  const TURNSTILE_SITE_KEY = "0x4AAAAAAEdhfkYgobhblVGY";
   
   const SWAP_CONTRACT_ADDRESS = "0x6AfED6EF9C950414A7688D0549A45fb593f9cB7a";
   const TOKEN_ADDRESS         = "0x12934cb5e37e1eeec80e889df7614febe312ecd9";
@@ -1092,6 +1094,36 @@ body.light-mode .logo-text {
     const [address, setAddress] = useState("");
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null); // { type: 'success' | 'error', text }
+    const [captchaToken, setCaptchaToken] = useState("");
+    const turnstileRef = useRef(null);
+    const widgetIdRef = useRef(null);
+
+    // Render the Turnstile widget once the script has loaded
+    useEffect(() => {
+      let attempts = 0;
+      const tryRender = () => {
+        if (window.turnstile && turnstileRef.current && widgetIdRef.current === null) {
+          widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+            sitekey: TURNSTILE_SITE_KEY,
+            theme: "dark",
+            callback: (token) => setCaptchaToken(token),
+            "expired-callback": () => setCaptchaToken(""),
+            "error-callback": () => setCaptchaToken(""),
+          });
+        } else if (attempts < 20) {
+          attempts += 1;
+          setTimeout(tryRender, 250);
+        }
+      };
+      tryRender();
+    }, []);
+
+    const resetCaptcha = () => {
+      setCaptchaToken("");
+      if (window.turnstile && widgetIdRef.current !== null) {
+        window.turnstile.reset(widgetIdRef.current);
+      }
+    };
 
     const handleClaim = useCallback(async () => {
       setStatus(null);
@@ -1101,12 +1133,17 @@ body.light-mode .logo-text {
         return;
       }
 
+      if (!captchaToken) {
+        setStatus({ type: "error", text: "Please complete the captcha check." });
+        return;
+      }
+
       setLoading(true);
       try {
         const res = await fetch("/api/faucet/claim", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ address }),
+          body: JSON.stringify({ address, captchaToken }),
         });
         const data = await res.json();
 
@@ -1124,8 +1161,9 @@ body.light-mode .logo-text {
         setStatus({ type: "error", text: "Network error. Please try again." });
       } finally {
         setLoading(false);
+        resetCaptcha();
       }
-    }, [address]);
+    }, [address, captchaToken]);
 
     return (
       <div style={{
@@ -1169,12 +1207,14 @@ body.light-mode .logo-text {
         </div>
 
         <div style={{ fontSize: 13, color: c.textMuted, margin: "12px 0" }}>
-          Claim: <span style={{ color: c.mint }}>100 {TOKEN_SYMBOL}</span> &middot; Limit: 1x / 24h per IP
+          Claim: <span style={{ color: c.mint }}>100 {TOKEN_SYMBOL}</span> &middot; Limit: 1x / 24h per wallet/IP
         </div>
+
+        <div ref={turnstileRef} style={{ margin: "12px 0" }} />
 
         <button
           onClick={handleClaim}
-          disabled={loading}
+          disabled={loading || !captchaToken}
           style={{
             width: "100%",
             background: c.mint,
@@ -1184,8 +1224,8 @@ body.light-mode .logo-text {
             fontWeight: 700,
             fontSize: 16,
             color: "#000",
-            cursor: loading ? "not-allowed" : "pointer",
-            opacity: loading ? 0.7 : 1,
+            cursor: (loading || !captchaToken) ? "not-allowed" : "pointer",
+            opacity: (loading || !captchaToken) ? 0.7 : 1,
           }}
         >
           {loading ? "Sending..." : `Claim 100 ${TOKEN_SYMBOL}`}
