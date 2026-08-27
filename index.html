@@ -1113,9 +1113,9 @@ body.light-mode .logo-text {
         if (!res.ok) {
           setStatus({ type: "error", text: data.error || "Claim failed." });
         } else {
-          setStatus({ type: "success", text: `Success! ${data.amount} ${TOKEN_SYMBOL} is on its way.` });
+          setStatus({ type: "success", text: `Success! ${data.amount} ${TOKEN_SYMBOL} is on its way.`, hash: data.txHash || data.hash });
           setAddress("");
-        }
+      }
       } catch (err) {
         setStatus({ type: "error", text: "Network error. Please try again." });
       } finally {
