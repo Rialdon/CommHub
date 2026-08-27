@@ -35,12 +35,32 @@
 </style>
 </head>
 <body>
-<div id="root"></div>
+<div id="root">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-family:system-ui,sans-serif;font-size:14px;">
+    Loading CoinFlip…
+  </div>
+</div>
 
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js"></script>
+<!-- Dipindah dari unpkg.com ke jsdelivr: unpkg cukup sering lambat/di-rate-limit
+     dan kalau gagal load, halaman jadi blank tanpa pesan error apa pun. -->
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js" crossorigin></script>
+
+<script>
+  // Jaring pengaman: kalau salah satu library gagal ke-load (CDN down/diblokir),
+  // atau script React error, jangan biarkan halaman diam blank — tampilkan pesan.
+  window.addEventListener('error', function (e) {
+    var root = document.getElementById('root');
+    if (root && (!window.React || !window.ReactDOM || !window.Babel || !window.ethers || !root.dataset.mounted)) {
+      root.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+        'color:#F87171;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
+        'Gagal memuat halaman.<br/>Cek koneksi internet kamu lalu refresh.<br/>' +
+        '<span style="opacity:.6;font-size:12px;">(' + (e.message || 'unknown error') + ')</span></div>';
+    }
+  });
+</script>
 
 <script type="text/babel" data-presets="react">
   const { useState, useEffect, useCallback, useMemo, useRef } = React;
@@ -419,7 +439,17 @@
     );
   }
 
-  ReactDOM.createRoot(document.getElementById('root')).render(<CoinFlipGame />);
+  const rootEl = document.getElementById('root');
+  try {
+    ReactDOM.createRoot(rootEl).render(<CoinFlipGame />);
+    rootEl.dataset.mounted = "true";
+  } catch (err) {
+    rootEl.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+      'color:#F87171;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
+      'Terjadi error saat menampilkan game.<br/>' +
+      '<span style="opacity:.6;font-size:12px;">(' + err.message + ')</span></div>';
+    console.error(err);
+  }
 </script>
 </body>
 </html>
