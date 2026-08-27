@@ -1086,6 +1086,118 @@ body.light-mode .logo-text {
     );
   }
 
+  function FaucetDemo() {
+    const [address, setAddress] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState(null); // { type: 'success' | 'error', text }
+
+    const handleClaim = useCallback(async () => {
+      setStatus(null);
+
+      if (!address || !ethers.isAddress(address)) {
+        setStatus({ type: "error", text: "Enter a valid wallet address." });
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await fetch("/api/faucet/claim", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          setStatus({ type: "error", text: data.error || "Claim failed." });
+        } else {
+          setStatus({ type: "success", text: `Success! ${data.amount} ${TOKEN_SYMBOL} is on its way.` });
+          setAddress("");
+        }
+      } catch (err) {
+        setStatus({ type: "error", text: "Network error. Please try again." });
+      } finally {
+        setLoading(false);
+      }
+    }, [address]);
+
+    return (
+      <div style={{
+        background: c.panel,
+        borderRadius: 24,
+        padding: 24,
+        marginTop: 16,
+        border: `1px solid ${c.border}`,
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <span style={{ fontSize: 20, fontWeight: 700, color: "#fff" }}>{TOKEN_SYMBOL} Faucet</span>
+          <span style={{
+            background: c.card,
+            color: c.textMuted,
+            fontSize: 12,
+            padding: "6px 12px",
+            borderRadius: 999,
+            border: `1px solid ${c.borderSoft}`,
+          }}>
+            Sepolia
+          </span>
+        </div>
+
+        <div style={{ background: c.field, borderRadius: 16, padding: 16, border: `1px solid ${c.borderSoft}` }}>
+          <label style={{ fontSize: 13, color: c.textMuted }}>Wallet address</label>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="0x..."
+            style={{
+              width: "100%",
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              color: "#fff",
+              fontSize: 16,
+              marginTop: 8,
+            }}
+          />
+        </div>
+
+        <div style={{ fontSize: 13, color: c.textMuted, margin: "12px 0" }}>
+          Claim: <span style={{ color: c.mint }}>100 {TOKEN_SYMBOL}</span> &middot; Limit: 1x / 24h per IP
+        </div>
+
+        <button
+          onClick={handleClaim}
+          disabled={loading}
+          style={{
+            width: "100%",
+            background: c.mint,
+            border: "none",
+            borderRadius: 999,
+            padding: 16,
+            fontWeight: 700,
+            fontSize: 16,
+            color: "#000",
+            cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading ? 0.7 : 1,
+          }}
+        >
+          {loading ? "Sending..." : `Claim 100 ${TOKEN_SYMBOL}`}
+        </button>
+
+        {status && (
+          <div style={{
+            marginTop: 12,
+            fontSize: 13,
+            color: status.type === "success" ? c.mint : c.danger,
+          }}>
+            {status.text}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   ReactDOM.createRoot(document.getElementById('swap-root')).render(<SwapDemo />);
 ReactDOM.createRoot(document.getElementById('faucet-root')).render(<FaucetDemo />);
 </script>
