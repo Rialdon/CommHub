@@ -31,6 +31,10 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+  @keyframes coinIdleSpin {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+  }
   .spin { animation: spin360 0.8s linear infinite; }
   .reduce-motion, .reduce-motion * { animation-duration: 0.001s !important; transition-duration: 0.001s !important; }
 </style>
@@ -157,19 +161,22 @@
   }
 
   // ---------- Koin 3D: hero / signature element ----------
-  function Coin({ face, spinIndex, flipping, size = 176 }) {
+  // spinning = true saat approve/broadcast (belum tahu hasil) -> puter terus tanpa henti
+  // flipping = true saat menunggu hasil flip on-chain -> puter lalu berhenti di face hasil akhir
+  function Coin({ face, spinIndex, flipping, spinning, size = 176 }) {
     const rotation = spinIndex * 1080 + (face === "tails" ? 180 : 0);
     return (
       <div style={{
         width: size, height: size, margin: "0 auto",
         perspective: 900,
-        filter: flipping ? "drop-shadow(0 0 26px rgba(13,148,136,0.28))" : "drop-shadow(0 8px 16px rgba(10,13,12,0.12))",
+        filter: (flipping || spinning) ? "drop-shadow(0 0 26px rgba(13,148,136,0.28))" : "drop-shadow(0 8px 16px rgba(10,13,12,0.12))",
       }}>
         <div style={{
           position: "relative", width: "100%", height: "100%",
           transformStyle: "preserve-3d",
-          transform: `rotateY(${rotation}deg)`,
+          transform: flipping ? `rotateY(${rotation}deg)` : undefined,
           transition: flipping ? "transform 1.65s cubic-bezier(0.2, 0.9, 0.25, 1)" : "transform 0.5s ease",
+          animation: spinning ? "coinIdleSpin 0.9s linear infinite" : "none",
         }}>
           {/* Heads */}
           <div style={{
@@ -259,13 +266,13 @@
     const [selectedTier, setSelectedTier] = useState(null); // index into betTiers
     const [busy, setBusy] = useState(false);
     const [busyLabel, setBusyLabel] = useState("");
+    const [approving, setApproving] = useState(false);
     const [flipping, setFlipping] = useState(false);
     const [spinIndex, setSpinIndex] = useState(0);
     const [coinFace, setCoinFace] = useState("heads");
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
 
-    const pendingResultRef = useRef(null);
     const onSepolia = chainIdHex === SEPOLIA_CHAIN_ID_HEX;
     const hasInjected = typeof window !== "undefined" && !!window.ethereum;
 
@@ -384,25 +391,38 @@
 
     useEffect(() => { refreshData(); }, [refreshData]);
 
-    // ---------- Approve + Flip (real tx) ----------
+    // ---------- Approve (real tx) ----------
+    // Koin ikut berputar terus-menerus (idle spin) selama proses approve berlangsung,
+    // dari saat tanda tangan dikirim sampai tx approve dikonfirmasi di jaringan.
     const doApprove = useCallback(async () => {
       if (!signer || betUnits === null) return;
       setError("");
       setBusy(true);
-      setBusyLabel("Approving...");
+      setApproving(true);
+      setBusyLabel("Confirm approval in your wallet...");
       try {
         const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, signer);
         const tx = await token.approve(COINFLIP_ADDRESS, betUnits);
+        setBusyLabel("Approving...");
         await tx.wait();
         await refreshData();
       } catch (err) {
         setError(err?.info?.error?.message || err?.shortMessage || err.message || "Approve failed.");
       } finally {
         setBusy(false);
+        setApproving(false);
         setBusyLabel("");
       }
     }, [signer, betUnits, refreshData]);
 
+    // ---------- Flip (real tx) ----------
+    // PENTING: kontrak CoinFlip ini membayar payout di DALAM tx flip() yang sama
+    // (lihat event Flipped: won + payout langsung ada di situ). Jadi tidak ada
+    // fungsi "claim" terpisah untuk dipanggil setelah menang — begitu tx flip
+    // sudah confirmed, kalau menang, RIALO-nya sudah otomatis masuk ke wallet.
+    // Koin berputar (flipping) sejak tx dikirim sampai receipt on-chain benar-benar
+    // datang -- bukan lagi dibatasi timer buatan -- supaya hasil menang/kalah yang
+    // ditampilkan selalu sinkron dengan apa yang sebenarnya terjadi di chain.
     const runFlip = useCallback(async () => {
       setError("");
       setResult(null);
@@ -441,52 +461,48 @@
           return;
         }
 
-        setBusyLabel("Sending transaction...");
+        // Selama menunggu tanda tangan di wallet, koin sudah berputar idle
+        // supaya user tahu sesuatu sedang berlangsung.
+        setApproving(true);
+        setBusyLabel("Confirm the flip in your wallet...");
         const tx = await game.flip(betUnits, guess === "heads");
+        setApproving(false);
 
+        // Dari titik ini koin masuk mode "flipping" sampai hasil ASLI dari
+        // chain didapat -- animasi & minimum delay berjalan paralel dengan
+        // await tx.wait(), bukan lagi dua proses yang lepas satu sama lain.
         setBusyLabel("Waiting for confirmation...");
         setFlipping(true);
         setSpinIndex((i) => i + 1);
 
-        const receipt = await tx.wait();
+        const minSpinTime = new Promise((resolve) => setTimeout(resolve, 1700));
+        const [receipt] = await Promise.all([tx.wait(), minSpinTime]);
 
-        // Parse Flipped event from receipt logs
+        // Parse Flipped event dari log receipt
         let parsed = null;
         for (const log of receipt.logs) {
           try {
             const ev = game.interface.parseLog(log);
             if (ev && ev.name === "Flipped") { parsed = ev; break; }
-          } catch (_) { /* not our event, ignore */ }
+          } catch (_) { /* bukan event kita, abaikan */ }
         }
 
-        const faceResult = parsed ? (parsed.args.result ? "heads" : "tails") : (guess);
+        const faceResult = parsed ? (parsed.args.result ? "heads" : "tails") : guess;
         const won = parsed ? parsed.args.won : null;
         const payout = parsed ? parsed.args.payout : 0n;
 
-        pendingResultRef.current = { won, payout, txHash: receipt.hash, face: faceResult };
+        setCoinFace(faceResult);
+        setResult({ won, payout, txHash: receipt.hash });
+        await refreshData();
       } catch (err) {
-        setFlipping(false);
-        setBusy(false);
-        setBusyLabel("");
         setError(err?.info?.error?.message || err?.shortMessage || err.message || "Transaction failed.");
-      }
-    }, [account, signer, onSepolia, betUnits, tokenBalance, paused, guess]);
-
-    useEffect(() => {
-      if (!flipping) return;
-      const t = setTimeout(() => {
-        const r = pendingResultRef.current;
-        if (r) {
-          setCoinFace(r.face);
-          setResult({ won: r.won, payout: r.payout, txHash: r.txHash });
-          refreshData();
-        }
+      } finally {
+        setApproving(false);
         setFlipping(false);
         setBusy(false);
         setBusyLabel("");
-      }, 1700);
-      return () => clearTimeout(t);
-    }, [flipping, refreshData]);
+      }
+    }, [account, signer, onSepolia, betUnits, tokenBalance, paused, guess, refreshData]);
 
     let ctaLabel = "Flip Coin";
     if (!account) ctaLabel = "Connect Wallet";
@@ -548,17 +564,17 @@
               <div style={{
                 position: "absolute", left: "50%", top: "52%", transform: "translate(-50%,-50%)",
                 width: 190, height: 190, borderRadius: "50%",
-                background: `radial-gradient(circle, ${flipping ? "rgba(13,148,136,0.14)" : "rgba(13,148,136,0.05)"} 0%, transparent 70%)`,
-                animation: flipping ? "none" : "floatGlow 3.5s ease-in-out infinite",
+                background: `radial-gradient(circle, ${(flipping || approving) ? "rgba(13,148,136,0.14)" : "rgba(13,148,136,0.05)"} 0%, transparent 70%)`,
+                animation: (flipping || approving) ? "none" : "floatGlow 3.5s ease-in-out infinite",
                 pointerEvents: "none",
               }} />
-              <Coin face={coinFace} spinIndex={spinIndex} flipping={flipping} />
+              <Coin face={coinFace} spinIndex={spinIndex} flipping={flipping} spinning={approving} />
             </div>
 
             <div style={{ minHeight: 46, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 6 }}>
-              {flipping ? (
+              {(flipping || approving) ? (
                 <div style={{ fontSize: 13.5, color: c.textMuted, animation: "popIn 0.2s ease" }}>
-                  <Spinner color={c.textMuted} />{busyLabel || "Flipping the coin…"}
+                  <Spinner color={c.textMuted} />{busyLabel || (approving ? "Confirming in wallet…" : "Flipping the coin…")}
                 </div>
               ) : result ? (
                 <div style={{ textAlign: "center", animation: "popIn 0.25s ease" }}>
@@ -568,6 +584,11 @@
                   }}>
                     {result.won ? `You won ${fmt(result.payout, decimals)} ${TOKEN_SYMBOL}` : "Better luck next time"}
                   </div>
+                  {result.won && (
+                    <div style={{ fontSize: 11.5, color: c.textFaint, marginTop: 2 }}>
+                      Payout sent automatically — nothing else to claim.
+                    </div>
+                  )}
                   {result.txHash && (
                     <a
                       href={`https://sepolia.etherscan.io/tx/${result.txHash}`}
