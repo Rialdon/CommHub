@@ -5,6 +5,7 @@ const { createClient } = require("@supabase/supabase-js");
 const RPC_URL = process.env.SEPOLIA_RPC_URL;
 const FAUCET_PRIVATE_KEY = process.env.FAUCET_PRIVATE_KEY;
 const RIALO_TOKEN_ADDRESS = process.env.RIALO_TOKEN_ADDRESS;
+const FAUCET_CONTRACT_ADDRESS = process.env.FAUCET_CONTRACT_ADDRESS; // address RialoFaucet.sol yang baru di-deploy
 const CLAIM_AMOUNT = "100"; // 100 RIALO per klaim
 const COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 jam
 
@@ -17,9 +18,8 @@ const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY;
 // IPQualityScore (opsional, buat deteksi VPN/proxy/datacenter IP). Kosongkan kalau belum pakai.
 const IPQS_API_KEY = process.env.IPQS_API_KEY;
 
-const ERC20_ABI = [
-  "function transfer(address to, uint256 amount) returns (bool)",
-  "function decimals() view returns (uint8)",
+const FAUCET_ABI = [
+  "function claim(address to) external",
 ];
 
 function getClientIp(req) {
@@ -133,14 +133,12 @@ module.exports = async (req, res) => {
       }
     }
 
-    // 6. Setup provider & wallet server, kirim token
+    // 6. Setup provider & wallet server, panggil claim() di kontrak faucet
     const provider = new ethers.JsonRpcProvider(RPC_URL);
     const wallet = new ethers.Wallet(FAUCET_PRIVATE_KEY, provider);
-    const token = new ethers.Contract(RIALO_TOKEN_ADDRESS, ERC20_ABI, wallet);
+    const faucet = new ethers.Contract(FAUCET_CONTRACT_ADDRESS, FAUCET_ABI, wallet);
 
-    const decimals = await token.decimals();
-    const amount = ethers.parseUnits(CLAIM_AMOUNT, decimals);
-    const tx = await token.transfer(address, amount);
+    const tx = await faucet.claim(address);
     await tx.wait();
 
     // 7. Simpan / update waktu klaim untuk IP dan wallet (setelah tx sukses)
