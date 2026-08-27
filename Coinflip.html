@@ -12,9 +12,9 @@
   html, body { height: 100%; margin: 0; }
   body {
     font-family: system-ui, sans-serif;
-    background: radial-gradient(120% 140% at 50% -10%, #16221f 0%, #0a0d0c 55%, #060807 100%);
+    background: radial-gradient(120% 140% at 50% -10%, #ffffff 0%, #f4f6f5 55%, #eef1f0 100%);
     min-height: 100%;
-    color: #fff;
+    color: #0A0D0C;
   }
   .display { font-family: "Space Grotesk", system-ui, sans-serif; }
   #root { min-height: 100%; }
@@ -27,16 +27,17 @@
     0% { transform: scale(0.85); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
   }
-  @keyframes spark {
-    0% { transform: translate(0,0) scale(1); opacity: 1; }
-    100% { transform: var(--tt) scale(0); opacity: 0; }
+  @keyframes spin360 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
+  .spin { animation: spin360 0.8s linear infinite; }
   .reduce-motion, .reduce-motion * { animation-duration: 0.001s !important; transition-duration: 0.001s !important; }
 </style>
 </head>
 <body>
 <div id="root">
-  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-family:system-ui,sans-serif;font-size:14px;">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:rgba(0,0,0,0.35);font-family:system-ui,sans-serif;font-size:14px;">
     Loading CoinFlip…
   </div>
 </div>
@@ -52,25 +53,16 @@
   // ==========================================================
   // Jaring pengaman untuk error PADA HALAMAN INI SAJA.
   //
-  // Catatan penting: browser dompet Web3 (Mises, MetaMask, dsb.)
-  // menyuntikkan script mereka sendiri (mis. mises_safe_injected.bundle.js,
-  // inpage.js, contentscript.js) ke SETIAP halaman yang dibuka. Kalau
-  // script suntikan itu error, browser tetap melaporkannya lewat event
-  // 'error' global — padahal itu sama sekali bukan bagian dari game ini.
-  //
-  // Makanya di sini kita:
-  //  1) Abaikan error yang jelas bukan berasal dari file/script kita
-  //     (dicek dari e.filename, atau dari pesan errornya).
-  //  2) Beri jeda sebelum menampilkan pesan "gagal", supaya bukan
-  //     langsung vonis dari error pertama yang lewat.
+  // Browser dompet Web3 (Mises, MetaMask, dsb.) menyuntikkan script
+  // mereka sendiri ke SETIAP halaman yang dibuka. Kalau script suntikan
+  // itu error, browser tetap melaporkannya lewat event 'error' global —
+  // padahal itu bukan bagian dari game ini. Jadi kita filter dulu.
   // ==========================================================
-  var mounted = false;
   var shownFailure = false;
 
   function looksLikeThirdPartyError(e) {
     var src = (e && e.filename) || "";
     var msg = (e && e.message) || "";
-    // Pola umum script suntikan ekstensi wallet / dompet crypto.
     var thirdPartyPatterns = [
       "mises_safe_injected", "inpage.js", "contentscript.js",
       "chrome-extension://", "moz-extension://", "safari-extension://"
@@ -78,33 +70,24 @@
     for (var i = 0; i < thirdPartyPatterns.length; i++) {
       if (src.indexOf(thirdPartyPatterns[i]) !== -1) return true;
     }
-    // "Cannot use import statement outside a module" hampir selalu
-    // berasal dari script luar yang ditulis sebagai ES module,
-    // bukan dari game ini (game ini tidak pakai import/export).
     if (msg.indexOf("import statement") !== -1) return true;
     return false;
   }
 
   function showFailureMessage(reason) {
-    if (shownFailure) return; // jangan timpa pesan berkali-kali
+    if (shownFailure) return;
     var root = document.getElementById('root');
     if (root && !root.dataset.mounted) {
       shownFailure = true;
       root.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
-        'color:#F87171;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
+        'color:#DC2626;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
         'Gagal memuat halaman.<br/>Cek koneksi internet kamu lalu refresh.<br/>' +
         '<span style="opacity:.6;font-size:12px;">(' + (reason || 'unknown error') + ')</span></div>';
     }
   }
 
   window.addEventListener('error', function (e) {
-    if (looksLikeThirdPartyError(e)) {
-      // Bukan urusan kita — biarkan lewat, jangan tampilkan pesan gagal.
-      return;
-    }
-    // Error yang tersisa kemungkinan besar memang dari library/game kita.
-    // Beri jeda singkat untuk memastikan React benar-benar gagal mount
-    // (bukan cuma race condition saat CDN masih proses).
+    if (looksLikeThirdPartyError(e)) return;
     setTimeout(function () {
       var root = document.getElementById('root');
       if (!window.React || !window.ReactDOM || !window.Babel || !window.ethers || (root && !root.dataset.mounted)) {
@@ -118,14 +101,12 @@
   const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
   // ================== KONFIGURASI ==================
-  // TODO: ganti dengan address kontrak CoinFlip.sol setelah di-deploy.
   const COINFLIP_ADDRESS = "0xBe0C881a509B74D76D021F79FaBfb9F818E13060";
   const TOKEN_ADDRESS    = "0x12934cb5e37e1eeec80e889df7614febe312ecd9"; // RIALO
   const TOKEN_SYMBOL     = "RIALO";
   const SEPOLIA_CHAIN_ID_HEX = "0xaa36a7"; // 11155111
   const RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
 
-  // Ganti kalau logo kamu punya nama file lain di repo yang sama.
   const HEADS_IMG = "logo_transparent.png";
   const TAILS_IMG = "icon-app.svg";
 
@@ -146,24 +127,23 @@
   ];
 
   const c = {
-    panel: "#0E1211",
-    field: "#101413",
-    card: "#161B1A",
-    border: "rgba(255,255,255,0.08)",
-    borderSoft: "rgba(255,255,255,0.05)",
-    textFaint: "rgba(255,255,255,0.25)",
-    textMuted: "rgba(255,255,255,0.55)",
-    mint: "#5EEAD4",
-    mintBorder: "rgba(45,212,191,0.3)",
-    mintBg: "rgba(45,212,191,0.1)",
-    gold: "#F4C86B",
-    goldBg: "rgba(244,200,107,0.1)",
-    danger: "#F87171",
-    dangerBg: "rgba(248,113,113,0.1)",
+    panel: "#FFFFFF",
+    field: "#F3F5F4",
+    card: "#F7F9F8",
+    border: "rgba(10,13,12,0.10)",
+    borderSoft: "rgba(10,13,12,0.06)",
+    textFaint: "rgba(10,13,12,0.38)",
+    textMuted: "rgba(10,13,12,0.60)",
+    textMain: "#0A0D0C",
+    mint: "#0D9488",
+    mintBorder: "rgba(13,148,136,0.35)",
+    mintBg: "rgba(13,148,136,0.09)",
+    gold: "#B7791F",
+    goldBorder: "rgba(183,121,31,0.35)",
+    goldBg: "rgba(183,121,31,0.10)",
+    danger: "#DC2626",
+    dangerBg: "rgba(220,38,38,0.08)",
   };
-
-  const configured = COINFLIP_ADDRESS.startsWith("0x") &&
-    COINFLIP_ADDRESS.toLowerCase() !== "0xBe0C881a509B74D76D021F79FaBfb9F818E13060";
 
   function fmt(amount, decimals) {
     if (amount === null || amount === undefined) return "0";
@@ -171,15 +151,19 @@
     return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
   }
 
+  function short(addr) {
+    if (!addr) return "";
+    return addr.slice(0, 6) + "…" + addr.slice(-4);
+  }
+
   // ---------- Koin 3D: hero / signature element ----------
   function Coin({ face, spinIndex, flipping, size = 176 }) {
-    // face: "heads" | "tails" — target wajah setelah animasi selesai
     const rotation = spinIndex * 1080 + (face === "tails" ? 180 : 0);
     return (
       <div style={{
         width: size, height: size, margin: "0 auto",
         perspective: 900,
-        filter: flipping ? "drop-shadow(0 0 26px rgba(94,234,212,0.35))" : "drop-shadow(0 10px 18px rgba(0,0,0,0.5))",
+        filter: flipping ? "drop-shadow(0 0 26px rgba(13,148,136,0.28))" : "drop-shadow(0 8px 16px rgba(10,13,12,0.12))",
       }}>
         <div style={{
           position: "relative", width: "100%", height: "100%",
@@ -191,10 +175,10 @@
           <div style={{
             position: "absolute", inset: 0, borderRadius: "50%",
             backfaceVisibility: "hidden",
-            background: `radial-gradient(circle at 32% 28%, #1c2523, #0c1110 72%)`,
+            background: `radial-gradient(circle at 32% 28%, #FFFFFF, #F0F3F2 72%)`,
             border: `2px solid ${c.mintBorder}`,
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "inset 0 0 0 6px rgba(94,234,212,0.06)",
+            boxShadow: "inset 0 0 0 6px rgba(13,148,136,0.06)",
           }}>
             <img src={HEADS_IMG} alt="Heads" style={{ width: "58%", height: "58%", objectFit: "contain" }} onError={(e)=>{e.target.style.display='none';}} />
           </div>
@@ -203,10 +187,10 @@
             position: "absolute", inset: 0, borderRadius: "50%",
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
-            background: `radial-gradient(circle at 32% 28%, #241d14, #0c1110 72%)`,
-            border: `2px solid rgba(244,200,107,0.3)`,
+            background: `radial-gradient(circle at 32% 28%, #FFFFFF, #F5F1E7 72%)`,
+            border: `2px solid ${c.goldBorder}`,
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "inset 0 0 0 6px rgba(244,200,107,0.06)",
+            boxShadow: "inset 0 0 0 6px rgba(183,121,31,0.06)",
           }}>
             <img src={TAILS_IMG} alt="Tails" style={{ width: "50%", height: "50%", objectFit: "contain" }} onError={(e)=>{e.target.style.display='none';}} />
           </div>
@@ -225,7 +209,7 @@
           padding: "14px 10px",
           borderRadius: 16,
           background: active ? (accent === "gold" ? c.goldBg : c.mintBg) : c.field,
-          border: `1.5px solid ${active ? (accent === "gold" ? "rgba(244,200,107,0.5)" : c.mintBorder) : c.borderSoft}`,
+          border: `1.5px solid ${active ? (accent === "gold" ? c.goldBorder : c.mintBorder) : c.borderSoft}`,
           cursor: "pointer",
           transition: "all 0.15s ease",
         }}
@@ -247,23 +231,35 @@
     );
   }
 
+  function Spinner({ color = "#000" }) {
+    return (
+      <svg className="spin" width="16" height="16" viewBox="0 0 24 24" style={{ display: "inline-block", verticalAlign: "-3px", marginRight: 8 }}>
+        <circle cx="12" cy="12" r="10" stroke={color} strokeOpacity="0.25" strokeWidth="3" fill="none" />
+        <path d="M22 12a10 10 0 0 0-10-10" stroke={color} strokeWidth="3" fill="none" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
   function CoinFlipGame() {
-    const [account, setAccount] = useState(null);
+    const [provider, setProvider] = useState(null);
     const [signer, setSigner] = useState(null);
+    const [account, setAccount] = useState(null);
     const [chainIdHex, setChainIdHex] = useState(null);
-    const [loadingWallet, setLoadingWallet] = useState(false);
+    const [connecting, setConnecting] = useState(false);
+    const [switching, setSwitching] = useState(false);
 
     const [decimals, setDecimals] = useState(18);
     const [tokenBalance, setTokenBalance] = useState(null);
     const [allowance, setAllowance] = useState(null);
-    const [minBet, setMinBet] = useState(ethers.parseUnits("1", 18));
-    const [maxBet, setMaxBet] = useState(ethers.parseUnits("100", 18));
+    const [minBet, setMinBet] = useState(null);
+    const [maxBet, setMaxBet] = useState(null);
     const [paused, setPaused] = useState(false);
-    const [houseBalance, setHouseBalance] = useState(ethers.parseUnits("5000", 18));
+    const [houseBalance, setHouseBalance] = useState(null);
 
-    const [guess, setGuess] = useState("heads"); // "heads" | "tails"
+    const [guess, setGuess] = useState("heads");
     const [betAmount, setBetAmount] = useState("");
     const [busy, setBusy] = useState(false);
+    const [busyLabel, setBusyLabel] = useState("");
     const [flipping, setFlipping] = useState(false);
     const [spinIndex, setSpinIndex] = useState(0);
     const [coinFace, setCoinFace] = useState("heads");
@@ -272,38 +268,212 @@
 
     const pendingResultRef = useRef(null);
     const onSepolia = chainIdHex === SEPOLIA_CHAIN_ID_HEX;
+    const hasInjected = typeof window !== "undefined" && !!window.ethereum;
 
     const betUnits = useMemo(() => {
       if (!betAmount || isNaN(Number(betAmount))) return null;
       try { return ethers.parseUnits(betAmount, decimals); } catch { return null; }
     }, [betAmount, decimals]);
 
-    const needsApproval = betUnits !== null && (allowance === null || allowance < betUnits);
+    const needsApproval = betUnits !== null && betUnits > 0n && (allowance === null || allowance < betUnits);
 
     const setPreset = (units) => {
       if (units === null || units === undefined) return;
       setBetAmount(ethers.formatUnits(units, decimals));
     };
 
-    // Simulasi flip lokal, tanpa wallet/kontrak asli — cuma buat lihat animasi UI.
+    // ---------- Wallet connect ----------
+    const connectWallet = useCallback(async () => {
+      setError("");
+      if (!window.ethereum) {
+        setError("No wallet found. Open this page inside your wallet browser (e.g. Mises, MetaMask).");
+        return;
+      }
+      setConnecting(true);
+      try {
+        const p = new ethers.BrowserProvider(window.ethereum);
+        const accounts = await p.send("eth_requestAccounts", []);
+        const net = await p.getNetwork();
+        const s = await p.getSigner();
+        setProvider(p);
+        setSigner(s);
+        setAccount(accounts[0]);
+        setChainIdHex("0x" + net.chainId.toString(16));
+      } catch (err) {
+        setError(err?.info?.error?.message || err?.shortMessage || err.message || "Failed to connect wallet.");
+      } finally {
+        setConnecting(false);
+      }
+    }, []);
+
+    const switchToSepolia = useCallback(async () => {
+      setError("");
+      setSwitching(true);
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }],
+        });
+      } catch (err) {
+        if (err && err.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: SEPOLIA_CHAIN_ID_HEX,
+                chainName: "Sepolia",
+                rpcUrls: [RPC_URL],
+                nativeCurrency: { name: "Sepolia ETH", symbol: "ETH", decimals: 18 },
+                blockExplorerUrls: ["https://sepolia.etherscan.io"],
+              }],
+            });
+          } catch (err2) {
+            setError(err2?.message || "Failed to add Sepolia network.");
+          }
+        } else {
+          setError(err?.message || "Failed to switch network.");
+        }
+      } finally {
+        setSwitching(false);
+      }
+    }, []);
+
+    // React to account/network changes from the wallet itself
+    useEffect(() => {
+      if (!window.ethereum) return;
+      const onAccountsChanged = (accs) => {
+        if (!accs || accs.length === 0) {
+          setAccount(null); setSigner(null); setProvider(null);
+        } else {
+          setAccount(accs[0]);
+        }
+      };
+      const onChainChanged = (hex) => {
+        setChainIdHex(hex);
+      };
+      window.ethereum.on && window.ethereum.on("accountsChanged", onAccountsChanged);
+      window.ethereum.on && window.ethereum.on("chainChanged", onChainChanged);
+      return () => {
+        window.ethereum.removeListener && window.ethereum.removeListener("accountsChanged", onAccountsChanged);
+        window.ethereum.removeListener && window.ethereum.removeListener("chainChanged", onChainChanged);
+      };
+    }, []);
+
+    // ---------- Load on-chain data ----------
+    const refreshData = useCallback(async () => {
+      if (!provider || !onSepolia) return;
+      try {
+        const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, provider);
+        const game = new ethers.Contract(COINFLIP_ADDRESS, COINFLIP_ABI, provider);
+        const dec = await token.decimals();
+        setDecimals(Number(dec));
+
+        const [minB, maxB, isPaused, house] = await Promise.all([
+          game.minBet(), game.maxBet(), game.paused(), game.houseBalance(),
+        ]);
+        setMinBet(minB); setMaxBet(maxB); setPaused(isPaused); setHouseBalance(house);
+
+        if (account) {
+          const [bal, allw] = await Promise.all([
+            token.balanceOf(account),
+            token.allowance(account, COINFLIP_ADDRESS),
+          ]);
+          setTokenBalance(bal);
+          setAllowance(allw);
+        }
+      } catch (err) {
+        setError(err?.shortMessage || err.message || "Failed to load contract data.");
+      }
+    }, [provider, account, onSepolia]);
+
+    useEffect(() => { refreshData(); }, [refreshData]);
+
+    // ---------- Approve + Flip (real tx) ----------
+    const doApprove = useCallback(async () => {
+      if (!signer || betUnits === null) return;
+      setError("");
+      setBusy(true);
+      setBusyLabel("Approving...");
+      try {
+        const token = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, signer);
+        const tx = await token.approve(COINFLIP_ADDRESS, betUnits);
+        await tx.wait();
+        await refreshData();
+      } catch (err) {
+        setError(err?.info?.error?.message || err?.shortMessage || err.message || "Approve failed.");
+      } finally {
+        setBusy(false);
+        setBusyLabel("");
+      }
+    }, [signer, betUnits, refreshData]);
+
     const runFlip = useCallback(async () => {
       setError("");
       setResult(null);
+
+      if (!account || !signer) {
+        setError("Connect your wallet first.");
+        return;
+      }
+      if (!onSepolia) {
+        setError("Switch to Sepolia network first.");
+        return;
+      }
       if (betUnits === null || betUnits <= 0n) {
         setError("Enter a valid bet amount.");
         return;
       }
-      setBusy(true);
-      setFlipping(true);
-      setSpinIndex((i) => i + 1);
-      const won = Math.random() < 0.5;
-      const faceResult = Math.random() < 0.5 ? "heads" : "tails";
-      pendingResultRef.current = {
-        won, payout: won ? betUnits * 2n : 0n,
-        txHash: "0x" + Array.from({length:64}, ()=>Math.floor(Math.random()*16).toString(16)).join(""),
-        face: faceResult,
-      };
-    }, [betUnits]);
+      if (minBet !== null && betUnits < minBet) {
+        setError(`Minimum bet is ${fmt(minBet, decimals)} ${TOKEN_SYMBOL}.`);
+        return;
+      }
+      if (maxBet !== null && betUnits > maxBet) {
+        setError(`Maximum bet is ${fmt(maxBet, decimals)} ${TOKEN_SYMBOL}.`);
+        return;
+      }
+      if (tokenBalance !== null && betUnits > tokenBalance) {
+        setError("Insufficient balance.");
+        return;
+      }
+      if (paused) {
+        setError("Game is paused right now.");
+        return;
+      }
+
+      try {
+        const game = new ethers.Contract(COINFLIP_ADDRESS, COINFLIP_ABI, signer);
+
+        setBusy(true);
+        setBusyLabel("Sending transaction...");
+        const tx = await game.flip(betUnits, guess === "heads");
+
+        setBusyLabel("Waiting for confirmation...");
+        setFlipping(true);
+        setSpinIndex((i) => i + 1);
+
+        const receipt = await tx.wait();
+
+        // Parse Flipped event from receipt logs
+        let parsed = null;
+        for (const log of receipt.logs) {
+          try {
+            const ev = game.interface.parseLog(log);
+            if (ev && ev.name === "Flipped") { parsed = ev; break; }
+          } catch (_) { /* not our event, ignore */ }
+        }
+
+        const faceResult = parsed ? (parsed.args.result ? "heads" : "tails") : (guess);
+        const won = parsed ? parsed.args.won : null;
+        const payout = parsed ? parsed.args.payout : 0n;
+
+        pendingResultRef.current = { won, payout, txHash: receipt.hash, face: faceResult };
+      } catch (err) {
+        setFlipping(false);
+        setBusy(false);
+        setBusyLabel("");
+        setError(err?.info?.error?.message || err?.shortMessage || err.message || "Transaction failed.");
+      }
+    }, [account, signer, onSepolia, betUnits, minBet, maxBet, tokenBalance, paused, guess, decimals]);
 
     useEffect(() => {
       if (!flipping) return;
@@ -312,12 +482,14 @@
         if (r) {
           setCoinFace(r.face);
           setResult({ won: r.won, payout: r.payout, txHash: r.txHash });
+          refreshData();
         }
         setFlipping(false);
         setBusy(false);
+        setBusyLabel("");
       }, 1700);
       return () => clearTimeout(t);
-    }, [flipping]);
+    }, [flipping, refreshData]);
 
     const presets = [];
     if (minBet !== null && maxBet !== null) {
@@ -325,10 +497,20 @@
       presets.push(minBet, mid, maxBet);
     }
 
-    let ctaLabel = "Flip Coin (Preview)";
-    if (busy || flipping) ctaLabel = flipping ? "Flipping..." : "Sending...";
+    let ctaLabel = "Flip Coin";
+    if (!account) ctaLabel = "Connect Wallet";
+    else if (!onSepolia) ctaLabel = "Switch to Sepolia";
+    else if (needsApproval) ctaLabel = `Approve ${TOKEN_SYMBOL}`;
+    else if (busy || flipping) ctaLabel = busyLabel || "Working...";
 
-    const ctaDisabled = busy || flipping;
+    const ctaDisabled = busy || flipping || connecting || switching;
+
+    const handleCta = () => {
+      if (!account) { connectWallet(); return; }
+      if (!onSepolia) { switchToSepolia(); return; }
+      if (needsApproval) { doApprove(); return; }
+      runFlip();
+    };
 
     return (
       <div style={{
@@ -340,7 +522,7 @@
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
             <div>
-              <div className="display" style={{ fontSize: 22, fontWeight: 700, letterSpacing: 0.2 }}>
+              <div className="display" style={{ fontSize: 22, fontWeight: 700, letterSpacing: 0.2, color: c.textMain }}>
                 Coin<span style={{ color: c.mint }}>Flip</span>
               </div>
               <div style={{ fontSize: 12, color: c.textMuted, marginTop: 2 }}>
@@ -349,14 +531,17 @@
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
               <span style={{
-                background: c.card, color: c.textMuted, fontSize: 11.5,
-                padding: "5px 10px", borderRadius: 999, border: `1px solid ${c.borderSoft}`,
+                background: onSepolia ? c.mintBg : c.dangerBg,
+                color: onSepolia ? c.mint : c.danger,
+                fontSize: 11.5, fontWeight: 600,
+                padding: "5px 10px", borderRadius: 999,
+                border: `1px solid ${onSepolia ? c.mintBorder : "rgba(220,38,38,0.3)"}`,
               }}>
-                Sepolia
+                {account ? (onSepolia ? "Sepolia" : "Wrong network") : "Not connected"}
               </span>
-              {houseBalance !== null && (
+              {account && (
                 <span style={{ fontSize: 11, color: c.textFaint }}>
-                  House: {fmt(houseBalance, decimals)} {TOKEN_SYMBOL}
+                  {short(account)}
                 </span>
               )}
             </div>
@@ -365,13 +550,14 @@
           <div style={{
             background: c.panel, borderRadius: 24, padding: "28px 22px 24px",
             border: `1px solid ${c.border}`,
+            boxShadow: "0 4px 24px rgba(10,13,12,0.06)",
           }}>
 
             <div style={{ position: "relative", padding: "6px 0 4px" }}>
               <div style={{
                 position: "absolute", left: "50%", top: "52%", transform: "translate(-50%,-50%)",
                 width: 190, height: 190, borderRadius: "50%",
-                background: `radial-gradient(circle, ${flipping ? "rgba(94,234,212,0.16)" : "rgba(94,234,212,0.06)"} 0%, transparent 70%)`,
+                background: `radial-gradient(circle, ${flipping ? "rgba(13,148,136,0.14)" : "rgba(13,148,136,0.05)"} 0%, transparent 70%)`,
                 animation: flipping ? "none" : "floatGlow 3.5s ease-in-out infinite",
                 pointerEvents: "none",
               }} />
@@ -381,7 +567,7 @@
             <div style={{ minHeight: 46, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 6 }}>
               {flipping ? (
                 <div style={{ fontSize: 13.5, color: c.textMuted, animation: "popIn 0.2s ease" }}>
-                  Flipping the coin…
+                  <Spinner color={c.textMuted} />{busyLabel || "Flipping the coin…"}
                 </div>
               ) : result ? (
                 <div style={{ textAlign: "center", animation: "popIn 0.25s ease" }}>
@@ -391,9 +577,15 @@
                   }}>
                     {result.won ? `You won ${fmt(result.payout, decimals)} ${TOKEN_SYMBOL}` : "Better luck next time"}
                   </div>
-                  <span style={{ fontSize: 11.5, color: c.textFaint }}>
-                    (preview mode — tx tidak nyata)
-                  </span>
+                  {result.txHash && (
+                    <a
+                      href={`https://sepolia.etherscan.io/tx/${result.txHash}`}
+                      target="_blank" rel="noopener noreferrer"
+                      style={{ fontSize: 11.5, color: c.textFaint, textDecoration: "underline" }}
+                    >
+                      View transaction
+                    </a>
+                  )}
                 </div>
               ) : (
                 <div style={{ fontSize: 13, color: c.textFaint }}>
@@ -428,7 +620,7 @@
                   placeholder="0.0"
                   style={{
                     flex: 1, background: "transparent", border: "none", outline: "none",
-                    color: "#fff", fontSize: 18, fontWeight: 600,
+                    color: c.textMain, fontSize: 18, fontWeight: 600,
                   }}
                 />
                 <span style={{ fontSize: 13, color: c.textMuted, fontWeight: 600 }}>{TOKEN_SYMBOL}</span>
@@ -458,19 +650,26 @@
                 Min {fmt(minBet, decimals)} · Max {fmt(maxBet, decimals)} {TOKEN_SYMBOL} per flip · 2x payout on win
               </div>
             )}
+            {houseBalance !== null && (
+              <div style={{ fontSize: 11, color: c.textFaint, marginTop: 2 }}>
+                House balance: {fmt(houseBalance, decimals)} {TOKEN_SYMBOL}
+              </div>
+            )}
 
             <button
-              onClick={runFlip}
+              onClick={handleCta}
               disabled={ctaDisabled}
               style={{
                 width: "100%", marginTop: 16,
                 background: ctaDisabled ? c.card : c.mint,
                 border: "none", borderRadius: 999, padding: 16,
                 fontWeight: 700, fontSize: 15.5,
-                color: ctaDisabled ? c.textFaint : "#000",
+                color: ctaDisabled ? c.textFaint : "#FFFFFF",
                 cursor: ctaDisabled ? "not-allowed" : "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
               }}
             >
+              {(busy || flipping || connecting || switching) && <Spinner color={ctaDisabled ? "rgba(10,13,12,0.4)" : "#fff"} />}
               {ctaLabel}
             </button>
 
@@ -497,7 +696,7 @@
     rootEl.dataset.mounted = "true";
   } catch (err) {
     rootEl.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
-      'color:#F87171;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
+      'color:#DC2626;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
       'Terjadi error saat menampilkan game.<br/>' +
       '<span style="opacity:.6;font-size:12px;">(' + err.message + ')</span></div>';
     console.error(err);
@@ -530,7 +729,7 @@
     } catch (err) {
       var rootEl = document.getElementById('root');
       rootEl.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
-        'color:#F87171;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
+        'color:#DC2626;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
         'Gagal mem-compile script.<br/>' +
         '<span style="opacity:.6;font-size:12px;">(' + err.message + ')</span></div>';
       console.error(err);
