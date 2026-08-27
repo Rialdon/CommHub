@@ -114,7 +114,7 @@
   });
 </script>
 
-<script type="text/babel" data-presets="react">
+<script type="text/plain" id="app-source">
   const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
   // ================== KONFIGURASI ==================
@@ -502,6 +502,40 @@
       '<span style="opacity:.6;font-size:12px;">(' + err.message + ')</span></div>';
     console.error(err);
   }
+</script>
+
+<script>
+  // ==========================================================
+  // Transform manual, bukan pakai auto-scan bawaan <script type="text/babel">.
+  //
+  // Kenapa: versi Babel standalone terbaru default memakai "automatic
+  // JSX runtime", yang menghasilkan kode berisi `import { jsx as _jsx }
+  // from "react/jsx-runtime"` di baris paling atas. Karena script ini
+  // dijalankan sebagai script biasa (bukan type="module"), baris import
+  // itu memicu error "Cannot use import statement outside a module".
+  //
+  // Solusi: transform manual dengan opsi runtime "classic", yang
+  // menghasilkan React.createElement(...) biasa — tidak butuh import.
+  // ==========================================================
+  (function () {
+    try {
+      var src = document.getElementById('app-source').textContent;
+      var out = Babel.transform(src, {
+        presets: [["react", { runtime: "classic" }]],
+        filename: "app.jsx",
+      }).code;
+      var s = document.createElement('script');
+      s.textContent = out;
+      document.body.appendChild(s);
+    } catch (err) {
+      var rootEl = document.getElementById('root');
+      rootEl.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+        'color:#F87171;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
+        'Gagal mem-compile script.<br/>' +
+        '<span style="opacity:.6;font-size:12px;">(' + err.message + ')</span></div>';
+      console.error(err);
+    }
+  })();
 </script>
 </body>
 </html>
