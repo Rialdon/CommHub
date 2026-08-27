@@ -1113,9 +1113,13 @@ body.light-mode .logo-text {
         if (!res.ok) {
           setStatus({ type: "error", text: data.error || "Claim failed." });
         } else {
-          setStatus({ type: "success", text: `Success! ${data.amount} ${TOKEN_SYMBOL} is on its way.`, hash: data.txHash || data.hash });
+          setStatus({
+            type: "success",
+            text: `Success! ${data.amount} ${TOKEN_SYMBOL} is on its way.`,
+            txHash: data.txHash,
+          });
           setAddress("");
-      }
+        }
       } catch (err) {
         setStatus({ type: "error", text: "Network error. Please try again." });
       } finally {
@@ -1194,6 +1198,18 @@ body.light-mode .logo-text {
             color: status.type === "success" ? c.mint : c.danger,
           }}>
             {status.text}
+            {status.txHash && (
+              <>
+                {" "}
+                <a
+                  href={`https://sepolia.etherscan.io/tx/${status.txHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
+                  {status.txHash.slice(0, 10)}...{status.txHash.slice(-6)}
+                </a>
+              </>
+            )}
           </div>
         )}
       </div>
