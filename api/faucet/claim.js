@@ -5,7 +5,7 @@ const { createClient } = require("@supabase/supabase-js");
 const RPC_URL = process.env.SEPOLIA_RPC_URL;
 const FAUCET_PRIVATE_KEY = process.env.FAUCET_PRIVATE_KEY;
 const RIALO_TOKEN_ADDRESS = process.env.RIALO_TOKEN_ADDRESS;
-const FAUCET_CONTRACT_ADDRESS = process.env.FAUCET_CONTRACT_ADDRESS; // address RialoFaucet.sol yang baru di-deploy
+const FAUCET_CONTRACT_ADDRESS = process.env.FAUCET_CONTRACT_ADDRESS; 
 const CLAIM_AMOUNT = "100"; // 100 RIALO per klaim
 const COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 jam
 
@@ -51,10 +51,6 @@ async function isSuspiciousIp(ip) {
 
     // Deteksi utama: proxy/VPN/Tor eksplisit, atau fraud score tinggi
     const flaggedByCore = Boolean(data.proxy || data.vpn || data.tor || (data.fraud_score ?? 0) >= 75);
-
-    // Deteksi tambahan: IP dari Data Center / Hosting jarang sekali dipakai user asli.
-    // Banyak VPN pakai IP baru yang belum sempat ditandai vpn=true, tapi connection_type
-    // tetap kelihatan sebagai "Data Center" karena memang disewa dari provider hosting.
     const connectionType = (data.connection_type || "").toLowerCase();
     const flaggedByConnectionType = connectionType.includes("data center") || connectionType.includes("hosting");
 
