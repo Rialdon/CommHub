@@ -49,16 +49,68 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.9.0/ethers.umd.min.js" crossorigin></script>
 
 <script>
-  // Jaring pengaman: kalau salah satu library gagal ke-load (CDN down/diblokir),
-  // atau script React error, jangan biarkan halaman diam blank — tampilkan pesan.
-  window.addEventListener('error', function (e) {
+  // ==========================================================
+  // Jaring pengaman untuk error PADA HALAMAN INI SAJA.
+  //
+  // Catatan penting: browser dompet Web3 (Mises, MetaMask, dsb.)
+  // menyuntikkan script mereka sendiri (mis. mises_safe_injected.bundle.js,
+  // inpage.js, contentscript.js) ke SETIAP halaman yang dibuka. Kalau
+  // script suntikan itu error, browser tetap melaporkannya lewat event
+  // 'error' global — padahal itu sama sekali bukan bagian dari game ini.
+  //
+  // Makanya di sini kita:
+  //  1) Abaikan error yang jelas bukan berasal dari file/script kita
+  //     (dicek dari e.filename, atau dari pesan errornya).
+  //  2) Beri jeda sebelum menampilkan pesan "gagal", supaya bukan
+  //     langsung vonis dari error pertama yang lewat.
+  // ==========================================================
+  var mounted = false;
+  var shownFailure = false;
+
+  function looksLikeThirdPartyError(e) {
+    var src = (e && e.filename) || "";
+    var msg = (e && e.message) || "";
+    // Pola umum script suntikan ekstensi wallet / dompet crypto.
+    var thirdPartyPatterns = [
+      "mises_safe_injected", "inpage.js", "contentscript.js",
+      "chrome-extension://", "moz-extension://", "safari-extension://"
+    ];
+    for (var i = 0; i < thirdPartyPatterns.length; i++) {
+      if (src.indexOf(thirdPartyPatterns[i]) !== -1) return true;
+    }
+    // "Cannot use import statement outside a module" hampir selalu
+    // berasal dari script luar yang ditulis sebagai ES module,
+    // bukan dari game ini (game ini tidak pakai import/export).
+    if (msg.indexOf("import statement") !== -1) return true;
+    return false;
+  }
+
+  function showFailureMessage(reason) {
+    if (shownFailure) return; // jangan timpa pesan berkali-kali
     var root = document.getElementById('root');
-    if (root && (!window.React || !window.ReactDOM || !window.Babel || !window.ethers || !root.dataset.mounted)) {
+    if (root && !root.dataset.mounted) {
+      shownFailure = true;
       root.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
         'color:#F87171;font-family:system-ui,sans-serif;font-size:14px;text-align:center;padding:24px;">' +
         'Gagal memuat halaman.<br/>Cek koneksi internet kamu lalu refresh.<br/>' +
-        '<span style="opacity:.6;font-size:12px;">(' + (e.message || 'unknown error') + ')</span></div>';
+        '<span style="opacity:.6;font-size:12px;">(' + (reason || 'unknown error') + ')</span></div>';
     }
+  }
+
+  window.addEventListener('error', function (e) {
+    if (looksLikeThirdPartyError(e)) {
+      // Bukan urusan kita — biarkan lewat, jangan tampilkan pesan gagal.
+      return;
+    }
+    // Error yang tersisa kemungkinan besar memang dari library/game kita.
+    // Beri jeda singkat untuk memastikan React benar-benar gagal mount
+    // (bukan cuma race condition saat CDN masih proses).
+    setTimeout(function () {
+      var root = document.getElementById('root');
+      if (!window.React || !window.ReactDOM || !window.Babel || !window.ethers || (root && !root.dataset.mounted)) {
+        showFailureMessage(e.message);
+      }
+    }, 800);
   });
 </script>
 
