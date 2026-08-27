@@ -275,7 +275,6 @@ body.light-mode .logo-text {
     <!-- Tombol Trading Terminal Soon -->
 <div class="mt-4 text-center">
   <div id="swap-root"></div>
-  <div id="faucet-root"></div>
 </div>
 </section>
 
@@ -1080,6 +1079,9 @@ body.light-mode .logo-text {
                 </p>
               )}
             </div>
+
+            <FaucetDemo />
+
           </div>
         </div>
       </div>
@@ -1199,7 +1201,6 @@ body.light-mode .logo-text {
   }
 
   ReactDOM.createRoot(document.getElementById('swap-root')).render(<SwapDemo />);
-ReactDOM.createRoot(document.getElementById('faucet-root')).render(<FaucetDemo />);
 </script>
 </body>
 </html>
