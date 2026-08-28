@@ -95,12 +95,21 @@ body.light-mode .logo-text {
   body.dark-mode .game-img { 
     background: #1a1d24 !important; 
   }
+  .hero-banner-wrap {
+  width: 100%;
+}
+.hero-banner-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
 </style>
 </head>
 <body class="min-h-screen flex flex-col light-mode" id="body">
 
 <!-- Loading Screen -->
-<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
+<div id="loader" class="fixed inset-0 flex items-center justify-center z-50">
   <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
     
     <img src="icon-app.svg" class="h-12 mx-auto logo-glow object-contain" alt="Comhub Logo"/>
@@ -141,9 +150,11 @@ body.light-mode .logo-text {
 
 <main class="flex-1">
   <!-- Hero Banner -->
-  <div class="glass rounded-2xl overflow-hidden shadow-md mt-4">
-    <img src="comhub-games-banner.svg" class="w-full h-full object-cover" alt="ComHub Games Banner"/>
+<div class="px-6 pt-4 max-w-7xl mx-auto">
+  <div class="hero-banner-wrap">
+    <img src="comhub-games-banner.svg" class="opacity-90" alt="ComHub Games Banner"/>
   </div>
+</div>
 
   <!-- About -->
   <section id="about" class="px-6 py-16 max-w-7xl mx-auto">
