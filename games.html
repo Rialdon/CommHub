@@ -95,6 +95,14 @@ body.light-mode .logo-text {
   body.dark-mode .game-img { 
     background: #1a1d24 !important; 
   }
+  #loader { background-color: #ffffff; }
+  .dark-mode #loader { background-color: #05060a; }
+
+  .progress { height: 10px; border-radius: 999px; background: rgba(0,0,0,0.08); overflow: hidden; }
+  .dark-mode .progress { background: rgba(255,255,255,0.1); }
+  .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
+
+</style>
   .hero-banner-wrap {
   width: 100%;
 }
@@ -114,6 +122,7 @@ body.light-mode .logo-text {
     <img src="icon-app.svg" class="h-12 mx-auto logo-glow object-contain" alt="Comhub Logo"/>
     <h1 class="mt-4 font-bold text-xl">ComHub</h1>
     <p class="text-sm opacity-70 mt-1">Loading experience…</p>
+    <div class="progress mt-4"><div id="bar" class="progress-bar"></div></div>
     <p class="italic text-xs mt-2 opacity-60">Powered by ComHub</p>
   </div>
 </div>
@@ -240,12 +249,20 @@ body.light-mode .logo-text {
     }
   }
 
-  // Sembunyikan loader setelah sebentar
+  // Loader progress
+const bar = document.getElementById('bar');
 const loader = document.getElementById('loader');
-setTimeout(() => {
-  if (loader) loader.style.display = 'none';
-}, 800);
-</script>
+let p = 0;
+const int = setInterval(() => {
+  p += 15;
+  if (bar) bar.style.width = p + '%';
+  if (p >= 100) {
+    clearInterval(int);
+    setTimeout(() => {
+      if (loader) loader.style.display = 'none';
+    }, 250);
+}
+ }, 60);
 
 </body>
 </html>
