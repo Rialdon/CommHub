@@ -279,49 +279,49 @@ body.light-mode .logo-text {
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
       <!-- BTC Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-title text-xs">Bitcoin (BTC)</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="btc-price" class="text-[11px] crypto-sub font-semibold">$0</span>
-            <span id="btc-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="btc-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
+      <div class="glass p-3 md:p-5 rounded-xl h-24 md:h-40 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+  <div>
+    <h4 class="font-bold crypto-title text-xs md:text-base">Bitcoin (BTC)</h4>
+    <div class="flex items-center gap-1.5 mt-0.5 md:mt-2">
+      <span id="btc-price" class="text-[11px] md:text-lg crypto-sub font-semibold">$0</span>
+      <span id="btc-change" class="text-[11px] md:text-sm font-bold text-gray-400">0.00%</span>
+    </div>
+  </div>
+  <div id="btc-sparkline" class="w-full h-8 md:h-16 mt-1"></div>
+</div>
 
       <!-- BNB Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-title text-xs">BNB</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="bnb-price" class="text-[11px] crypto-sub font-semibold">$0</span>
-            <span id="bnb-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="bnb-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
+      <div class="glass p-3 md:p-5 rounded-xl h-24 md:h-40 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+  <div>
+    <h4 class="font-bold crypto-title text-xs md:text-base">Bitcoin (BTC)</h4>
+    <div class="flex items-center gap-1.5 mt-0.5 md:mt-2">
+      <span id="bnb-price" class="text-[11px] md:text-lg crypto-sub font-semibold">$0</span>
+      <span id="bnb-change" class="text-[11px] md:text-sm font-bold text-gray-400">0.00%</span>
+    </div>
+  </div>
+  <div id="bnb-sparkline" class="w-full h-8 md:h-16 mt-1"></div>
+</div>
 
       <!-- ETH Card -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-title text-xs">Ethereum (ETH)</h4>
-          <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="eth-price" class="text-[11px] crypto-sub font-semibold">$0</span>
-            <span id="eth-change" class="text-[11px] font-bold text-gray-400">0.00%</span>
-          </div>
-        </div>
-        <div id="eth-sparkline" class="w-full h-8 md:h-10 mt-1"></div>
-      </div>
+      <div class="glass p-3 md:p-5 rounded-xl h-24 md:h-40 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+  <div>
+    <h4 class="font-bold crypto-title text-xs md:text-base">Bitcoin (BTC)</h4>
+    <div class="flex items-center gap-1.5 mt-0.5 md:mt-2">
+      <span id="eth-price" class="text-[11px] md:text-lg crypto-sub font-semibold">$0</span>
+      <span id="eth-change" class="text-[11px] md:text-sm font-bold text-gray-400">0.00%</span>
+    </div>
+  </div>
+  <div id="eth-sparkline" class="w-full h-8 md:h-16 mt-1"></div>
+</div>
 
             <!-- Rialo Card (Soon) -->
-      <div class="glass p-3 rounded-xl h-24 md:h-28 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
-        <div>
-          <h4 class="font-bold crypto-title text-xs">Rialo</h4>
-          <span class="inline-block mt-1 text-[9px] font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
-        </div>
-        <p class="crypto-sub text-[10px] mb-1">Chart Live Soon</p>
-      </div>
+      <div class="glass p-3 md:p-5 rounded-xl h-24 md:h-40 flex flex-col justify-between border border-black/5 dark-mode:border-white/10 relative overflow-hidden">
+  <div>
+    <h4 class="font-bold crypto-title text-xs md:text-base">Rialo</h4>
+    <span class="inline-block mt-1 text-[9px] md:text-xs font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">UPCOMING</span>
+  </div>
+  <p class="crypto-sub text-[10px] md:text-sm mb-1">Chart Live Soon</p>
+</div>
 
     </div>
 
@@ -498,8 +498,8 @@ body.light-mode .logo-text {
   }
 
   function renderSparkline(prices, containerId, isPositive) {
-    const width = 140;
-    const height = 40;
+    const width = window.innerWidth >= 768 ? 260 : 140;
+const height = window.innerWidth >= 768 ? 70 : 40;
     const min = Math.min(...prices);
     const max = Math.max(...prices);
     const range = max - min || 1;
