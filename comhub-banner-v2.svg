@@ -1,26 +1,95 @@
 <svg width="1200" height="640" viewBox="0 0 1200 640" xmlns="http://www.w3.org/2000/svg">
+  <style>
+  <![CDATA[
+    /* Glow lembut di belakang icon - bernapas pelan */
+    .icon-glow {
+      animation: breathe 3.5s ease-in-out infinite;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+    @keyframes breathe {
+      0%, 100% { opacity: 0.06; transform: scale(0.9); }
+      50% { opacity: 0.16; transform: scale(1.15); }
+    }
+
+    /* Seluruh garis + titik icon muter bareng jadi satu kayak kincir */
+    .wheel-spin {
+      transform-origin: center;
+      transform-box: fill-box;
+      animation: wheelSpin 5s linear infinite;
+    }
+    @keyframes wheelSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Cincin dan lingkaran tengah tetap diem jadi poros */
+    .icon-ring { transform-origin: center; transform-box: fill-box; }
+
+    /* Dot dekoratif kanan atas: berdenyut */
+    .accent-dot {
+      animation: pulse 1.6s ease-in-out infinite;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+    .accent-dot:nth-of-type(2) { animation-delay: 0.4s; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.6); opacity: 0.6; }
+    }
+
+    /* Dot besar (kuning) di bawah kanan: pulse lebih kuat */
+    .accent-dot-big {
+      animation: pulseStrong 2s ease-in-out infinite;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+    @keyframes pulseStrong {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    /* Pill/toggle bar - geser bolak-balik kayak switch */
+    .pill-slide {
+      animation: slideBar 2.6s ease-in-out infinite;
+    }
+    @keyframes slideBar {
+      0%, 100% { transform: translateX(0px); }
+      50% { transform: translateX(18px); }
+    }
+    .pill-slide-rev {
+      animation: slideBarRev 2.6s ease-in-out infinite;
+    }
+    @keyframes slideBarRev {
+      0%, 100% { transform: translateX(0px); }
+      50% { transform: translateX(-18px); }
+    }
+  ]]>
+  </style>
+
   <rect x="0" y="0" width="1200" height="640" fill="#10131C"/>
 
   <!-- subtle glow behind icon -->
-  <circle cx="150" cy="140" r="140" fill="#4CE0B3" opacity="0.08"/>
+  <circle class="icon-glow" cx="150" cy="140" r="140" fill="#4CE0B3" opacity="0.08"/>
 
   <!-- icon top-left, small, clear of text -->
   <g transform="translate(70,60) scale(0.34)">
     <rect x="16" y="16" width="480" height="480" rx="110" fill="#191D28"/>
-    <line x1="256" y1="256" x2="256" y2="106" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
-    <line x1="256" y1="256" x2="385.9" y2="181" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
-    <line x1="256" y1="256" x2="256" y2="406" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
-    <line x1="256" y1="256" x2="126.1" y2="331" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
-    <line x1="256" y1="256" x2="126.1" y2="181" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
-    <line x1="256" y1="256" x2="404.95" y2="342" stroke="#F2B705" stroke-width="11" stroke-linecap="round"/>
-    <circle cx="256" cy="106" r="26" fill="#4CE0B3"/>
-    <circle cx="385.9" cy="181" r="26" fill="#4CE0B3"/>
-    <circle cx="256" cy="406" r="26" fill="#4CE0B3"/>
-    <circle cx="126.1" cy="331" r="26" fill="#4CE0B3"/>
-    <circle cx="126.1" cy="181" r="26" fill="#4CE0B3"/>
-    <circle cx="404.95" cy="342" r="33" fill="#F2B705"/>
-    <circle cx="256" cy="256" r="50" fill="#F5F4F0"/>
-    <circle cx="256" cy="256" r="50" fill="none" stroke="#4CE0B3" stroke-width="7"/>
+    <g class="wheel-spin">
+      <line x1="256" y1="256" x2="256" y2="106" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="385.9" y2="181" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="256" y2="406" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="126.1" y2="331" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="126.1" y2="181" stroke="#3A4552" stroke-width="9" stroke-linecap="round"/>
+      <line x1="256" y1="256" x2="385.9" y2="331" stroke="#F2B705" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="256" cy="106" r="26" fill="#4CE0B3"/>
+      <circle cx="385.9" cy="181" r="26" fill="#4CE0B3"/>
+      <circle cx="256" cy="406" r="26" fill="#4CE0B3"/>
+      <circle cx="126.1" cy="331" r="26" fill="#4CE0B3"/>
+      <circle cx="126.1" cy="181" r="26" fill="#4CE0B3"/>
+      <circle cx="385.9" cy="331" r="33" fill="#F2B705"/>
+    </g>
+    <circle class="icon-ring" cx="256" cy="256" r="50" fill="#F5F4F0"/>
+    <circle class="icon-ring" cx="256" cy="256" r="50" fill="none" stroke="#4CE0B3" stroke-width="7"/>
   </g>
 
   <!-- wordmark next to icon -->
@@ -29,16 +98,16 @@
   <!-- headline, clear space below icon row -->
   <text x="70" y="370" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="88" font-weight="800" fill="#F5F4F0">Welcome to Com<tspan fill="#4CE0B3">Hub</tspan></text>
 
-  <!-- tagline -->
-  <text x="70" y="420" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="28" fill="#9AA3AE">Built by the community, for the community.</text>
+  <!-- subtitle -->
+  <text x="70" y="425" font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-size="28" font-weight="500" fill="#9CA3AF">Built by the community, for the community.</text>
 
   <!-- decorative accents, own arrangement, bottom-right area only -->
   <g opacity="0.95">
-    <circle cx="980" cy="150" r="10" fill="#F2B705"/>
-    <circle cx="1040" cy="210" r="6" fill="#4CE0B3"/>
-    <rect x="880" y="470" width="260" height="60" rx="30" fill="#4CE0B3"/>
-    <rect x="780" y="540" width="180" height="60" rx="30" fill="#F5F4F0" opacity="0.9"/>
-    <circle cx="1090" cy="520" r="24" fill="#F2B705"/>
-    <rect x="960" y="580" width="220" height="60" rx="30" fill="#4CE0B3" opacity="0.7"/>
+    <circle class="accent-dot" cx="980" cy="150" r="10" fill="#F2B705"/>
+    <circle class="accent-dot" cx="1040" cy="210" r="6" fill="#4CE0B3"/>
+    <rect class="pill-slide" x="880" y="470" width="260" height="60" rx="30" fill="#4CE0B3"/>
+    <rect class="pill-slide-rev" x="780" y="540" width="180" height="60" rx="30" fill="#F5F4F0" opacity="0.9"/>
+    <circle class="accent-dot-big" cx="1090" cy="520" r="24" fill="#F2B705"/>
+    <rect class="pill-slide" x="960" y="580" width="220" height="60" rx="30" fill="#4CE0B3" opacity="0.7"/>
   </g>
 </svg>
