@@ -81,6 +81,10 @@ body.light-mode .logo-text {
   .dark-mode .progress { background: rgba(255,255,255,0.1); }
   .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg,#00ffb7,#6ee7b7); box-shadow: 0 0 12px rgba(0,255,183,0.7); }
 
+  /* Loader — ikut tema manual (.light-mode/.dark-mode), BUKAN preferensi sistem/OS */
+  #loader { background-color: #ffffff; }
+  .dark-mode #loader { background-color: #05060a; }
+
   /* Kartu Partner/Investor */
   .partner-card {
     display: flex;
@@ -119,6 +123,7 @@ body.light-mode .logo-text {
   .marquee-wrap {
     overflow: hidden;
     width: 100%;
+    max-width: 100%;
     position: relative;
     -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
@@ -146,7 +151,7 @@ body.light-mode .logo-text {
 <body class="min-h-screen flex flex-col light-mode" id="body">
 
 <!-- Loading Screen -->
-<div id="loader" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#05060a] z-50">
+<div id="loader" class="fixed inset-0 flex items-center justify-center z-50">
   <div class="glass rounded-2xl p-8 w-80 text-center shadow-xl">
     
     <img src="icon-app.svg" class="h-12 mx-auto logo-glow object-contain" alt="Comhub Logo"/>
@@ -215,7 +220,7 @@ body.light-mode .logo-text {
     </div>
   </section>
 <!-- Market Overview Section -->
-  <section class="px-6 max-w-7xl mx-auto mb-10">
+  <section class="px-6 max-w-5xl mx-auto mb-10">
     <h2 class="sr-only">Market Overview</h2>
     <div class="flex items-center justify-between mb-3 px-1">
       <h3 class="crypto-title font-bold text-sm md:text-base flex items-center gap-2">
@@ -280,7 +285,7 @@ body.light-mode .logo-text {
 </section>
 
   <!-- Investors & Partners Section -->
-  <section class="px-6 max-w-7xl mx-auto pb-12">
+  <section class="px-6 max-w-7xl mx-auto pb-12 overflow-hidden">
     <div>
       <!-- Investors -->
       <p class="text-xs opacity-60 text-center mb-5 uppercase tracking-widest font-semibold">Investors</p>
