@@ -240,20 +240,11 @@ body.light-mode .logo-text {
     }
   }
 
-  // Loader progress
-  const bar = document.getElementById('bar');
-  const loader = document.getElementById('loader');
-  let p = 0;
-  const int = setInterval(() => {
-    p += 15;
-    if (bar) bar.style.width = p + '%';
-    if (p >= 100) {
-      clearInterval(int);
-      setTimeout(() => {
-        if (loader) loader.style.display = 'none';
-      }, 250);
-  }
-   }, 60);
+  // Sembunyikan loader setelah sebentar
+const loader = document.getElementById('loader');
+setTimeout(() => {
+  if (loader) loader.style.display = 'none';
+}, 800);
 </script>
 
 </body>
