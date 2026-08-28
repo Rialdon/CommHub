@@ -146,6 +146,14 @@ body.light-mode .logo-text {
     from { transform: translateX(-50%); }
     to { transform: translateX(0); }
   }
+
+  /* --- FIX: hero banner jangan sampai crop tulisan di dalam SVG --- */
+  .hero-banner-wrap {
+    min-height: 260px;
+  }
+  .hero-banner-wrap img {
+    object-fit: contain !important;
+  }
 </style>
 </head>
 <body class="min-h-screen flex flex-col light-mode" id="body">
@@ -191,8 +199,8 @@ body.light-mode .logo-text {
 <main class="flex-1">
   <!-- Hero Section -->
   <div class="px-6 pt-4 max-w-7xl mx-auto">
-    <div class="glass rounded-2xl overflow-hidden shadow-md mt-4">
-      <img src="comhub-banner-v2.svg" class="w-full h-full object-cover opacity-90" alt="Hero visual"/>
+    <div class="glass rounded-2xl overflow-hidden shadow-md mt-4 hero-banner-wrap">
+      <img src="comhub-banner-v2.svg" class="w-full h-full object-contain opacity-90" alt="Hero visual"/>
     </div>
   </div>
 
@@ -200,7 +208,7 @@ body.light-mode .logo-text {
   <section class="px-6 pt-16 pb-6 max-w-7xl mx-auto">
     <div>
       <h2 id="comhubTitle" class="text-4xl md:text-5xl font-bold">What is ComHub?</h2>
-      <p id="comhubText" class="mt-4 text-lg md:text-xl text-gray-300 max-w-4xl">ComHub is a community hub built around Rialo. This is where players, builders, and early supporters gather to play games, and explore what can be done on Rialo.</p>
+      <p id="comhubText" class="mt-4 text-lg md:text-xl text-gray-300 max-w-6xl">ComHub is a community hub built around Rialo. This is where players, builders, and early supporters gather to play games, and explore what can be done on Rialo.</p>
     </div>
   </section>
 
@@ -209,7 +217,7 @@ body.light-mode .logo-text {
       <h2 id="heroTitle" class="text-4xl md:text-5xl font-bold">
         What is Rialo?
       </h2>
-      <p id="heroText" class="mt-4 text-lg md:text-xl text-gray-300 max-w-4xl">
+      <p id="heroText" class="mt-4 text-lg md:text-xl text-gray-300 max-w-6xl">
         Rialo is a next-generation blockchain platform built to bridge Web3 and the real world. It lets smart contracts talk directly to real-time data payments, prices, weather, anything without needing oracles or complicated middleware. Simply put, Rialo makes blockchain apps work as smoothly as the apps you use every day.
       </p>
       <div class="mt-6 grid grid-cols-2 gap-3">
