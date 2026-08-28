@@ -179,10 +179,20 @@ body.light-mode .logo-text {
     margin: 0 auto;
   }
   @media (min-width: 768px) {
-    .swap-shell {
-      max-width: 560px;
-    }
+  .swap-panel {
+    padding: 28px !important;
+    border-radius: 28px !important;
+    gap: 14px !important;
   }
+  .swap-input {
+    font-size: 34px !important;
+  }
+  .swap-main-btn {
+    font-size: 18px !important;
+    padding: 18px !important;
+    border-radius: 18px !important;
+  }
+}
 	</style>
 </head>
 <body class="min-h-screen flex flex-col light-mode" id="body">
@@ -902,7 +912,7 @@ body.light-mode .logo-text {
 </button>
 
 
-        <div style={{
+        <div className="swap-panel" style={{
           display: "grid", gridTemplateRows: expanded ? "1fr" : "0fr", opacity: expanded ? 1 : 0,
           marginTop: expanded ? 12 : 0, transition: "all 300ms ease-out",
         }}>
@@ -998,6 +1008,7 @@ body.light-mode .logo-text {
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <input type="number" inputMode="decimal" placeholder="0.0" value={payAmount}
                     onChange={(e) => setPayAmount(e.target.value)}
+                    className="swap-input"
                     style={{ background: "transparent", outline: "none", border: "none", fontSize: 24, fontWeight: 600, color: "#fff", width: "100%" }} />
                   <div style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.05)", borderRadius: 999, padding: "6px 12px 6px 6px", flexShrink: 0 }}>
                     {payingETH ? <EthIcon size={20} /> : <RialoIcon size={20} />}
