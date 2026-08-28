@@ -1,4 +1,71 @@
-<svg width="1600" height="830" viewBox="0 0 1600 830" xmlns="http://www.w3.org/2000/svg">
+<svg width="1600" height="500" viewBox="0 0 1600 500" xmlns="http://www.w3.org/2000/svg">
+  <style>
+  <![CDATA[
+    /* Ambient glow bernapas - besar dan cepat */
+    .glow {
+      animation: breathe 3s ease-in-out infinite;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+    .glow-gold { animation-delay: 1s; }
+    @keyframes breathe {
+      0%, 100% { opacity: 0.7; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.35); }
+    }
+
+    /* Controller mengambang - jarak diperbesar, plus sedikit rotasi */
+    .controller {
+      animation: floatY 2.8s ease-in-out infinite;
+      transform-box: fill-box;
+    }
+    @keyframes floatY {
+      0%, 100% { transform: translate(1140px,150px) translateY(0px) rotate(0deg); }
+      50% { transform: translate(1140px,150px) translateY(-25px) rotate(-2deg); }
+    }
+
+    /* Node jaringan kanan atas: berdenyut kuat */
+    .fnode {
+      animation: pulse 1.3s ease-in-out infinite;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+    .fnode:nth-of-type(2) { animation-delay: 0.25s; }
+    .fnode:nth-of-type(3) { animation-delay: 0.5s; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(2.2); opacity: 0.5; }
+    }
+
+    /* Garis jaringan kayak sinyal berjalan - cepat dan kontras */
+    .fline {
+      stroke-dasharray: 8 6;
+      stroke: #4CE0B3;
+      stroke-width: 4;
+      animation: dash 0.6s linear infinite;
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: -28; }
+    }
+
+    /* Seluruh garis dan titik logo muter bareng jadi satu kayak kincir */
+    .wheel-spin {
+      transform-origin: center;
+      transform-box: fill-box;
+      animation: wheelSpin 4s linear infinite;
+    }
+    @keyframes wheelSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .logo-ring {
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+
+    /* Pill Community-driven - statis, gak gerak */
+  ]]>
+  </style>
+
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#05060a"/>
@@ -31,78 +98,80 @@
   </defs>
 
   <!-- Background -->
-  <rect width="1600" height="830" fill="url(#bgGrad)"/>
-  <rect width="1600" height="830" fill="url(#grid)"/>
+  <rect width="1600" height="500" fill="url(#bgGrad)"/>
+  <rect width="1600" height="500" fill="url(#grid)"/>
 
   <!-- Ambient glows -->
-  <circle cx="1330" cy="280" r="320" fill="url(#glowMint)" filter="url(#softBlur)"/>
-  <circle cx="180" cy="650" r="280" fill="url(#glowGold)" filter="url(#softBlur)"/>
+  <circle class="glow glow-mint" cx="1330" cy="120" r="260" fill="url(#glowMint)" filter="url(#softBlur)"/>
+  <circle class="glow glow-gold" cx="180" cy="430" r="220" fill="url(#glowGold)" filter="url(#softBlur)"/>
 
-  <g transform="translate(0,165)">
-    <!-- Decorative hex/controller line art (right side) -->
-    <g opacity="0.9">
-      <!-- Game controller silhouette, simplified geometric -->
-      <g transform="translate(1140,150)">
-        <rect x="0" y="70" width="360" height="150" rx="70" fill="none" stroke="#2F3A45" stroke-width="6"/>
-        <circle cx="80" cy="145" r="26" fill="none" stroke="#4CE0B3" stroke-width="6"/>
-        <line x1="55" y1="145" x2="105" y2="145" stroke="#4CE0B3" stroke-width="6" stroke-linecap="round"/>
-        <line x1="80" y1="120" x2="80" y2="170" stroke="#4CE0B3" stroke-width="6" stroke-linecap="round"/>
-        <circle cx="270" cy="120" r="16" fill="#F2B705"/>
-        <circle cx="310" cy="150" r="16" fill="none" stroke="#F2B705" stroke-width="6"/>
-        <circle cx="270" cy="180" r="16" fill="none" stroke="#F2B705" stroke-width="6"/>
-        <circle cx="230" cy="150" r="16" fill="none" stroke="#F2B705" stroke-width="6"/>
-      </g>
-
-      <!-- Floating nodes / network dots like the logo -->
-      <circle cx="1500" cy="90" r="7" fill="#4CE0B3"/>
-      <circle cx="1470" cy="380" r="6" fill="#F2B705"/>
-      <circle cx="1560" cy="260" r="5" fill="#4CE0B3"/>
-      <line x1="1500" y1="90" x2="1560" y2="260" stroke="#2F3A45" stroke-width="3"/>
-      <line x1="1470" y1="380" x2="1560" y2="260" stroke="#2F3A45" stroke-width="3"/>
+  <!-- Decorative controller line art (right side) -->
+  <g opacity="0.9">
+    <!-- Game controller silhouette, simplified geometric -->
+    <g class="controller" transform="translate(1140,150)">
+      <rect x="0" y="70" width="360" height="150" rx="70" fill="none" stroke="#2F3A45" stroke-width="6"/>
+      <circle cx="80" cy="145" r="26" fill="none" stroke="#4CE0B3" stroke-width="6"/>
+      <line x1="55" y1="145" x2="105" y2="145" stroke="#4CE0B3" stroke-width="6" stroke-linecap="round"/>
+      <line x1="80" y1="120" x2="80" y2="170" stroke="#4CE0B3" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="270" cy="120" r="16" fill="#F2B705"/>
+      <circle cx="310" cy="150" r="16" fill="none" stroke="#F2B705" stroke-width="6"/>
+      <circle cx="270" cy="180" r="16" fill="none" stroke="#F2B705" stroke-width="6"/>
+      <circle cx="230" cy="150" r="16" fill="none" stroke="#F2B705" stroke-width="6"/>
     </g>
 
-    <!-- ComHub logo mark -->
-    <g transform="translate(90,70)">
-      <rect x="0" y="0" width="92" height="92" rx="22" fill="#10131C" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-      <g transform="translate(46,46)">
+    <!-- Floating nodes / network dots like the logo -->
+    <circle class="fnode" cx="1500" cy="90" r="7" fill="#4CE0B3"/>
+    <circle class="fnode" cx="1470" cy="380" r="6" fill="#F2B705"/>
+    <circle class="fnode" cx="1560" cy="260" r="5" fill="#4CE0B3"/>
+    <line class="fline" x1="1500" y1="90" x2="1560" y2="260" stroke="#2F3A45" stroke-width="3"/>
+    <line class="fline" x1="1470" y1="380" x2="1560" y2="260" stroke="#2F3A45" stroke-width="3"/>
+  </g>
+
+  <!-- ComHub logo mark -->
+  <g transform="translate(90,70)">
+    <rect x="0" y="0" width="92" height="92" rx="22" fill="#10131C" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <g transform="translate(46,46)">
+      <g class="wheel-spin">
         <line x1="0" y1="0" x2="0" y2="-29" stroke="#2F3A45" stroke-width="3"/>
         <line x1="0" y1="0" x2="25" y2="-14.5" stroke="#2F3A45" stroke-width="3"/>
         <line x1="0" y1="0" x2="0" y2="29" stroke="#2F3A45" stroke-width="3"/>
         <line x1="0" y1="0" x2="-25" y2="14.5" stroke="#2F3A45" stroke-width="3"/>
         <line x1="0" y1="0" x2="-25" y2="-14.5" stroke="#2F3A45" stroke-width="3"/>
-        <line x1="0" y1="0" x2="27" y2="16.5" stroke="#F2B705" stroke-width="4"/>
+        <line x1="0" y1="0" x2="24.8" y2="15.1" stroke="#F2B705" stroke-width="4"/>
         <circle cx="0" cy="-29" r="6" fill="#4CE0B3"/>
         <circle cx="25" cy="-14.5" r="6" fill="#4CE0B3"/>
         <circle cx="0" cy="29" r="6" fill="#4CE0B3"/>
         <circle cx="-25" cy="14.5" r="6" fill="#4CE0B3"/>
         <circle cx="-25" cy="-14.5" r="6" fill="#4CE0B3"/>
-        <circle cx="27" cy="16.5" r="7.5" fill="#F2B705"/>
-        <circle cx="0" cy="0" r="11" fill="#F5F4F0" stroke="#4CE0B3" stroke-width="2"/>
+        <circle cx="24.8" cy="15.1" r="7.5" fill="#F2B705"/>
       </g>
+      <circle class="logo-ring" cx="0" cy="0" r="11" fill="#F5F4F0" stroke="#4CE0B3" stroke-width="2"/>
     </g>
+  </g>
 
-    <!-- Wordmark -->
-    <text x="205" y="130" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="42" font-weight="800" fill="#ffffff">
-      Com<tspan fill="#4CE0B3">Hub</tspan>
-    </text>
+  <!-- Wordmark -->
+  <text x="205" y="130" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="42" font-weight="800" fill="#ffffff">
+    Com<tspan fill="#4CE0B3">Hub</tspan>
+  </text>
 
-    <!-- Main title -->
-    <text x="90" y="260" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="76" font-weight="800" fill="url(#textGrad)">
-      Com<tspan fill="#4CE0B3">Hub</tspan> Games
-    </text>
+  <!-- Main title -->
+  <text x="90" y="260" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="76" font-weight="800" fill="url(#textGrad)">
+    Com<tspan fill="#4CE0B3">Hub</tspan> Games
+  </text>
 
-    <!-- Subtitle -->
-    <text x="90" y="310" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="24" font-weight="500" fill="#9ca3af">
-      Play, build, and earn across the Rialo ecosystem
-    </text>
+  <!-- Subtitle -->
+  <text x="90" y="310" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="24" font-weight="500" fill="#9ca3af">
+    Play, build, and earn across the Rialo ecosystem
+  </text>
 
-    <!-- Tag pills -->
-    <g font-family="system-ui, sans-serif" font-size="18" font-weight="600">
+  <!-- Tag pills -->
+  <g font-family="system-ui, sans-serif" font-size="18" font-weight="600">
+    <g class="pill-gold">
       <rect x="90" y="345" width="150" height="42" rx="21" fill="rgba(242,183,5,0.12)" stroke="#F2B705" stroke-width="1.5"/>
       <text x="165" y="372" fill="#F2B705" text-anchor="middle">Community-driven</text>
-
-      <rect x="252" y="345" width="120" height="42" rx="21" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-      <text x="312" y="372" fill="#e5e7eb" text-anchor="middle">Free to Play</text>
     </g>
+
+    <rect x="252" y="345" width="120" height="42" rx="21" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+    <text x="312" y="372" fill="#e5e7eb" text-anchor="middle">Free to Play</text>
   </g>
 </svg>
