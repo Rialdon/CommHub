@@ -147,12 +147,28 @@ body.light-mode .logo-text {
     to { transform: translateX(0); }
   }
 
-  /* --- FIX: hero banner jangan sampai crop tulisan di dalam SVG --- */
+  /* --- FIX: hero banner responsif, tinggi ikut rasio gambar, bukan angka fixed --- */
   .hero-banner-wrap {
-    min-height: 260px;
+    width: 100%;
+    /* Ganti angka 1400/400 di bawah sesuai viewBox asli comhub-banner-v2.svg
+       (lihat atribut viewBox="0 0 W H" di file svg-nya -> pakai W/H) */
+    aspect-ratio: 1400 / 400;
   }
   .hero-banner-wrap img {
-    object-fit: contain !important;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* Fallback untuk browser lama yang belum dukung aspect-ratio */
+  @supports not (aspect-ratio: 1 / 1) {
+    .hero-banner-wrap {
+      height: auto;
+    }
+    .hero-banner-wrap img {
+      height: auto;
+    }
   }
 </style>
 </head>
@@ -200,7 +216,7 @@ body.light-mode .logo-text {
   <!-- Hero Section -->
   <div class="px-6 pt-4 max-w-7xl mx-auto">
     <div class="glass rounded-2xl overflow-hidden shadow-md mt-4 hero-banner-wrap">
-      <img src="comhub-banner-v2.svg" class="w-full h-full object-contain opacity-90" alt="Hero visual"/>
+      <img src="comhub-banner-v2.svg" class="opacity-90" alt="Hero visual"/>
     </div>
   </div>
 
