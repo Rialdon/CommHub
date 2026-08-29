@@ -96,6 +96,25 @@ body.light-mode .logo-text {
     background: #1a1d24 !important; 
   }
 
+  /* Logo bulat ala Coinflip, dipakai ulang buat game lain (mis. Wheel) */
+  .circle-logo-wrap {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 50%;
+    border: 3px solid #4CE0B3;
+    overflow: hidden;
+  }
+  .circle-logo-wrap img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+  }
+
   #loader { background-color: #ffffff; }
   .dark-mode #loader { background-color: #05060a; }
 
@@ -172,13 +191,15 @@ body.light-mode .logo-text {
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
   <div id="wheel" class="game-card text-center scroll-mt-24">
-    <img src="wheel.png" class="w-full game-img mb-3"/>
+    <div class="circle-logo-wrap mb-3">
+      <img src="wheel.png"/>
+    </div>
     <h3 class="font-semibold" data-en="Rialo Wheel" data-id="Rialo Wheel">Rialo Wheel</h3>
     <a href="https://games.comhub.my.id/#wheel" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
   </div>
   <div id="coinflip" class="game-card text-center scroll-mt-24">
-  <div class="mb-3" style="width:160px;height:160px;margin:0 auto;display:flex;align-items:center;justify-content:center;background:#ffffff;border-radius:50%;border:3px solid #4CE0B3;overflow:hidden;">
-    <img src="logo_transparent.png" style="width:60%;height:60%;object-fit:contain;"/>
+  <div class="circle-logo-wrap mb-3">
+    <img src="logo_transparent.png"/>
   </div>
   <h3 class="font-semibold" data-en="Rialo CoinFlip" data-id="Rialo CoinFlip">Rialo CoinFlip</h3>
   <a href="https://games.comhub.my.id/#coinflip" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
@@ -203,9 +224,9 @@ body.light-mode .logo-text {
     <h3 class="font-semibold" data-en="Rialo Quiz" data-id="Rialo Quiz">Rialo Quiz</h3>
     <a href="https://games.comhub.my.id/#quiz" class="btn mt-3 inline-block" data-en="Play" data-id="Main">Play</a>
   </div>
-</div><!-- ⬅ nutup grid -->
-  </section><!-- ⬅ nutup section games hub -->
-</main><!-- ⬅ nutup main -->
+</div><!-- nutup grid -->
+  </section><!-- nutup section games hub -->
+</main><!-- nutup main -->
 
 <!-- Footer -->
 <footer class="p-6 text-center mt-auto">
